@@ -23,13 +23,13 @@ class Competitor(models.Model):
 class CompetitorDetails(models.Model):
 	competitor = models.ForeignKey(Competitor, related_name='details', on_delete=models.CASCADE)
 	bio = models.TextField(max_length=1000, blank=True, null=True)
-	height = models.CharField(max_length=3, blank=True, null=True)
-	work = models.CharField(max_length=100, blank=True, null=True)
-	study = models.CharField(max_length=100, blank=True, null=True)
-	home = models.CharField(max_length=100, blank=True, null=True)
-	looking_for = models.CharField(max_length=100, blank=True, null=True)
-	relationship_type = models.CharField(max_length=100, blank=True, null=True)
-	pronouns = models.CharField(max_length=100, blank=True, null=True)
+	height = models.CharField(max_length=10, blank=True, null=True)
+	work = models.CharField(max_length=255, blank=True, null=True)
+	study = models.CharField(max_length=255, blank=True, null=True)
+	home = models.CharField(max_length=255, blank=True, null=True)
+	looking_for = models.CharField(max_length=255, blank=True, null=True)
+	relationship_type = models.CharField(max_length=255, blank=True, null=True)
+	pronouns = models.CharField(max_length=255, blank=True, null=True)
 	lifestyle = models.TextField(max_length=1000, blank=True, null=True)
 	more_about_me = models.TextField(max_length=1000, blank=True, null=True)
 	languages = models.TextField(max_length=1000, blank=True, null=True)
@@ -38,5 +38,6 @@ class CompetitorDetails(models.Model):
 class CompetitorImage(models.Model):
 	image_hash = models.CharField(max_length=64, unique=True, blank=True, null=True)
 	beauty_ai_rate = models.FloatField(null=True, blank=True)
-	image = models.ImageField(upload_to='competitor_images/')  # Путь для хранения изображений
+	image_local_path = models.CharField(max_length=255) # Путь для хранения изображений
+	image_full_path = models.CharField(max_length=255) # Путь для хранения изображений
 	competitor = models.ManyToManyField(Competitor, related_name='images')  # Связь с моделью Person

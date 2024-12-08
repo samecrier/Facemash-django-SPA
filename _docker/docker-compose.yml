@@ -7,6 +7,7 @@ services:
       - "8000:8000"
     volumes:
       - ../backend:/app/backend
+      - /mnt/g/facemash/images:/app/media
     environment:
       - DEBUG=True
       - DJANGO_SETTINGS_MODULE=_facemash_django.settings
