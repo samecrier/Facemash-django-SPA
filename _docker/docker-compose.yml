@@ -1,0 +1,36 @@
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: _docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend:/app/backend
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=_facemash_django.settings
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: facemash_database
+      POSTGRES_USER: saycry
+      POSTGRES_PASSWORD: 12345678
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge
