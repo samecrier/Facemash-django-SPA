@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -85,7 +86,7 @@ DATABASES = {
 		'NAME': 'facemash_database',
 		'USER': 'saycry',
 		'PASSWORD': '12345678',
-		'HOST': 'db',  # Имя сервиса Docker
+		'HOST': os.getenv('DB_HOST', 'localhost'),  # Имя сервиса Docker
 		'PORT': '5432',
 	}
 }

@@ -10,8 +10,10 @@ services:
     environment:
       - DEBUG=True
       - DJANGO_SETTINGS_MODULE=_facemash_django.settings
+      - DB_HOST=db  # Для контейнера с базой данных
     depends_on:
       - db
+    command: ["python", "backend/manage.py", "runserver", "0.0.0.0:8000"]
     networks:
       - backend
 

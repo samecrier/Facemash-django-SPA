@@ -2,17 +2,17 @@ from django.db import models
 
 # Create your models here.
 class Location(models.Model):
-	city_eng = models.CharField(max_lenght=100)
-	city_ru = models.CharField(max_lenght=100)
-	country = models.CharField(max_lenght=100)
-	continent = models.CharField(max_lenght=100)
+	city_eng = models.CharField(max_length=100)
+	city_ru = models.CharField(max_length=100)
+	country = models.CharField(max_length=100)
+	continent = models.CharField(max_length=100)
 
 	def __str__(self):
 		return self.city_eng
 
 class Competitor(models.Model):
-	name = models.CharField(max_lenght=100)
-	name_id = models.CharField(max_lenght=100)
+	name = models.CharField(max_length=100)
+	name_id = models.CharField(max_length=100)
 	age = models.PositiveIntegerField(blank=True, null=True)
 	city = models.ForeignKey(Location, related_name='competitor',
 		on_delete=models.PROTECT)
