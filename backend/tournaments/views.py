@@ -3,4 +3,4 @@ from django.views import View
 from django.http import HttpResponse
 
 def home(request):
-	return HttpResponse("Game_system")
+	return HttpResponse("profiles")

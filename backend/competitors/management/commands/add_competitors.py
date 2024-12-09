@@ -43,7 +43,7 @@ class Command(BaseCommand):
 			for row in reader:
 				image = row[0]
 				check_image_quality.append(image)
-		
+
 		with transaction.atomic():
 			for i, file_path in enumerate(file_pathes):
 				try:
@@ -79,7 +79,7 @@ class Command(BaseCommand):
 							if image_local_path not in check_image_quality:
 								image_hash = image_name
 								beauty_ai_rate = data[competitor_data]["images_by_hashes"][image_name]["beauty_ai"]
-								image, created = CompetitorImage.objects.get_or_create(
+								image, recieved = CompetitorImage.objects.get_or_create(
 									image_local_path=image_local_path,
 									image_hash=image_hash, 
 									beauty_ai_rate=beauty_ai_rate,

@@ -18,7 +18,9 @@ class Competitor(models.Model):
 		on_delete=models.PROTECT)
 	updated_at = models.DateTimeField(auto_now=True)
 	added_at = models.DateTimeField(auto_now_add=True)
-	
+
+	def __str__(self):
+		return self.name_id
 
 class CompetitorDetails(models.Model):
 	competitor = models.ForeignKey(Competitor, related_name='details', on_delete=models.CASCADE)

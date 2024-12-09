@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class GameSystemConfig(AppConfig):
+class MatchupsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'game_system'
+    name = 'matchups'

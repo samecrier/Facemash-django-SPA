@@ -23,8 +23,9 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
 	path('', include('test_app.urls')),  # Маршруты из test_app без префикса
 	path('competitors', include('competitors.urls')),
-	path('game-system', include('game_system.urls')),
 	path('profiles', include('profiles.urls')),
+	path('matchups', include('matchups.urls')),
+	path('tournaments', include('tournaments.urls')),
 	path('ratings', include('ratings.urls')),
 	path('services', include('services.urls')),
 ]

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 	'services',
 	'competitors',
 	'profiles',
-	'game_system',
+	'matchups',
+	'tournaments',
 	'ratings',
 ]
 
