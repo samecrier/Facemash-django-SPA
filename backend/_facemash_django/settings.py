@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'test_app',
+	'frontend',
 	'services',
 	'competitors',
 	'profiles',
@@ -62,7 +63,7 @@ ROOT_URLCONF = '_facemash_django.urls'
 TEMPLATES = [
 	{
 		'BACKEND': 'django.template.backends.django.DjangoTemplates',
-		'DIRS': [],
+		'DIRS': [BASE_DIR / 'templates'],
 		'APP_DIRS': True,
 		'OPTIONS': {
 			'context_processors': [

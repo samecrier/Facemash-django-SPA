@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title%} Main {% endblock %}
+
+
+{% block content %}
+	<main>
+		<div class="wrapper">
+		{% for competitor in competitors%}
+			<div class="competitor">
+				<div class="slider">
+					<div class="slider-controls">
+					</div>
+					<div class="slider-images">
+						{% for image in competitor.images.all %}
+							{% if forloop.counter == 1 %}
+						<img id="current-image-{{forloop.counter}}" src="{{ image.get_path }}" alt="Image">
+							{% endif %}
+						{% endfor%}
+					</div>
+				</div>
+				<div class="bio">
+					<p>{{ competitor.name}}, {{competitor.age}}</p>
+				</div>
+				<div class="button">
+					<p>Выбрать</p>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
+	</main>
+	
+	<script id="image-data-slider-1" type="application/json">
+		{
+			"image_count": {{image_count_1}},
+			"initial_image": "{{ initial_image_1|escapejs }}",
+			"other_images": {{ other_images_1 }}
+		}
+	</script>
+
+	<script id="image-data-slider-2" type="application/json">
+		{
+			"image_count": {{image_count_2}},
+			"initial_image": "{{ initial_image_2|escapejs }}",
+			"other_images": {{ other_images_2 }}
+		}
+	</script>
+	<script src="{% static 'frontend/js/sliders_new.js' %}"></script>
+{% endblock %}

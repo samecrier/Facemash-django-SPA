@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+import os
 
 # Create your models here.
 class Location(models.Model):
@@ -43,3 +45,7 @@ class CompetitorImage(models.Model):
 	image_local_path = models.CharField(max_length=255) # Путь для хранения изображений
 	image_full_path = models.CharField(max_length=255) # Путь для хранения изображений
 	competitor = models.ManyToManyField(Competitor, related_name='images')  # Связь с моделью Person
+
+	def get_path(self):
+		# Формируем полный путь
+		return os.path.join(settings.MEDIA_URL, self.image_local_path)

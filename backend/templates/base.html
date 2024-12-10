@@ -1,0 +1,28 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{% static 'frontend/css/styles.css' %}">
+	<title>{% block title %}{% endblock%}</title>
+</head>
+<body>
+	<header class="header">
+		<div class="logo" ><a class="logo" href"/">
+			<img class="img_logo" src="{% static 'frontend/img/logo_black.png'%}"></a></div>
+		<nav class="navbar">
+			<ul>
+				<li><a class="{% if request.path == '/' %}active{% endif %}" href="/">Матчап</a></li>
+				<li><a class="{% if request.path == '/rating' %}active{% endif %}" href="/">Рейтинг</a></li>
+				<li><a class="{% if request.path == '/profile' %}active{% endif %}" href="/">Профиль</a></li>
+			</ul>
+		</nav>
+	</header>
+	{% block content %}
+
+	{% endblock %}
+	
+</body>
+</html>

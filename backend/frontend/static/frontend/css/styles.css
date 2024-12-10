@@ -1,0 +1,123 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+body {
+	font-family: Consolas;
+}
+div.logo {
+	margin-left:50px;
+}
+img.img_logo {
+	width: 45%;
+}
+header.header {
+	margin-top: 10px;
+	display:flex;
+	justify-content: space-between;
+	align-items: center; /* Центрирует по вертикали */
+}
+
+nav.navbar ul{
+	display: flex;
+	justify-content: space-between;
+	list-style: none; /* Убирает маркеры списка */
+}
+
+nav.navbar li{
+	margin-right: 25px;
+}
+
+nav.navbar a{
+	font-size: 25pt;
+	color: black;
+	text-decoration: none; /* Подчеркивание */
+}
+
+nav.navbar a.active{
+	font-size: 25pt;
+	color: black;
+	text-decoration: underline; /* Подчеркивание */
+	text-decoration-color: #000cff; /* Цвет подчеркивания */
+	text-decoration-thickness: 5px; /* Толщина подчеркивания */
+	text-underline-offset: 10px; /* Отступ подчеркивания от текста */
+}
+
+div.wrapper {
+	display: flex;
+} 
+
+div.competitor {
+	margin: 50px 10px 0px 50px;
+	font-size: 25pt;
+	width: 360px;
+	box-sizing: border-box;
+} 
+
+.slider-images {
+	display: flex;
+	transition: transform 0.5s ease-in-out;
+}
+
+.slider-images img {
+	width: 100%; /* Заполняет ширину контейнера */
+	height: auto; /* Заполняет высоту контейнера */
+	flex-shrink: 0; /* Не даёт изображениям сжиматься */
+	display: block; /* Убирает лишние отступы */
+	object-fit: cover; /* Изображение заполняет контейнер, сохраняя пропорции */
+	border: 6px solid black;
+}
+
+/* Стили переключателей */
+.slider-controls {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+.slider-controls input {
+	display: none;
+}
+
+.slider-controls label {
+	width: 15px;
+	height: 15px;
+	background-color: black;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.slider-controls input:checked + label {
+	background-color: #000cff;
+	box-shadow: 0 0 5px #000cff;
+}
+
+.bio {
+	width: 100%; /* Устанавливаем ширину 50% от competitor */
+	margin: 10px auto; /* Горизонтальное центрирование */
+}
+
+.bio p {
+	text-align: center;
+	font-weight: bold;
+}
+
+.button {
+	display: flex;
+	justify-content: center;
+	background-color: #000cff;
+	width: 80%; /* Устанавливаем ширину 50% от competitor */
+	margin: 10px auto; /* Горизонтальное центрирование */
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border-radius: 10px;
+}
+
+.button p {
+	color: white;
+	text-align: center;
+}
