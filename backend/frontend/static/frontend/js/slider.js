@@ -1,60 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
-	const currentImageElement = document.getElementById("current-image");
-	const controlsContainer = document.getElementById("slider-controls");
+	// Найти все слайдеры
+	const sliders = document.querySelectorAll(".slider");
 
-	// Получаем JSON из тега <script>
-	const scriptContent = document.querySelector("#image-data").textContent;
+	sliders.forEach((slider, index) => {
+		const currentImageElement = slider.querySelector(".slider-images img");
+		const controlsContainer = slider.querySelector(".slider-controls");
+		const hiddenInput = document.querySelector(`#image-index-slider-${index + 1}`);
+		// Получаем JSON из соответствующего <script>
+		const scriptContent = document.querySelector(`#image-data-slider-${index + 1}`).textContent;
 
+		// Парсим JSON
+		const data = JSON.parse(scriptContent);
 
-	// Парсим JSON
-	const data = JSON.parse(scriptContent);
+		// Получаем данные
+		const images = data.images;
+		const initialIndex = data.initial_index || 0; // Индекс текущего изображения, по умолчанию 0
+		
+		// Устанавливаем начальное изображение
+		currentImageElement.src = images[initialIndex];
 
-	// Получаем данные
-	const initialImage = data.initial_image;
+		let currentIndex = initialIndex;
 
-	
-	const imageCount = data.image_count;
-	const otherImages = data.other_images;
+		// Функция для создания радиокнопок
+		const createRadioButtons = (images, initialIndex) => {
+			images.forEach((image, i) => {
+				const input = document.createElement("input");
+				input.type = "radio";
+				input.name = `slider-${index + 1}`;
+				input.id = `slide-${index + 1}-${i + 1}`;
+				input.value = i;
 
-	// Проверяем данные
-	console.log("Initial Image:", initialImage);
-	console.log("Image Count:", imageCount);
-	console.log("Other Images:", otherImages);
-
-	// Пример использования
-	currentImageElement.src = initialImage;
-
-	let currentIndex = 0;
-
-	// Функция для создания radio buttons
-	const createRadioButtons = (count) => {
-		for (let i = 0; i < count; i++) {
-			const input = document.createElement("input");
-			input.type = "radio";
-			input.name = "slider";
-			input.id = `slide${i + 1}`;
-			input.value = i;
-			if (i === 0) input.checked = true;
-
-			const label = document.createElement("label");
-			label.htmlFor = `slide${i + 1}`;
-
-			controlsContainer.appendChild(input);
-			controlsContainer.appendChild(label);
-
-			// Навешивание события
-			input.addEventListener("change", () => {
-				currentIndex = parseInt(input.value, 10);
-				if (currentIndex === 0) {
-					currentImageElement.src = initialImage; // Первое изображение
-				} else {
-					currentImageElement.src = otherImages[currentIndex - 1]; // Остальные изображения
+				// Устанавливаем активную радиокнопку
+				if (i === initialIndex) {
+					input.checked = true;
 				}
-			});
-		}
-	};
 
-	// Создаём radio buttons
-	createRadioButtons(imageCount);
-	console.log("Radio buttons сгенерированы для", imageCount, "изображений");
+				const label = document.createElement("label");
+				label.htmlFor = input.id;
+
+				controlsContainer.appendChild(input);
+				controlsContainer.appendChild(label);
+
+				// Навешивание события
+				input.addEventListener("change", () => {
+					currentIndex = parseInt(input.value, 10);
+					hiddenInput.value = currentIndex; // Обновляем скрытое поле
+					currentImageElement.src = images[currentIndex];
+				});
+			});
+		};
+
+		// Создаём радиокнопки
+		createRadioButtons(images, initialIndex);
+	});
 });

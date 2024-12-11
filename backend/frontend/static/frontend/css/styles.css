@@ -51,20 +51,22 @@ div.wrapper {
 div.competitor {
 	margin: 50px 10px 0px 50px;
 	font-size: 25pt;
-	width: 360px;
 	box-sizing: border-box;
 } 
 
 .slider-images {
 	display: flex;
+	justify-content: center; /* Центрирует по горизонтали */
+    align-items: center; /* Центрирует по вертикали */
 	transition: transform 0.5s ease-in-out;
 }
 
 .slider-images img {
-	width: 100%; /* Заполняет ширину контейнера */
-	height: auto; /* Заполняет высоту контейнера */
+	height: 460px;
+	width: auto; /* Заполняет ширину контейнера */
 	flex-shrink: 0; /* Не даёт изображениям сжиматься */
 	display: block; /* Убирает лишние отступы */
+	margin: 0 0;
 	object-fit: cover; /* Изображение заполняет контейнер, сохраняя пропорции */
 	border: 6px solid black;
 }

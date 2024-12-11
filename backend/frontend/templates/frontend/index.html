@@ -14,7 +14,7 @@
 					<div class="slider-images">
 						{% for image in competitor_data.competitor.images.all %}
 							{% if forloop.counter == competitor_data.forloop_index %}
-								<img id="current-image-{{forloop.counter}}" src="{{ competitor_data.initial_image }}" alt="Image">
+								<img id="current-image-{{forloop.counter}}" src="{{ image.get_path }}" alt="Image">
 							{% endif %}
 						{% endfor%}
 					</div>
@@ -39,13 +39,11 @@
 		{% for competitor_key, competitor_data in data.items %}
 		<script id="image-data-slider-{{forloop.counter}}" type="application/json">
 			{
-				"image_count": {{ competitor_data.image_count}},
-				"initial_image": "{{ competitor_data.initial_image|escapejs }}",
-				"other_images": {{ competitor_data.other_images }},
+				"images": {{ competitor_data.images }},
 				"initial_index": {{ competitor_data.initial_index }}
 			}
 		</script>
 		{% endfor %}
 
-	<script src="{% static 'frontend/js/sliders_new.js' %}"></script>
+	<script src="{% static 'frontend/js/slider.js' %}"></script>
 {% endblock %}

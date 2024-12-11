@@ -13,17 +13,12 @@ class HomeView(View):
 		winner_id = request.session.get("winner_id")
 		winner_position = request.session.get("winner_position")
 		current_image_index = request.session.get("current_image_index")
-		print(winner_id, winner_position, current_image_index)
 		
 		home_service = GetData()
 		if winner_id:
 			data = home_service.get_enemy(2, winner_id, winner_position, current_image_index)
-			print('__________________')
-			print(data)
 		else:
 			data = home_service.get_data_competitors(2)
-			print('***********')
-			print(data)
 
 		return render(
 			request, 
