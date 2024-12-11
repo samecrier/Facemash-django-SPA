@@ -1,36 +1,43 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.http import HttpResponse
-from django.conf import settings
 from django.utils.safestring import mark_safe
 from services.competitors_service import LocalCompetitorService
+from frontend.helpers import GetData
 import json
 
-def home(request):
-	competitor_service = LocalCompetitorService()
-	competitors = []
-	first_competitor = competitor_service.get_random_competitor()
-	competitors.append(first_competitor)
-	while True:
-		second_competitor = competitor_service.get_random_competitor()
-		if second_competitor != first_competitor:
-			competitors.append(second_competitor)
-			break
-	first_images = first_competitor.images.all()
-	second_images = second_competitor.images.all()
 
-	return render(
-		request, 
-		'frontend/index.html',
-		{
-			'competitors': competitors,
+class HomeView(View):
 
-			'initial_image_1': first_images[0].get_path(),
-			'image_count_1': first_images.count(),
-			'other_images_1': mark_safe(json.dumps([image.get_path() for image in first_images[1:]])),
+	def get(self, request):
+		winner_id = request.session.get("winner_id")
+		winner_position = request.session.get("winner_position")
+		current_image_index = request.session.get("current_image_index")
+		print(winner_id, winner_position, current_image_index)
+		
+		home_service = GetData()
+		if winner_id:
+			data = home_service.get_enemy(2, winner_id, winner_position, current_image_index)
+			print('__________________')
+			print(data)
+		else:
+			data = home_service.get_data_competitors(2)
+			print('***********')
+			print(data)
 
-			'initial_image_2': second_images[0].get_path(),
-			'image_count_2': second_images.count(),
-			'other_images_2': mark_safe(json.dumps([image.get_path() for image in second_images[1:]])),
-		}
-	)
+		return render(
+			request, 
+			'frontend/index.html',
+			{'data': data}
+		)
+	
+	def post(self, request):
+		winner_id = request.POST.get("winner_id")
+		winner_position = request.POST.get("winner_position")
+		current_image_index = request.POST.get("image_index")
+		loser_ids = [competitor_id for competitor_id in request.POST.get("loser_ids").split(',') 
+			if competitor_id != '']
+		request.session['winner_id'] = winner_id
+		request.session['winner_position'] = winner_position
+		request.session['current_image_index'] = current_image_index
+		return redirect("home")

@@ -2,7 +2,7 @@
 venv/
 __pycache__/
 *.pyc
-*test.py
+*test*.py
 scripts/
 data/
 .vscode/

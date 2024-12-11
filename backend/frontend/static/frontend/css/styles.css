@@ -106,18 +106,19 @@ div.competitor {
 	font-weight: bold;
 }
 
-.button {
-	display: flex;
-	justify-content: center;
-	background-color: #000cff;
-	width: 80%; /* Устанавливаем ширину 50% от competitor */
-	margin: 10px auto; /* Горизонтальное центрирование */
+.button button {
+	width: 80%;
+	background: #000cff; /* Градиент от светло-голубого к темно-голубому */
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: Consolas;
+	cursor: pointer;
+	text-align: center;
+	margin: 0 auto; /* Обеспечивает горизонтальное центрирование блока */
+	display: block; /* Делает кнопку блочным элементом */
 	padding-top: 5px;
 	padding-bottom: 5px;
-	border-radius: 10px;
-}
-
-.button p {
-	color: white;
-	text-align: center;
 }

@@ -6,44 +6,46 @@
 {% block content %}
 	<main>
 		<div class="wrapper">
-		{% for competitor in competitors%}
-			<div class="competitor">
+		{% for competitor_key, competitor_data in data.items %}
+			<div class="competitor" id="{{ competitor_key }}">
 				<div class="slider">
 					<div class="slider-controls">
 					</div>
 					<div class="slider-images">
-						{% for image in competitor.images.all %}
-							{% if forloop.counter == 1 %}
-						<img id="current-image-{{forloop.counter}}" src="{{ image.get_path }}" alt="Image">
+						{% for image in competitor_data.competitor.images.all %}
+							{% if forloop.counter == competitor_data.forloop_index %}
+								<img id="current-image-{{forloop.counter}}" src="{{ competitor_data.initial_image }}" alt="Image">
 							{% endif %}
 						{% endfor%}
 					</div>
 				</div>
 				<div class="bio">
-					<p>{{ competitor.name}}, {{competitor.age}}</p>
+					<p>{{ competitor_data.competitor.name}}, {{ competitor_data.competitor.age }}</p>
 				</div>
 				<div class="button">
-					<p>Выбрать</p>
+					<form method="post">
+					{% csrf_token %}
+						<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
+						<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
+						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="image_index" value="{{competitor_data.initial_index}}">
+						<input type="hidden" name="loser_ids" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }},{% endif %}{% endfor %}">
+						<button type="submit">Выбрать</button>
+					</form>
 				</div>
 			</div>
 		{% endfor %}
 		</div>
 	</main>
-	
-	<script id="image-data-slider-1" type="application/json">
-		{
-			"image_count": {{image_count_1}},
-			"initial_image": "{{ initial_image_1|escapejs }}",
-			"other_images": {{ other_images_1 }}
-		}
-	</script>
+		{% for competitor_key, competitor_data in data.items %}
+		<script id="image-data-slider-{{forloop.counter}}" type="application/json">
+			{
+				"image_count": {{ competitor_data.image_count}},
+				"initial_image": "{{ competitor_data.initial_image|escapejs }}",
+				"other_images": {{ competitor_data.other_images }},
+				"initial_index": {{ competitor_data.initial_index }}
+			}
+		</script>
+		{% endfor %}
 
-	<script id="image-data-slider-2" type="application/json">
-		{
-			"image_count": {{image_count_2}},
-			"initial_image": "{{ initial_image_2|escapejs }}",
-			"other_images": {{ other_images_2 }}
-		}
-	</script>
 	<script src="{% static 'frontend/js/sliders_new.js' %}"></script>
 {% endblock %}
