@@ -41,10 +41,13 @@ class LocalRatingService(RatingService):
 		)
 		return True
 	
-	def get_top_rating(self):
+	@staticmethod
+	def get_top_rating():
 		competitor_service = LocalCompetitorService()
-		top_ratings = Rating.objects.order_by('-rating')[:10]
-		competitors = [rating.competitors_id for rating in top_ratings]
-		
+		top_ratings = Rating.objects.order_by('-rating')[:20]
+		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratings]
+		# competitor_service.fetch_competitors(competitors)
+		return competitors
+
 class APIRatingService(RatingService):
 	pass

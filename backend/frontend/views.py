@@ -3,6 +3,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 from services.competitors_service import LocalCompetitorService
+from services.ratings_service import LocalRatingService
 from frontend.helpers import GetData
 from frontend.handlers import MatchupHandler
 import json
@@ -20,11 +21,16 @@ class HomeView(View):
 			data = home_helper.get_enemy(winner_id, winner_position, winner_image_index)
 		else:
 			data = home_helper.get_data_competitors(2)
-
+		
+		ratings = LocalRatingService.get_top_rating()
+		
 		return render(
 			request, 
 			'frontend/index.html',
-			{'data': data}
+			{
+				'data': data,
+				'ratings': ratings,
+			}
 		)
 	
 	def post(self, request):

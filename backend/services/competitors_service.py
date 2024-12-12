@@ -50,8 +50,15 @@ class LocalCompetitorService(CompetitorService):
 		return competitor_images
 	
 	def fetch_competitors(self, competitor_ids) -> QuerySet[Competitor]:
-		'''По листу с id возвращает лист с объектами компетитор по id'''
-		competitors = Competitor.objects.filter(id__in=competitor_ids)
+		'''По листу с id или объектами
+		возвращаю лист с объектами Competitor'''
+		competitors = []
+		for competitor_id in competitor_ids:
+			if isinstance(competitor_id, Competitor):
+				competitors.append(competitor_id)
+			else:
+				competitor = Competitor.objects.get(id=competitor_id)
+				competitors.append(competitor)
 		return competitors
 	
 	def get_all_competitors(self):
