@@ -46,10 +46,16 @@ nav.navbar a.active{
 
 div.wrapper {
 	display: flex;
+	justify-content: space-between;
+	margin-top: 10px;
 } 
 
+div.competitors-block{
+	display:flex;
+}
+
 div.competitor {
-	margin: 50px 10px 0px 50px;
+	margin: 40px 10px 0px 50px;
 	font-size: 25pt;
 	box-sizing: border-box;
 } 
@@ -57,7 +63,7 @@ div.competitor {
 .slider-images {
 	display: flex;
 	justify-content: center; /* Центрирует по горизонтали */
-    align-items: center; /* Центрирует по вертикали */
+	align-items: center; /* Центрирует по вертикали */
 	transition: transform 0.5s ease-in-out;
 }
 
@@ -134,4 +140,29 @@ div.competitor {
 .button button:hover{
 	color: #000cff;
 	background-color: black;
+}
+
+
+.top-rating {
+	margin-right: 25%;
+	width: 20%;
+}
+
+.top-rating h1 {
+	margin: 0;
+	line-height: 1;
+}
+table {
+	margin-top: 23px;
+	border-collapse: collapse; /* Убирает промежутки между ячейками */
+	width: 100%; /* Таблица занимает всю ширину */
+}
+
+td, th {
+	padding: 5px; /* Добавляет немного отступов */
+	padding-right: 50px;
+	text-align: left; /* Выравнивает текст по левому краю */
+	white-space: nowrap; /* Запрет на перенос текста */
+	max-width: 500px; /* Ограничение ширины ячейки */
+
 }

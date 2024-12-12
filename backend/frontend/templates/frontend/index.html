@@ -6,35 +6,58 @@
 {% block content %}
 	<main>
 		<div class="wrapper">
-		{% for competitor_key, competitor_data in data.items %}
-			<div class="competitor" id="{{ competitor_key }}">
-				<div class="slider">
-					<div class="slider-controls">
+			<div class="competitors-block">
+			{% for competitor_key, competitor_data in data.items %}
+				<div class="competitor" id="{{ competitor_key }}">
+					<div class="slider">
+						<div class="slider-controls">
+						</div>
+						<div class="slider-images">
+							{% for image in competitor_data.competitor.images.all %}
+								{% if forloop.counter == competitor_data.forloop_index %}
+									<img id="current-image-{{forloop.counter}}" src="{{ image.get_path }}" alt="Image">
+								{% endif %}
+							{% endfor%}
+						</div>
 					</div>
-					<div class="slider-images">
-						{% for image in competitor_data.competitor.images.all %}
-							{% if forloop.counter == competitor_data.forloop_index %}
-								<img id="current-image-{{forloop.counter}}" src="{{ image.get_path }}" alt="Image">
-							{% endif %}
-						{% endfor%}
+					<div class="bio">
+						<p>{{ competitor_data.competitor.name_id}}, {{ competitor_data.competitor.age }}</p>
+						<p>Rating: {{ competitor_data.rating }}</p>
+					</div>
+					<div class="button">
+						<form method="post">
+						{% csrf_token %}
+							<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
+							<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
+							<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
+							<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
+							<button type="submit">Выбрать</button>
+						</form>
 					</div>
 				</div>
-				<div class="bio">
-					<p>{{ competitor_data.competitor.name_id}}, {{ competitor_data.competitor.age }}</p>
-					<p>Rating: {{ competitor_data.rating }}</p>
-				</div>
-				<div class="button">
-					<form method="post">
-					{% csrf_token %}
-						<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
-						<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
-						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
-						<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
-						<button type="submit">Выбрать</button>
-					</form>
-				</div>
+			{% endfor %}
 			</div>
-		{% endfor %}
+
+			<div class="top-rating">
+			<h1>Топ рейтинга</h1>
+			<table>
+				<tbody>
+					{% for top_competitor, rating in ratings %}
+					<tr>
+						<td>{{ forloop.counter }}</td>
+						<td>{{ top_competitor.name_id }}</td>
+						<td>{{ top_competitor.city.city_eng }}</td>
+						<td>{{ rating }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+				</table>
+
+
+
+			</div>
+
+
 		</div>
 	</main>
 		{% for competitor_key, competitor_data in data.items %}
