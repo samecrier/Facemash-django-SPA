@@ -20,15 +20,16 @@
 					</div>
 				</div>
 				<div class="bio">
-					<p>{{ competitor_data.competitor.name}}, {{ competitor_data.competitor.age }}</p>
+					<p>{{ competitor_data.competitor.name_id}}, {{ competitor_data.competitor.age }}</p>
+					<p>Rating: {{ competitor_data.rating }}</p>
 				</div>
 				<div class="button">
 					<form method="post">
 					{% csrf_token %}
 						<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
 						<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
-						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="image_index" value="{{competitor_data.initial_index}}">
-						<input type="hidden" name="loser_ids" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }},{% endif %}{% endfor %}">
+						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
+						<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
 						<button type="submit">Выбрать</button>
 					</form>
 				</div>

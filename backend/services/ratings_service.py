@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from ratings.models import Rating
-from ratings_system import EloRatingSystem
-from competitors_service import LocalCompetitorService
+from services.ratings_system import EloRatingSystem
+from services.competitors_service import LocalCompetitorService
 from typing import List
 
 class RatingService(ABC):
@@ -13,20 +13,38 @@ class RatingService(ABC):
 class LocalRatingService(RatingService):
 	
 	@staticmethod
-	def get_rating(competitor_id) -> int:
+	def get_rating(competitor) -> int:
 		'''По id Competitor возвращаю его рейтинг'''
-		competitor_rating = Rating.objects.get(competitor_id=competitor_id)
+		competitor_rating = Rating.objects.get(competitor_id=competitor)
 		return competitor_rating.rating
 	
 	@staticmethod
-	def update_rating(competitor_id, rating, cost) -> None:
+	def update_matchup_rating(competitor_id, delta, result) -> None:
 		'''
 		Функции принимает id Competitor, текущий рейтинг
-		elo cost и обновляет рейтинг.
+		elo delta и обновляет рейтинг.
 		'''
 		competitor_rating = Rating.objects.get(competitor_id=competitor_id)
-		competitor_rating.rating = rating+cost
+		competitor_rating.rating = competitor_rating.rating+delta
+		if result == 1:
+			competitor_rating.wins += 1
+		if result == 0:
+			competitor_rating.losses += 1
+		competitor_rating.matchups += 1
 		competitor_rating.save()
 	
+	def create_competitor_rating(self, competitor):
+		if Rating.objects.filter(competitor_id=competitor).exists():
+			return False
+		Rating.objects.create(
+			competitor_id=competitor
+		)
+		return True
+	
+	def get_top_rating(self):
+		competitor_service = LocalCompetitorService()
+		top_ratings = Rating.objects.order_by('-rating')[:10]
+		competitors = [rating.competitors_id for rating in top_ratings]
+		
 class APIRatingService(RatingService):
 	pass

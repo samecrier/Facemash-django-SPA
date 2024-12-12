@@ -100,12 +100,18 @@ div.competitor {
 
 .bio {
 	width: 100%; /* Устанавливаем ширину 50% от competitor */
-	margin: 10px auto; /* Горизонтальное центрирование */
+	margin: 10px auto;
 }
 
 .bio p {
 	text-align: center;
 	font-weight: bold;
+	font-size: 20pt;
+}
+
+.button {
+	margin-top: 10px;
+	margin-bottom: 100px;
 }
 
 .button button {
@@ -123,4 +129,9 @@ div.competitor {
 	display: block; /* Делает кнопку блочным элементом */
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+
+.button button:hover{
+	color: #000cff;
+	background-color: black;
 }

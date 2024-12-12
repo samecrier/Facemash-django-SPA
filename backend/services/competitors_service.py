@@ -53,6 +53,9 @@ class LocalCompetitorService(CompetitorService):
 		'''По листу с id возвращает лист с объектами компетитор по id'''
 		competitors = Competitor.objects.filter(id__in=competitor_ids)
 		return competitors
+	
+	def get_all_competitors(self):
+		return Competitor.objects.all()
 
 	
 class APICompetitorService(CompetitorService):
