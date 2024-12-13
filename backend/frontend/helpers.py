@@ -78,3 +78,34 @@ class GetData():
 				data[competitor_number_key]["forloop_index"] = 1
 		data = dict(sorted(data.items()))
 		return data
+	
+	def get_competitor_js(self, winner_id, loser_id, winner_position):
+		data = defaultdict(lambda: defaultdict(dict))
+		winner_obj = self.competitor_service.get_competitor(winner_id)
+		loser_obj = self.competitor_service.get_competitor(loser_id)
+		for i in range(1, 3):
+			if i != int(winner_position):
+				competitor_number = i
+				competitor_number_key = f"competitor-{competitor_number}"
+				competitor = self.competitor_service.get_random_competitor()
+				while True:
+					competitor = self.competitor_service.get_random_competitor()
+					if competitor != winner_obj and competitor != loser_obj:
+						data[competitor_number_key]["competitor"]["id"] = competitor.id
+						data[competitor_number_key]["competitor"]["name"] = competitor.name_id
+						data[competitor_number_key]["competitor"]["age"] = competitor.age
+						data[competitor_number_key]["competitor"]["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
+						break
+				image_data = self.get_image_stats(competitor)
+				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
+				data[competitor_number_key]["images"] = image_data["images"]
+				data[competitor_number_key]["winner_id"] = competitor.id
+				data[competitor_number_key]["winner_position"] = i
+				data[competitor_number_key]["loser_id"] = winner_id
+				data[competitor_number_key]["initial_index"] = 0
+				data[competitor_number_key]["forloop_index"] = 1
+		data = dict(data)
+		return data
+	
+	def get_winner_rating(self, winner_id):
+		return self.rating_service.get_rating(winner_id)

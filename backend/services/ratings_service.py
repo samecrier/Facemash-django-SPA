@@ -48,6 +48,27 @@ class LocalRatingService(RatingService):
 		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratings]
 		# competitor_service.fetch_competitors(competitors)
 		return competitors
+	
+
 
 class APIRatingService(RatingService):
-	pass
+	
+	def get_rating(self):
+		pass
+	
+	@staticmethod
+	def get_top_rating():
+		competitor_service = LocalCompetitorService()
+		top_ratings = Rating.objects.order_by('-rating')[:20]
+		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratings]
+		data = []
+		for competitor, rating in competitors:
+			data_competitor = {}
+			data_competitor["name"] = competitor.name_id
+			data_competitor["city"] = competitor.city.city_eng
+			data_competitor["rating"] = rating
+			data.append(data_competitor)
+			
+
+		# competitor_service.fetch_competitors(competitors)
+		return data

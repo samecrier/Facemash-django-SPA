@@ -46,7 +46,6 @@ nav.navbar a.active{
 
 div.wrapper {
 	display: flex;
-	justify-content: space-between;
 	margin-top: 10px;
 } 
 
@@ -144,8 +143,7 @@ div.competitor {
 
 
 .top-rating {
-	margin-right: 25%;
-	width: 20%;
+	margin-left: 100px;
 }
 
 .top-rating h1 {

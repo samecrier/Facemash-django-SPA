@@ -8,7 +8,7 @@
 		<div class="wrapper">
 			<div class="competitors-block">
 			{% for competitor_key, competitor_data in data.items %}
-				<div class="competitor" id="{{ competitor_key }}">
+				<div class="competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
 					<div class="slider">
 						<div class="slider-controls">
 						</div>
@@ -19,10 +19,16 @@
 								{% endif %}
 							{% endfor%}
 						</div>
+						<script id="image-data-slider-{{forloop.counter}}" type="application/json">
+							{
+								"images": {{ competitor_data.images }},
+								"initial_index": {{ competitor_data.initial_index }}
+							}
+						</script>
 					</div>
 					<div class="bio">
 						<p>{{ competitor_data.competitor.name_id}}, {{ competitor_data.competitor.age }}</p>
-						<p>Rating: {{ competitor_data.rating }}</p>
+						<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
 					</div>
 					<div class="button">
 						<form method="post">
@@ -31,7 +37,8 @@
 							<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
 							<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
 							<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
-							<button type="submit">Выбрать</button>
+							{% comment %} <button type="submit">Выбрать</button> {% endcomment %}
+							<button type="button" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
 						</form>
 					</div>
 				</div>
@@ -61,13 +68,11 @@
 		</div>
 	</main>
 		{% for competitor_key, competitor_data in data.items %}
-		<script id="image-data-slider-{{forloop.counter}}" type="application/json">
-			{
-				"images": {{ competitor_data.images }},
-				"initial_index": {{ competitor_data.initial_index }}
-			}
-		</script>
+
 		{% endfor %}
 
-	<script src="{% static 'frontend/js/slider.js' %}"></script>
+	<script src="{% static 'frontend/js/utils.js' %}" type="module" defer></script>
+	<script src="{% static 'frontend/js/slider-utility.js' %}" type="module" defer></script>
+	<script src="{% static 'frontend/js/slider.js' %}" type="module" defer></script>
+	<script src="{% static 'frontend/js/matchup.js' %}" type="module" defer></script>
 {% endblock %}
