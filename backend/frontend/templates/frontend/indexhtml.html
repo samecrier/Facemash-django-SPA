@@ -15,7 +15,7 @@
 						<div class="slider-images">
 							{% for image in competitor_data.competitor.images.all %}
 								{% if forloop.counter == competitor_data.forloop_index %}
-									<a href="{% url 'profile' competitor_data.competitor.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
+									<img id="current-image-{{forloop.counter}}" src="{{ image.get_path }}" alt="Image">
 								{% endif %}
 							{% endfor%}
 						</div>
@@ -37,7 +37,8 @@
 							<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
 							<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
 							<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
-							<button type="button" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
+							<button type="submit">Выбрать</button>
+							{% comment %} <button type="button" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button> {% endcomment %}
 						</form>
 					</div>
 				</div>
@@ -51,7 +52,7 @@
 					{% for top_competitor, rating in ratings %}
 					<tr>
 						<td>{{ forloop.counter }}</td>
-						<td><a class="profile-ref" href="{% url 'profile' top_competitor.id %}">{{ top_competitor.name_id }}</a></td>
+						<td>{{ top_competitor.name_id }}</td>
 						<td>{{ top_competitor.city.city_eng }}</td>
 						<td>{{ rating }}</td>
 					</tr>
@@ -66,6 +67,9 @@
 
 		</div>
 	</main>
+		{% for competitor_key, competitor_data in data.items %}
+
+		{% endfor %}
 
 	<script src="{% static 'frontend/js/utils.js' %}" type="module" defer></script>
 	<script src="{% static 'frontend/js/slider-utility.js' %}" type="module" defer></script>

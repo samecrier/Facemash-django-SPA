@@ -25,7 +25,7 @@ class Competitor(models.Model):
 		return self.name_id
 
 class CompetitorDetails(models.Model):
-	competitor = models.ForeignKey(Competitor, related_name='details', on_delete=models.CASCADE)
+	competitor = models.OneToOneField(Competitor, related_name='details', on_delete=models.CASCADE)
 	bio = models.TextField(max_length=1000, blank=True, null=True)
 	height = models.CharField(max_length=10, blank=True, null=True)
 	work = models.CharField(max_length=255, blank=True, null=True)

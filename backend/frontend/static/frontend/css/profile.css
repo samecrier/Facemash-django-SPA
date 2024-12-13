@@ -1,0 +1,37 @@
+div.wrapper {
+	display: flex;
+	margin-top: 100px;
+}
+
+.slider-images {
+	margin-left: 100px;
+}
+
+.slider-images img {
+	height: 600px;
+}
+
+.profile-info {
+	margin-left: 100px;
+	margin-top: 20px;
+	max-width: 800px;
+}
+
+.profile-info table{
+	border-collapse: collapse; /* Убирает промежутки между ячейками */
+}
+.profile-info td.key {
+	padding: 0;
+	margin: 0;
+	font-size: 20pt;
+	vertical-align: top;
+}
+.profile-info td.value {
+	padding-left: 50px;
+	width: 100%;
+	font-size: 25pt;
+	font-weight: bold;
+	word-wrap: break-word;
+	word-break: break-word;
+	white-space: normal;
+}

@@ -14,7 +14,6 @@ class GetData():
 
 	def get_image_stats(self, competitor, initial_index=0) -> list:
 		images = [image.get_path() for image in competitor.images.all()]
-		images.sort()
 		initial_index = int(initial_index)
 		initial_image = images[initial_index]
 		image_count = len(images)
@@ -42,6 +41,7 @@ class GetData():
 			data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
 			image_data = self.get_image_stats(competitor)
 			data[competitor_number_key]["images"] = image_data["images"]
+			print(type(data[competitor_number_key]["images"]), data[competitor_number_key]["images"])
 			data[competitor_number_key]["initial_index"] = 0
 			data[competitor_number_key]["forloop_index"] = 1
 		data = dict(data)
@@ -96,9 +96,7 @@ class GetData():
 						data[competitor_number_key]["competitor"]["age"] = competitor.age
 						data[competitor_number_key]["competitor"]["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
 						break
-				image_data = self.get_image_stats(competitor)
 				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
-				data[competitor_number_key]["images"] = image_data["images"]
 				data[competitor_number_key]["winner_id"] = competitor.id
 				data[competitor_number_key]["winner_position"] = i
 				data[competitor_number_key]["loser_id"] = winner_id
@@ -109,3 +107,16 @@ class GetData():
 	
 	def get_winner_rating(self, winner_id):
 		return self.rating_service.get_rating(winner_id)
+	
+	def get_competitor_profile(self, competitor_id):
+		competitor_obj = self.competitor_service.get_competitor(competitor_id)
+		data = {}
+		data["name"] = competitor_obj.name
+		data["age"] = competitor_obj.age
+		data["city"] = competitor_obj.city.city_eng
+		image_data = self.get_image_stats(competitor_obj)
+		data["images"] = image_data["images"]
+		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
+		return data
+		
+

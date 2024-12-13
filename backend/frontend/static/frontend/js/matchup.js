@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
 
                 loserElement.querySelector(".slider-images").innerHTML = `
-                    <img src="${loserData.competitor.images[0].url}" alt="${loserData.competitor.name}">
+                    <a href="profile/${loserData.winner_id}"><img src="${loserData.competitor.images[0].url}" alt="${loserData.competitor.name}">
                 `;
 
                 const newFormHtml = `
@@ -68,16 +68,18 @@ document.addEventListener("DOMContentLoaded", () => {
 				
 				const winnerLoserInput = winnerElement.querySelector("input[name='loser_id']");
 				winnerLoserInput.value = loserData.winner_id;
+			
+				const profileBaseUrl = "/profile/";
 
 				const topRatingTableBody = document.querySelector(".top-rating tbody");
 				topRatingTableBody.innerHTML = ""; // Очищаем текущую таблицу
-		
+
 				data.top_ratings.forEach((competitor, index) => {
 					const row = document.createElement("tr");
 		
 					row.innerHTML = `
 						<td>${index + 1}</td>
-						<td>${competitor.name}</td>
+						<td><a class="profile-ref" href="${profileBaseUrl}${competitor.id}">${competitor.name}</a></td>
 						<td>${competitor.city}</td>
 						<td>${competitor.rating}</td>
 					`;

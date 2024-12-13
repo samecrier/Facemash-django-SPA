@@ -63,6 +63,9 @@ class LocalCompetitorService(CompetitorService):
 	
 	def get_all_competitors(self):
 		return Competitor.objects.all()
+	
+	def get_competitor_bio(self, competitor_obj):
+		return competitor_obj.details.bio
 
 	
 class APICompetitorService(CompetitorService):

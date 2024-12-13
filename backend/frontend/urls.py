@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('', views.HomeView.as_view(), name='home'),  # Пример маршрута
-	path('js', views.HomeViewJS.as_view(), name='home_js'),  # Пример маршрута
+	path('archieve', views.HomeView.as_view(), name='home-archieve'),  # Пример маршрута
+	path('', views.HomeViewJS.as_view(), name='home'),  # Пример маршрута
+	path('profile/<int:profile_id>', views.ProfileView.as_view(), name='profile'),
 ]
