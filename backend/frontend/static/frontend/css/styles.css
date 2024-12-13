@@ -150,17 +150,20 @@ div.competitor {
 	margin: 0;
 	line-height: 1;
 }
-table {
+.top-rating table {
 	margin-top: 23px;
 	border-collapse: collapse; /* Убирает промежутки между ячейками */
 	width: 100%; /* Таблица занимает всю ширину */
 }
 
-td, th {
+.top-rating td, th {
 	padding: 5px; /* Добавляет немного отступов */
 	padding-right: 50px;
 	text-align: left; /* Выравнивает текст по левому краю */
 	white-space: nowrap; /* Запрет на перенос текста */
 	max-width: 500px; /* Ограничение ширины ячейки */
+}
 
+a.profile-ref {
+	color: black;
 }

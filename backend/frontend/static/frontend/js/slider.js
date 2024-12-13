@@ -1,5 +1,4 @@
 import { initializeSlider } from "./slider-utility.js";
-
 document.addEventListener("DOMContentLoaded", () => {
     const sliders = document.querySelectorAll(".slider");
 

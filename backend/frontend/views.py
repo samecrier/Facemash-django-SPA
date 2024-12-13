@@ -27,7 +27,7 @@ class HomeView(View):
 		
 		return render(
 			request, 
-			'frontend/index.html',
+			'frontend/indexhtml.html',
 			{
 				'data': data,
 				'ratings': ratings,
@@ -49,7 +49,7 @@ class HomeView(View):
 		request.session['winner_position'] = winner_position
 		request.session['winner_image_index'] = winner_image_index
 
-		return redirect("home")
+		return redirect("home-archieve")
 
 
 class HomeViewJS(View):
@@ -95,8 +95,8 @@ class HomeViewJS(View):
 				loser_id,
 				winner_position
 			)
+			print(new_loser)
 			winner_rating = self.home_helper.get_winner_rating(winner_id)
-			
 			top_ratings = APIRatingService.get_top_rating()
 			
 			request.session['winner_id'] = winner_id
@@ -109,3 +109,16 @@ class HomeViewJS(View):
 				"winner_rating": winner_rating,
 				"top_ratings": top_ratings
 			})
+		
+
+class ProfileView(View):
+
+	home_helper = GetData()
+
+	def get(self, request, profile_id: int):
+		data = self.home_helper.get_competitor_profile(profile_id)
+		return render(
+			request, 
+			'frontend/profile.html', 
+			{'data': data}
+		)
