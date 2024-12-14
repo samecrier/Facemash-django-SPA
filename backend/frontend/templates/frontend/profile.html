@@ -1,51 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block css %}<link rel="stylesheet" href="{% static 'frontend/css/profile.css' %}">{% endblock%}
-{% block title%} Profile {% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'frontend/css/profile.css' %}">
+{% endblock %}
+{% block title%}Профиль{% endblock %}
 
-{% block content%}
-<main>
-	<div class="wrapper">
-		<div class="slider">
-			<div class="slider-controls">
-			</div>
-			<div class="slider-images">
-
-					<img id="current-image" src="/" alt="Image">
-
-			</div>
-		</div>
-
+{% block content %}
+<div class="wrapper">
+	<div class="bio-section">
 		<div class="profile-info">
-			<table>
-				<tbody>
-					<tr>
-						<td class="key">Name</td>
-						<td class="value">{{ data.name }}</td>
-					</tr>
-					<tr>
-						<td class="key">Age</td>
-						<td class="value">{{ data.age }}</td>
-					</tr>
-					<tr>
-						<td class="key">City</td>
-						<td class="value">{{ data.city }}</td>
-					</tr>
-					<tr>
-						<td class="key">Bio</td>
-						<td class="value">{{ data.bio }}</td>
-					</tr>
-				</tbody>
-				</table>
-
+			<p>Привет, {{user}}!</p>
+		</div>
+		<div class="logout">
+			<form method="post" action="{% url 'logout' %}">
+			{% csrf_token %}
+				<button type="submit">Выйти из профиля</button>
+		</form>
+			</form>
+		</div>
 	</div>
-</main>
-
-<script id="image-data-slider-1" type="application/json">
-    {
-		"images" : {{ data.images }}
-	}
-</script>
-
-<script src="{% static 'frontend/js/profile-slider.js' %}" type="module" defer></script>
-{% endblock%}
+	<div class="history-section">
+	<h1>Здесь будет история твоих матчапов!</h1>
+	</div>
+</div>
+{% endblock %}

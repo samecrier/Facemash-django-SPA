@@ -18,13 +18,16 @@
 			<ul>
 				<li><a class="{% if request.path == '/' %}active{% endif %}" href="/">Матчап</a></li>
 				<li><a class="{% if request.path == '/rating' %}active{% endif %}" href="/">Рейтинг</a></li>
-				<li><a class="{% if request.path == '/profile' %}active{% endif %}" href="/">Профиль</a></li>
+				{% if user.is_authenticated %}
+				<li><a href="/profile/">Профиль</a></li>
+				{% else %}
+				<li><a href="/login/">Войти</a></li>
+				{% endif %}
 			</ul>
 		</nav>
 	</header>
 	{% block content %}
 
 	{% endblock %}
-	
 </body>
 </html>

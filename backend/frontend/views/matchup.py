@@ -1,13 +1,9 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from django.http import HttpResponse, JsonResponse
-from django.utils.safestring import mark_safe
-from django.core.serializers import serialize
-from services.competitors_service import LocalCompetitorService
+from django.http import JsonResponse
 from services.ratings_service import LocalRatingService, APIRatingService
 from frontend.helpers import GetData
 from frontend.handlers import MatchupHandler
-import json
 
 
 class HomeView(View):
@@ -71,7 +67,7 @@ class HomeViewJS(View):
 		
 		return render(
 			request, 
-			'frontend/index.html',
+			'frontend/matchup.html',
 			{
 				'data': data,
 				'ratings': ratings,
@@ -109,16 +105,3 @@ class HomeViewJS(View):
 				"winner_rating": winner_rating,
 				"top_ratings": top_ratings
 			})
-		
-
-class ProfileView(View):
-
-	home_helper = GetData()
-
-	def get(self, request, profile_id: int):
-		data = self.home_helper.get_competitor_profile(profile_id)
-		return render(
-			request, 
-			'frontend/profile.html', 
-			{'data': data}
-		)
