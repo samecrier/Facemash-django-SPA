@@ -63,7 +63,7 @@ class HomeViewJS(View):
 		else:
 			data = self.home_helper.get_data_competitors(2)
 		
-		ratings = LocalRatingService.get_top_rating()
+		ratings = LocalRatingService.get_top_rating(20)
 		
 		return render(
 			request, 
@@ -91,9 +91,9 @@ class HomeViewJS(View):
 				loser_id,
 				winner_position
 			)
-			print(new_loser)
+
 			winner_rating = self.home_helper.get_winner_rating(winner_id)
-			top_ratings = APIRatingService.get_top_rating()
+			top_ratings = APIRatingService.get_top_rating(20)
 			
 			request.session['winner_id'] = winner_id
 			request.session['loser_id'] = loser_id

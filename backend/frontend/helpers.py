@@ -118,5 +118,3 @@ class GetData():
 		data["images"] = image_data["images"]
 		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
 		return data
-		
-

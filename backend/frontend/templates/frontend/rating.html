@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css%}
+<link rel="stylesheet" href="{% static 'frontend/css/rating.css' %}">
+{% endblock %}
+
+{% block content%}
+<div class="wrapper-rating">
+	<div class="overall-rating">
+		<div class="rating">
+		<div class="headers">
+			<a href="">Общий рейтинг</a> / <a href="">Рейтинг профиля</a>
+		</div>
+		<table>
+			<tbody>
+				{% for competitor, rating in page_obj%}
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td><a class="profile-ref" href="{% url 'competitor' competitor.id %}">{{ competitor.name_id }}</a></td>
+					<td>{{ competitor.age }}</td>
+					<td>{{ competitor.city.city_eng }}</td>
+					<td>{{ rating }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+			</table>
+		</div>
+			<!-- Пагинация -->
+		<div class="pagination">
+		{% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"><</a>
+        {% endif %}
+			{% if page_obj.number > 3 %}
+				<a href="?page=1">1</a>
+				<span>...</span>
+			{% elif page_obj.number > 1 %}
+				<a href="?page=1">1</a>
+			{% endif %}
+			<!-- Динамический диапазон страниц -->
+			{% for num in paginator.page_range %}
+					{% if num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+						{% if num == page_obj.number%}
+							<span class="current"><strong>{{ num }}</strong></span> <!-- Текущая страница -->
+						{% else %}
+							{% if num != 1 %}
+							<a href="?page={{ num }}">{{ num }}</a>
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+
+			<!-- Ссылка на последнюю страницу -->
+			{% if page_obj.number < paginator.num_pages|add:'-2' %}
+				<span>...</span>
+				<a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+			{% elif page_obj.number|add:'2' < paginator.num_pages %}
+				<a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+			{% endif %}
+
+		{% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">></a>
+        {% endif %}
+		</div>
+
+	</div>
+</div>
+{% endblock%}

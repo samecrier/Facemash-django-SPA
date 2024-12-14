@@ -17,11 +17,11 @@
 		<nav class="navbar">
 			<ul>
 				<li><a class="{% if request.path == '/' %}active{% endif %}" href="/">Матчап</a></li>
-				<li><a class="{% if request.path == '/rating' %}active{% endif %}" href="/">Рейтинг</a></li>
+				<li><a class="{% if request.path == '/rating/' %}active{% endif %}" href="/rating/">Рейтинг</a></li>
 				{% if user.is_authenticated %}
-				<li><a href="/profile/">Профиль</a></li>
+				<li><a class="{% if request.path == '/profile/' %}active{% endif %}" href="/profile/">Профиль</a></li>
 				{% else %}
-				<li><a href="/login/">Войти</a></li>
+				<li><a class="{% if request.path == '/login/' %}active{% endif %}" href="/login/">Войти</a></li>
 				{% endif %}
 			</ul>
 		</nav>
