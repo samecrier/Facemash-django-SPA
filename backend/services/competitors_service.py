@@ -71,7 +71,23 @@ class LocalCompetitorService(CompetitorService):
 class APICompetitorService(CompetitorService):
 	
 	def get_competitor(self, competitor_id):
-		pass
+		return Competitor.objects.get(id=competitor_id)
 
 	def fetch_competitors(self, competitor_ids):
 		pass
+	
+	def get_random_competitor(self):
+		pass
+	
+	def get_competitor_data(self, competitor_id):
+		competitor = self.get_competitor(competitor_id)
+		data = {}
+
+		data["name"] = competitor.name
+		data["age"] = competitor.age
+		data["city"] = competitor.city.city_eng
+		data["bio"] = competitor.details.bio
+		data["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
+		return data
+
+

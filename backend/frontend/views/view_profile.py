@@ -1,11 +1,12 @@
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
 from django.views import View
-from profiles.forms import RegistrationForm
 from django.views.generic.edit import FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
+from django.conf import settings
+from profiles.forms import RegistrationForm
 
 
 class ProfileView(View):
@@ -35,12 +36,13 @@ class RegisterView(FormView):
 class LoginView(LoginView):
 	template_name = 'frontend/login.html'
 	authentication_form = AuthenticationForm
-	success_url = reverse_lazy('profile')
 
 	def get_success_url(self):
-		# Используем success_url для перенаправления после успешного входа
-		return self.success_url
-
+		next_url = self.request.GET.get('next')
+		if next_url:
+			return next_url
+		return self.get_redirect_url() or settings.LOGIN_REDIRECT_URL
+	
 	def form_invalid(self, form):
 		form.errors.clear()
 		# Добавляем кастомное сообщение об ошибке

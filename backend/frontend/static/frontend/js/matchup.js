@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				const winnerLoserInput = winnerElement.querySelector("input[name='loser_id']");
 				winnerLoserInput.value = loserData.winner_id;
 			
-				const profileBaseUrl = "/profile/";
+				const profileBaseUrl = "/competitor/";
 
 				const topRatingTableBody = document.querySelector(".top-rating tbody");
 				topRatingTableBody.innerHTML = ""; // Очищаем текущую таблицу

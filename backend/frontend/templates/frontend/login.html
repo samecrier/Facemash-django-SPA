@@ -3,13 +3,13 @@
 {% block css %}
 	<link rel="stylesheet" href="{% static 'frontend/css/profile.css' %}">
 {% endblock %}
-{% block title%} Main {% endblock %}
+{% block title%}Авторизация{% endblock %}
 
 {% block content%}
 <div class="wrapper-centered">
 	<div class="form">
 		<p class="head">Ввойти в профиль</p>
-		<form method="post">
+		<form method="post" action="{% url 'login' %}?next={{ request.GET.next }}">
 			{% csrf_token %}
 			{% if form.non_field_errors %}
 				<div class="error-message">

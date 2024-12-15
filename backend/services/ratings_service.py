@@ -43,12 +43,18 @@ class LocalRatingService(RatingService):
 	
 	@staticmethod
 	def get_top_rating(numbers):
-		competitor_service = LocalCompetitorService()
 		top_ratings = Rating.objects.order_by('-rating')[:numbers]
 		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratings]
 		sorted_competitors = sorted(competitors, key=lambda x: (-x[1], x[0].name))
 		return sorted_competitors
 	
+	@staticmethod
+	def get_top_ratingprofile(profile_id, numbers):
+		top_ratingsprofile = RatingProfile.objects.filter(profile_id=profile_id).order_by('-rating')[:numbers]
+		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratingsprofile]
+		sorted_competitors = sorted(competitors, key=lambda x: (-x[1], x[0].name))
+		return sorted_competitors
+
 	@staticmethod
 	def update_matchup_ratingprofile(profile_id, competitor_id, delta, result):
 		

@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.views import View
 from frontend.helpers import GetData
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 
-class CompetitorView(View):
+class CompetitorView(LoginRequiredMixin, TemplateView):
 
 	home_helper = GetData()
 

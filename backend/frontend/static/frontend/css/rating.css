@@ -1,6 +1,7 @@
 .wrapper-rating{
 	display: flex;
 	margin: 100px;
+	margin-top: 60px;
 }
 
 .headers h1 {
@@ -12,6 +13,12 @@
 	font-weight: bold;
 	font-size: 20pt;
 	text-decoration: underline;
+}
+
+.headers p {
+	color: black;
+	font-weight: bold;
+	font-size: 20pt;
 }
 
 .headers a:hover {
@@ -47,4 +54,82 @@ div.pagination a {
 
 span.current { 
 	color: #000cff;
+}
+
+#profile-detail {
+	width: 60%;
+	margin-left: 100px;
+	display: flex;
+}
+
+.competitor-row {
+	cursor: pointer; /* Указывает, что элемент кликабельный */
+	transition: background-color 0.3s ease;
+}
+
+
+.slider {
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.slider img {
+	height: 600px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.slider-controls {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.slider-controls input {
+	display: none;
+}
+
+.slider-controls label {
+	width: 15px;
+	height: 15px;
+	background-color: black;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.slider-controls input:checked + label {
+	background-color: #000cff;
+	box-shadow: 0 0 5px #000cff;
+}
+
+.slider {
+	width: 60%;
+}
+
+.profile-info {
+	width: 40%;
+	margin-left: 50px;
+	margin-top: 50px;
+}
+
+.profile-info table{
+	border-collapse: collapse; /* Убирает промежутки между ячейками */
+}
+.profile-info td.key {
+	padding: 0;
+	margin: 0;
+	font-size: 15pt;
+	vertical-align: top;
+}
+.profile-info td.value {
+	padding-left: 25px;
+	width: 100%;
+	font-size: 15pt;
+	font-weight: bold;
+	word-wrap: break-word;
+	word-break: break-word;
+	white-space: normal;
 }

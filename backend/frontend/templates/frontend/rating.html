@@ -3,20 +3,25 @@
 {% block css%}
 <link rel="stylesheet" href="{% static 'frontend/css/rating.css' %}">
 {% endblock %}
+{% block title%}Рейтинг{% endblock %}
 
 {% block content%}
 <div class="wrapper-rating">
 	<div class="overall-rating">
 		<div class="rating">
-		<div class="headers">
-			<a href="">Общий рейтинг</a> / <a href="">Рейтинг профиля</a>
-		</div>
+			<div class="headers">
+			{% if user.is_authenticated %}
+				<a href="?type=global">Общий рейтинг</a>/ <a href="?type=profile">Рейтинг профиля</a>
+			{% else %}
+				<p class="header-nonauth">Общий рейтинг</p>
+			{% endif %}
+			</div>
 		<table>
 			<tbody>
 				{% for competitor, rating in page_obj%}
-				<tr>
-					<td>{{ forloop.counter }}</td>
-					<td><a class="profile-ref" href="{% url 'competitor' competitor.id %}">{{ competitor.name_id }}</a></td>
+				<tr class="competitor-row" data-competitor-id="{{ competitor.id }}">
+					<td>{{ start_position|add:forloop.counter }}</td>
+					<td class="competitor-name">{{ competitor.name_id }}</td>
 					<td>{{ competitor.age }}</td>
 					<td>{{ competitor.city.city_eng }}</td>
 					<td>{{ rating }}</td>
@@ -28,13 +33,13 @@
 			<!-- Пагинация -->
 		<div class="pagination">
 		{% if page_obj.has_previous %}
-			<a href="?page={{ page_obj.previous_page_number }}"><</a>
+			<a href="?type={{ request.GET.type }}&page={{ page_obj.previous_page_number }}"><</a>
 		{% endif %}
 			{% if page_obj.number > 3 %}
-				<a href="?page=1">1</a>
+				<a href="?type={{ request.GET.type }}&page=1">1</a>
 				<span>...</span>
 			{% elif page_obj.number > 1 %}
-				<a href="?page=1">1</a>
+				<a href="?type={{ request.GET.type }}&page=1">1</a>
 			{% endif %}
 			<!-- Динамический диапазон страниц -->
 			{% for num in paginator.page_range %}
@@ -43,7 +48,7 @@
 							<span class="current"><strong>{{ num }}</strong></span> <!-- Текущая страница -->
 						{% else %}
 							{% if num != 1 %}
-							<a href="?page={{ num }}">{{ num }}</a>
+							<a href="?type={{ request.GET.type }}&page={{ num }}">{{ num }}</a>
 						{% endif %}
 					{% endif %}
 				{% endif %}
@@ -52,16 +57,21 @@
 			<!-- Ссылка на последнюю страницу -->
 			{% if page_obj.number < paginator.num_pages|add:'-2' %}
 				<span>...</span>
-				<a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+				<a href="?type={{ request.GET.type }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
 			{% elif page_obj.number|add:'2' < paginator.num_pages %}
-				<a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+				<a href="?type={{ request.GET.type }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
 			{% endif %}
 
 		{% if page_obj.has_next %}
-			<a href="?page={{ page_obj.next_page_number }}">></a>
+			<a href="?type={{ request.GET.type }}&page={{ page_obj.next_page_number }}">></a>
 		{% endif %}
 		</div>
 
 	</div>
+	<div id="profile-detail">
+		<div id="profile-photos"></div>
+	</div>
 </div>
+
+<script src="{% static 'frontend/js/rating-competitor.js' %}" type="module" defer></script>
 {% endblock%}
