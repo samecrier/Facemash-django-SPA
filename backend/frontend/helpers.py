@@ -119,6 +119,8 @@ class GetData():
 		image_data = self.get_image_stats(competitor_obj)
 		data["images"] = image_data["images"]
 		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
+		if not data["bio"]:
+			data["bio"] = '-'
 		return data
 
 	def get_specific_matchup_guest(self, winner_id, winner_position, winner_image_index, 
