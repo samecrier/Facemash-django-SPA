@@ -47,3 +47,25 @@ class Matchup(models.Model):
 	
 	def __str__(self):
 		return f"{self.winner_id} vs {self.loser_id}"
+
+class SavedMatchup(models.Model):
+	profile_id = models.OneToOneField(
+		'profiles.User',
+		on_delete=models.CASCADE,
+		related_name='saved_matchup',
+		db_column='profile_id'
+	)
+	competitor_1 = models.ForeignKey(
+		'competitors.Competitor',
+		on_delete=models.CASCADE,
+		related_name='saved_first_competitor'
+	)
+	competitor_2 = models.ForeignKey(
+		'competitors.Competitor',
+		on_delete=models.CASCADE,
+		related_name='saved_second_competitor'
+	)
+	competitor_1_ii = models.PositiveIntegerField(default=0)
+	competitor_2_ii = models.PositiveIntegerField(default=0)
+	updated_at = models.DateTimeField(auto_now=True)
+	

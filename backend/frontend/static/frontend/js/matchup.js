@@ -21,16 +21,16 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             if (data.status === "success") {
                 const competitorKey = Object.keys(data.loser_data)[0];
+				const profileBaseUrl = "/competitor/";
                 const loserElement = document.querySelector(`#${competitorKey}`);
                 const loserData = data.loser_data[competitorKey];
-
                 loserElement.querySelector(".bio").innerHTML = `
                     <p>${loserData.competitor.name}, ${loserData.competitor.age}</p>
                     <p class='competitor-rating'>Rating: ${loserData.rating}</p>
                 `;
 
                 loserElement.querySelector(".slider-images").innerHTML = `
-                    <a href="profile/${loserData.winner_id}"><img src="${loserData.competitor.images[0].url}" alt="${loserData.competitor.name}">
+                    <a href="${profileBaseUrl}${loserData.winner_id}"><img src="${loserData.competitor.images[0].url}" alt="${loserData.competitor.name}">
                 `;
 
                 const newFormHtml = `
@@ -62,14 +62,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				// Обновление победителя
 				const winnerElement = button.closest(".competitor");
-				
+				console.log(winnerElement)
 				const winnerRatingElement = winnerElement.querySelector(".competitor-rating");
 				winnerRatingElement.textContent = `Rating: ${data.winner_rating}`;
 				
 				const winnerLoserInput = winnerElement.querySelector("input[name='loser_id']");
 				winnerLoserInput.value = loserData.winner_id;
 			
-				const profileBaseUrl = "/competitor/";
+				
 
 				const topRatingTableBody = document.querySelector(".top-rating tbody");
 				topRatingTableBody.innerHTML = ""; // Очищаем текущую таблицу

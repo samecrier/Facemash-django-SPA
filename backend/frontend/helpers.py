@@ -1,5 +1,7 @@
 from services.competitors_service import LocalCompetitorService
 from services.ratings_service import LocalRatingService
+from services.profiles_service import LocalProfileService
+from services.matchups_service import LocalMatchupService
 from django.utils.safestring import mark_safe
 import json
 from collections import defaultdict
@@ -7,6 +9,8 @@ from collections import defaultdict
 class GetData():
 	competitor_service = LocalCompetitorService()
 	rating_service = LocalRatingService()
+	profile_service = LocalProfileService()
+	matchup_service = LocalMatchupService()
 
 	def get_rating_stat(self, competitor):
 		return self.rating_service.get_rating(competitor)
@@ -117,7 +121,7 @@ class GetData():
 		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
 		return data
 
-	def get_specific_matchup(self, winner_id, winner_position, winner_image_index, 
+	def get_specific_matchup_guest(self, winner_id, winner_position, winner_image_index, 
 						enemy_id, competitors_number=2):
 		data = defaultdict(dict)
 		winner_image_index = int(winner_image_index)
@@ -145,3 +149,97 @@ class GetData():
 				data[competitor_number_key]["forloop_index"] = 1
 		data = dict(sorted(data.items()))
 		return data
+	
+	def get_saved_data(self, competitor_1, competitor_2, competitor_1_index=0, competitor_2_index=0):
+		data = defaultdict(dict)
+		competitor_1_index = int(competitor_1_index)
+		image_data = self.get_image_stats(competitor_1, initial_index=competitor_1_index)
+		data["competitor-1"]["competitor"] = competitor_1
+		data["competitor-1"]["rating"] = self.get_rating_stat(competitor_1)
+		data["competitor-1"]["images"] = image_data["images"]
+		data["competitor-1"]["initial_index"] = competitor_1_index
+		data["competitor-1"]["forloop_index"] = competitor_1_index+1
+		
+		data["competitor-2"]["competitor"] = competitor_2
+		image_data = self.get_image_stats(competitor_2, initial_index=competitor_2_index)
+		data["competitor-2"]["rating"] = self.get_rating_stat(competitor_2)
+		data["competitor-2"]["images"] = image_data["images"]
+		data["competitor-2"]["initial_index"] = competitor_2_index
+		data["competitor-2"]["forloop_index"] = competitor_2_index+1
+		data = dict(sorted(data.items()))
+		return data
+	
+	def get_specific_matchup(self, competitor_1, competitor_2, competitor_1_position=1, competitor_1_index=0, competitors_number=2):
+		data = defaultdict(dict)
+		competitor_1_index = int(competitor_1_index)
+		competitors = []
+		competitor_1 = self.competitor_service.get_competitor(competitor_1)
+		competitors.append(competitor_1)
+		image_data = self.get_image_stats(competitor_1, initial_index=competitor_1_index)
+		data[f"competitor-{competitor_1_position}"]["competitor"] = competitor_1
+		data[f"competitor-{competitor_1_position}"]["rating"] = self.get_rating_stat(competitor_1)
+		data[f"competitor-{competitor_1_position}"]["images"] = image_data["images"]
+		data[f"competitor-{competitor_1_position}"]["initial_index"] = competitor_1_index
+		data[f"competitor-{competitor_1_position}"]["forloop_index"] = competitor_1_index+1
+		
+		for i in range(1, competitors_number+1):
+			if i != int(competitor_1_position):
+				competitor_number = i
+				competitor_number_key = f"competitor-{competitor_number}"
+				competitor = self.competitor_service.get_competitor(competitor_2)
+				data[competitor_number_key]["competitor"] = competitor
+				competitors.append(competitor)
+				image_data = self.get_image_stats(competitor)
+				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
+				data[competitor_number_key]["images"] = image_data["images"]
+				data[competitor_number_key]["initial_index"] = 0
+				data[competitor_number_key]["forloop_index"] = 1
+		data = dict(sorted(data.items()))
+		return data
+	
+	def get_saved_matchup(self, request):
+		if request.user.is_authenticated:
+			try:
+				saved_matchup = request.user.saved_matchup
+				return saved_matchup
+			except:
+				competitor_1 = self.competitor_service.get_random_competitor()
+				while True:
+					competitor_2 = self.competitor_service.get_random_competitor()
+					if competitor_2 != competitor_1:
+						saved_matchup = self.matchup_service.create_saved_matchup(
+							request.user, competitor_1, competitor_2)
+						break
+				
+		else:
+			return False
+
+	def update_saved_matchup(self, profile_id, winner_id, winner_position,
+		winner_image_index, enemy_id):
+		winner_id = self.competitor_service.get_competitor(winner_id)
+		enemy_id = self.competitor_service.get_competitor(enemy_id)
+		if winner_position == '1':
+			updated_matchup = self.matchup_service.update_saved_matchup(
+				profile_id=profile_id, 
+				competitor_1=winner_id,
+				competitor_2=enemy_id,
+				competitor_1_ii=winner_image_index,
+				competitor_2_ii=0
+			)
+		else:
+			updated_matchup = self.matchup_service.update_saved_matchup(
+				profile_id=profile_id, 
+				competitor_1=enemy_id,
+				competitor_2=winner_id,
+				competitor_1_ii=0,
+				competitor_2_ii=winner_image_index
+			)
+		return updated_matchup
+	
+	def get_two_competitors(self):
+		competitor_1 = self.competitor_service.get_random_competitor()
+		while True:
+			competitor_2 = self.competitor_service.get_random_competitor()
+			if competitor_2 != competitor_1:
+				break
+		return (competitor_1, competitor_2)

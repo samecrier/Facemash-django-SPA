@@ -17,5 +17,6 @@ class LocalProfileService(ProfileService):
 	def get_guest_profile(self):
 		return User.objects.get(username='guest')
 
+
 class APIProfileService(ProfileService):
 	pass
