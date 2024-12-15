@@ -117,6 +117,7 @@ class GetData():
 		data["age"] = competitor_obj.age
 		data["city"] = competitor_obj.city.city_eng
 		image_data = self.get_image_stats(competitor_obj)
+		data["rating"] = self.rating_service.get_rating(competitor_obj)
 		data["images"] = image_data["images"]
 		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
 		if not data["bio"]:

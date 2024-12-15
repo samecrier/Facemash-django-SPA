@@ -37,7 +37,24 @@ export const initializeSlider = (slider, index) => {
         input.addEventListener("change", () => {
             currentIndex = parseInt(input.value, 10);
             hiddenInput.value = currentIndex;
-            currentImageElement.src = images[currentIndex];
+
+            // Отображаем индикатор загрузки
+            currentImageElement.style.opacity = "0"; // Исчезает текущее изображение
+
+            // Предварительная загрузка нового изображения
+            const newImage = new Image();
+            newImage.src = images[currentIndex];
+
+            newImage.onload = () => {
+                // После загрузки заменяем изображение
+                currentImageElement.src = newImage.src;
+                currentImageElement.style.opacity = "1"; // Появляется новое изображение
+            };
+
+            newImage.onerror = () => {
+                console.error("Ошибка загрузки изображения:", newImage.src);
+                currentImageElement.style.opacity = "1"; // Возвращаем видимость, даже если произошла ошибка
+            };
         });
     });
 };

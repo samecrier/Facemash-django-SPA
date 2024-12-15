@@ -1,14 +1,15 @@
 div.wrapper {
 	display: flex;
-	margin-top: 100px;
+	margin-top: 50px;
 }
 
-.slider-images {
+div.slider {
 	margin-left: 100px;
 }
 
-.slider-images img {
+.slider-images {
 	height: 600px;
+	width: 475px;
 }
 
 .profile-info {
