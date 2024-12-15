@@ -60,6 +60,7 @@ class LocalMatchupService(MatchupService):
 	def update_saved_matchup(profile_id, competitor_1, competitor_2,
 							competitor_1_ii, competitor_2_ii):
 		updated_matchup, updated = SavedMatchup.objects.update_or_create(
+		profile_id=profile_id,
 		defaults={
 			'competitor_1': competitor_1,
 			'competitor_2': competitor_2,
