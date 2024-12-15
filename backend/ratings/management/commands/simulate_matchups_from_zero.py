@@ -28,12 +28,12 @@ class Command(BaseCommand):
 			)
 		
 		
-			winner_rp.rating += matchup.delta_winner
+			winner_rp.rating += matchup.delta_winner_profile
 			winner_rp.wins += 1
 			winner_rp.matchups += 1
 			winner_rp.save()
 	
-			loser_rp.rating += matchup.delta_loser
+			loser_rp.rating += matchup.delta_loser_profile
 			loser_rp.losses += 1
 			loser_rp.matchups += 1
 			loser_rp.save()

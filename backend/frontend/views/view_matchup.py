@@ -11,17 +11,34 @@ class HomeView(View):
 	home_helper = GetData()
 
 	def get(self, request):
+
+		mode = request.GET.get('mode')
+		if request.user.is_authenticated and mode == 'refresh':
+			request.session['winner_id'] = None
+			request.session['winner_position'] = None
+			request.session['winner_image_index'] = None
+			request.session['enemy_id'] = None
+			request.session['enemy_1'] = None
+			request.session['enemy_2'] = None
+			return redirect('home')
+
 		winner_id = request.session.get("winner_id")
 		winner_position = request.session.get("winner_position")
 		winner_image_index = request.session.get("winner_image_index")
 		enemy_id = request.session.get("enemy_id")
-		
-		if enemy_id:
+		enemy_1 = request.session.get("enemy_1")
+		enemy_2 = request.session.get("enemy_2")
+
+		if enemy_1 and enemy_2:
+			data = self.home_helper.get_specific_matchup(enemy_1, 1, 0, enemy_2)
+		elif enemy_id:
 			data = self.home_helper.get_specific_matchup(winner_id, winner_position, winner_image_index, enemy_id)
 		elif winner_id:
 			data = self.home_helper.get_enemy(winner_id, winner_position, winner_image_index)
 		else:
 			data = self.home_helper.get_data_competitors(2)
+			for i, competitor in enumerate(data):
+				request.session[f'enemy_{i+1}'] = data[competitor]['competitor'].id
 		
 		if not enemy_id:
 			for competitor in data:
@@ -66,6 +83,8 @@ class HomeView(View):
 			request.session['winner_id'] = winner_id
 			request.session['winner_position'] = winner_position
 			request.session['winner_image_index'] = winner_image_index
+			request.session['enemy_1'] = None
+			request.session['enemy_2'] = None
 			return JsonResponse({
 				"status": "success",
 				"loser_data": new_enemy,

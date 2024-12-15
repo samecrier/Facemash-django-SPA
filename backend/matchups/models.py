@@ -20,6 +20,8 @@ class Matchup(models.Model):
 	rating_system = models.CharField(max_length=255)
 	delta_winner = models.IntegerField()
 	delta_loser = models.IntegerField()
+	delta_winner_profile = models.IntegerField(null=True)
+	delta_loser_profile = models.IntegerField(null=True)
 	profile_id = models.ForeignKey(
 		'profiles.User',
 		on_delete=models.SET_NULL,

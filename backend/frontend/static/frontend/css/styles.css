@@ -54,10 +54,29 @@ div.competitors-block{
 }
 
 div.competitor {
-	margin: 40px 10px 0px 50px;
+	margin: 40px 0px 0px 0px;
 	font-size: 25pt;
 	box-sizing: border-box;
 } 
+
+div.competitor-1 {
+	margin: 40px 0px 0px 50px;
+	font-size: 25pt;
+	box-sizing: border-box;
+} 
+
+div.refresh-block {
+	width: 40px;
+	margin-top: 45px;
+	text-align: center;
+	align-items: center;
+	font-weight: bold;
+	color: #000cff;
+}
+
+div.separate-block {
+	width: 40px;
+}
 
 .slider-images {
 	display: flex;
@@ -116,7 +135,7 @@ div.competitor {
 
 .button {
 	margin-top: 10px;
-	margin-bottom: 100px;
+	margin-bottom: 10px;
 }
 
 .button button {

@@ -11,7 +11,7 @@
 		<div class="wrapper">
 			<div class="competitors-block">
 			{% for competitor_key, competitor_data in data.items %}
-				<div class="competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
+				<div class="{% if forloop.first %}competitor-1{% else %}competitor{% endif %}" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
 					<div class="slider">
 						<div class="slider-controls">
 						</div>
@@ -44,6 +44,18 @@
 						</form>
 					</div>
 				</div>
+			{% if not forloop.last %}
+				{% if user.is_authenticated %}
+				
+				<div class="refresh-block">
+					<div>
+						<a href='/?mode=refresh'><img src="{% static 'frontend/img/refresh.png' %}" width="15px" alt="Image"></a>
+					</div>
+				</div>
+				{% else%}
+				<div class="separate-block"></div>
+				{% endif %}
+			{% endif %}
 			{% endfor %}
 			</div>
 
