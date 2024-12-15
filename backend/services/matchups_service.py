@@ -18,7 +18,8 @@ class LocalMatchupService(MatchupService):
 	def create_matchup(
 			self, winner_id, loser_id,
 			rating_system,
-			delta_winner, delta_loser
+			delta_winner, delta_loser,
+			profile_id
 			
 	) -> None:
 		'''Просто создаю Matchup'''
@@ -29,6 +30,7 @@ class LocalMatchupService(MatchupService):
 			rating_system=rating_system,
 			delta_winner=delta_winner,
 			delta_loser=delta_loser,
+			profile_id=profile_id
 		)
 		matchup.save()
 	def get_matchups(self, competitor_id) -> QuerySet[Matchup]:
@@ -36,6 +38,10 @@ class LocalMatchupService(MatchupService):
 		competitor_matchups = Matchup.objects.filter(
 			Q(winner_id=competitor_id) | Q(loser_id=competitor_id))
 		return competitor_matchups
+
+	@staticmethod
+	def update_profile_with_guest(profile_obj, guest_profile):
+		Matchup.objects.filter(profile_id=profile_obj).update(profile_id=guest_profile)
 
 
 class APIMatchupService(MatchupService):

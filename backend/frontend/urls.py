@@ -3,7 +3,7 @@ from .views import view_competitor, view_matchup, view_profile, view_rating
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-	path('', view_matchup.HomeViewJS.as_view(), name='home'),  # Пример маршрута
+	path('', view_matchup.HomeView.as_view(), name='home'),  # Пример маршрута
 	path('competitor/<int:competitor_id>', view_competitor.CompetitorView.as_view(), name='competitor'),
 	path('rating/', view_rating.RatingView.as_view(), name='rating'),
 	path('profile/', view_profile.ProfileView.as_view(), name='profile'),

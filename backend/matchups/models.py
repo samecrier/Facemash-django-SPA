@@ -20,6 +20,13 @@ class Matchup(models.Model):
 	rating_system = models.CharField(max_length=255)
 	delta_winner = models.IntegerField()
 	delta_loser = models.IntegerField()
+	profile_id = models.ForeignKey(
+		'profiles.User',
+		on_delete=models.SET_NULL,
+		null=True,
+		related_name='matchups',
+		db_column='profile_id'
+	)
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	competitor_service = None
@@ -35,3 +42,6 @@ class Matchup(models.Model):
 	
 	def get_loser(self):
 		return(self.competitor_service.get_competitor(self.loser))
+	
+	def __str__(self):
+		return f"{self.winner_id} vs {self.loser_id}"

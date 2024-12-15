@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ratings.models import Rating
+from ratings.models import Rating, RatingProfile
 from services.ratings_system import EloRatingSystem
 from services.competitors_service import LocalCompetitorService
 from typing import List
@@ -49,6 +49,21 @@ class LocalRatingService(RatingService):
 		sorted_competitors = sorted(competitors, key=lambda x: (-x[1], x[0].name))
 		return sorted_competitors
 	
+	@staticmethod
+	def update_matchup_ratingprofile(profile_id, competitor_id, delta, result):
+		
+		ratingprofile, created = RatingProfile.objects.get_or_create(
+			profile_id=profile_id,
+			competitor_id=competitor_id
+		)
+
+		ratingprofile.rating += delta
+		if result == 1:
+			ratingprofile.wins += 1
+		if result == 0:
+			ratingprofile.losses += 1
+		ratingprofile.matchups += 1
+		ratingprofile.save()
 
 
 class APIRatingService(RatingService):

@@ -28,8 +28,8 @@
 			<!-- Пагинация -->
 		<div class="pagination">
 		{% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}"><</a>
-        {% endif %}
+			<a href="?page={{ page_obj.previous_page_number }}"><</a>
+		{% endif %}
 			{% if page_obj.number > 3 %}
 				<a href="?page=1">1</a>
 				<span>...</span>
@@ -58,8 +58,8 @@
 			{% endif %}
 
 		{% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">></a>
-        {% endif %}
+			<a href="?page={{ page_obj.next_page_number }}">></a>
+		{% endif %}
 		</div>
 
 	</div>

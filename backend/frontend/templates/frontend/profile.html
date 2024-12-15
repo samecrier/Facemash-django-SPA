@@ -10,6 +10,9 @@
 	<div class="bio-section">
 		<div class="profile-info">
 			<p>Привет, {{user}}!</p>
+			{% for group in user.groups.all %}
+				<p>Твой статус: {{ group.name }}</p>
+			{% endfor %}
 		</div>
 		<div class="logout">
 			<form method="post" action="{% url 'logout' %}">
