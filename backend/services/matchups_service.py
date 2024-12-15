@@ -49,7 +49,7 @@ class LocalMatchupService(MatchupService):
 
 	@staticmethod
 	def create_saved_matchup(profile_id, competitor_1, competitor_2):
-		saved_matchup = SavedMatchup.objects.get_or_create(
+		saved_matchup, created = SavedMatchup.objects.get_or_create(
 			profile_id=profile_id,
 			competitor_1=competitor_1,
 			competitor_2=competitor_2

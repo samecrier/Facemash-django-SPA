@@ -209,7 +209,7 @@ class GetData():
 					if competitor_2 != competitor_1:
 						saved_matchup = self.matchup_service.create_saved_matchup(
 							request.user, competitor_1, competitor_2)
-						break
+						return saved_matchup
 				
 		else:
 			return False
