@@ -87,6 +87,8 @@ class APICompetitorService(CompetitorService):
 		data["age"] = competitor.age
 		data["city"] = competitor.city.city_eng
 		data["bio"] = competitor.details.bio
+		if not data["bio"]:
+			data["bio"] = '-'
 		data["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
 		return data
 

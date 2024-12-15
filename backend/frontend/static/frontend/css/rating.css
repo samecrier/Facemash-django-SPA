@@ -43,6 +43,10 @@
 	max-width: 500px; /* Ограничение ширины ячейки */
 }
 
+td.competitor-name {
+	text-decoration: underline;
+}
+
 div.pagination {
 	margin-top: 20px;
 	text-align: center;
