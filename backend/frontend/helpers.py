@@ -41,7 +41,6 @@ class GetData():
 			data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
 			image_data = self.get_image_stats(competitor)
 			data[competitor_number_key]["images"] = image_data["images"]
-			print(type(data[competitor_number_key]["images"]), data[competitor_number_key]["images"])
 			data[competitor_number_key]["initial_index"] = 0
 			data[competitor_number_key]["forloop_index"] = 1
 		data = dict(data)
@@ -64,7 +63,6 @@ class GetData():
 			if i != int(winner_position):
 				competitor_number = i
 				competitor_number_key = f"competitor-{competitor_number}"
-				competitor = self.competitor_service.get_random_competitor()
 				while True:
 					competitor = self.competitor_service.get_random_competitor()
 					if competitor not in competitors:
@@ -117,4 +115,33 @@ class GetData():
 		image_data = self.get_image_stats(competitor_obj)
 		data["images"] = image_data["images"]
 		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
+		return data
+
+	def get_specific_matchup(self, winner_id, winner_position, winner_image_index, 
+						enemy_id, competitors_number=2):
+		data = defaultdict(dict)
+		winner_image_index = int(winner_image_index)
+		competitors = []
+		winner_competitor = self.competitor_service.get_competitor(winner_id)
+		competitors.append(winner_competitor)
+		image_data = self.get_image_stats(winner_competitor, initial_index=winner_image_index)
+		data[f"competitor-{winner_position}"]["competitor"] = winner_competitor
+		data[f"competitor-{winner_position}"]["rating"] = self.get_rating_stat(winner_competitor)
+		data[f"competitor-{winner_position}"]["images"] = image_data["images"]
+		data[f"competitor-{winner_position}"]["initial_index"] = winner_image_index
+		data[f"competitor-{winner_position}"]["forloop_index"] = winner_image_index+1
+		
+		for i in range(1, competitors_number+1):
+			if i != int(winner_position):
+				competitor_number = i
+				competitor_number_key = f"competitor-{competitor_number}"
+				competitor = self.competitor_service.get_competitor(enemy_id)
+				data[competitor_number_key]["competitor"] = competitor
+				competitors.append(competitor)
+				image_data = self.get_image_stats(competitor)
+				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
+				data[competitor_number_key]["images"] = image_data["images"]
+				data[competitor_number_key]["initial_index"] = 0
+				data[competitor_number_key]["forloop_index"] = 1
+		data = dict(sorted(data.items()))
 		return data
