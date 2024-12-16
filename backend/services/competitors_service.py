@@ -4,6 +4,7 @@ from django.db.models import Min, Max
 import random
 from django.db.models import QuerySet
 from typing import List
+from django.db.models import Q
 
 class CompetitorService(ABC):
 	
@@ -66,6 +67,13 @@ class LocalCompetitorService(CompetitorService):
 	
 	def get_competitor_bio(self, competitor_obj):
 		return competitor_obj.details.bio
+	
+	def get_competitors_from_matchups(self, matchups):
+		competitors = Competitor.objects.filter(
+			Q(id__in=matchups.values_list('winner_id', flat=True)) |
+			Q(id__in=matchups.values_list('loser_id', flat=True))
+			).distinct()  # distinct удаляет дубликаты
+		return competitors
 
 	
 class APICompetitorService(CompetitorService):

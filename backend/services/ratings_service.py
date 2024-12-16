@@ -28,6 +28,18 @@ class LocalRatingService(RatingService):
 		return competitor_rating_profile.rating
 	
 	@staticmethod
+	def get_rating_profiles(profile_id, competitor_ids) -> int:
+		'''По id Competitor возвращаю его рейтинг'''
+		ratings = {}
+		for competitor_id in competitor_ids:
+			competitor_rating_profile, created = RatingProfile.objects.get_or_create(
+				profile_id=profile_id,
+				competitor_id=competitor_id
+			)
+			ratings[competitor_id] = competitor_rating_profile.rating
+		return ratings
+	
+	@staticmethod
 	def update_matchup_rating(competitor_id, delta, result) -> None:
 		'''
 		Функции принимает id Competitor, текущий рейтинг

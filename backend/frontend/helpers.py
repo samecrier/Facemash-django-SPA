@@ -94,7 +94,7 @@ class GetData():
 					competitor = self.competitor_service.get_random_competitor()
 					if competitor != winner_obj and competitor != loser_obj:
 						data[competitor_number_key]["competitor"]["id"] = competitor.id
-						data[competitor_number_key]["competitor"]["name"] = competitor.name_id
+						data[competitor_number_key]["competitor"]["name"] = competitor.name
 						data[competitor_number_key]["competitor"]["age"] = competitor.age
 						data[competitor_number_key]["competitor"]["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
 						break
@@ -114,6 +114,7 @@ class GetData():
 		competitor_obj = self.competitor_service.get_competitor(competitor_id)
 		data = {}
 		data["name"] = competitor_obj.name
+		data["id"] = competitor_obj.id
 		data["age"] = competitor_obj.age
 		data["city"] = competitor_obj.city.city_eng
 		image_data = self.get_image_stats(competitor_obj)
@@ -246,3 +247,51 @@ class GetData():
 			if competitor_2 != competitor_1:
 				break
 		return (competitor_1, competitor_2)
+	
+
+	def get_profile_matchups(self, profile_id, number=None):
+		matchups = self.matchup_service.get_profile_matchups(profile_id).order_by('-created_at')
+		if number:
+			matchups = matchups[:number]
+	
+		competitor_ids = self.competitor_service.get_competitors_from_matchups(matchups)
+		ratings = self.rating_service.get_rating_profiles(profile_id, competitor_ids)
+		
+		data = defaultdict(dict)
+		for i, matchup in enumerate(matchups):
+			i = i+1
+			data[i]["winner"] = matchup.winner_id
+			data[i]["loser"] = matchup.loser_id
+			data[i]["winner_rating"] = ratings[matchup.winner_id]
+			data[i]["loser_rating"] = ratings[matchup.loser_id]
+			data[i]["delta_winner"] = matchup.delta_winner_profile
+			data[i]["delta_loser"] = matchup.delta_loser_profile
+			ratings[matchup.winner_id] -= matchup.delta_winner_profile
+			ratings[matchup.loser_id] += matchup.delta_loser_profile
+		data = dict(data)
+		return data
+	
+	def paginate_dict(data, page=1, per_page=10):
+		"""
+		Пагинация словаря с числовыми ключами.
+		
+		:param data: dict - исходный словарь
+		:param page: int - текущая страница (по умолчанию 1)
+		:param per_page: int - количество элементов на странице (по умолчанию 10)
+		:return: dict - часть словаря, соответствующая странице
+		"""
+		if not isinstance(data, dict):
+			raise ValueError("Data must be a dictionary")
+
+		# Сортируем словарь по ключам
+		sorted_keys = sorted(data.keys())
+		
+		# Определяем границы текущей страницы
+		start = (page - 1) * per_page
+		end = start + per_page
+
+		# Извлекаем нужные элементы
+		paginated_keys = sorted_keys[start:end]
+		paginated_dict = {key: data[key] for key in paginated_keys}
+
+		return paginated_dict

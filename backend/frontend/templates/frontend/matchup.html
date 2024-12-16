@@ -30,7 +30,7 @@
 						</script>
 					</div>
 					<div class="bio">
-						<p>{{ competitor_data.competitor.name_id}}, {{ competitor_data.competitor.age }}</p>
+						<p>{{ competitor_data.competitor.name}}, {{ competitor_data.competitor.age }}</p>
 						<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
 					</div>
 					<div class="button">
@@ -66,7 +66,7 @@
 					{% for top_competitor, rating in ratings %}
 					<tr>
 						<td>{{ forloop.counter }}</td>
-						<td><a class="profile-ref" href="{% url 'competitor' top_competitor.id %}">{{ top_competitor.name_id }}</a></td>
+						<td><a class="profile-ref" href="{% url 'competitor' top_competitor.id %}">{{ top_competitor.name }}</a></td>
 						<td>{{ top_competitor.city.city_eng }}</td>
 						<td>{{ rating }}</td>
 					</tr>

@@ -37,11 +37,18 @@ class LocalMatchupService(MatchupService):
 			profile_id=profile_id
 		)
 		matchup.save()
-	def get_matchups(self, competitor_id) -> QuerySet[Matchup]:
+	
+	@staticmethod
+	def get_competitor_matchups(competitor_id) -> QuerySet[Matchup]:
 		'''Возвращает все матчапы по competitor_id'''
 		competitor_matchups = Matchup.objects.filter(
 			Q(winner_id=competitor_id) | Q(loser_id=competitor_id))
 		return competitor_matchups
+
+	@staticmethod
+	def get_profile_matchups(profile_id):
+		profile_matchups = Matchup.objects.filter(profile_id=profile_id)
+		return profile_matchups
 
 	@staticmethod
 	def update_profile_with_guest(profile_obj, guest_profile):

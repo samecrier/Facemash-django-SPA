@@ -13,6 +13,10 @@ div.wrapper {
 	width: 60%;
 }
 
+.history-block {
+	margin-top: 25px;
+}
+
 .profile-info {
 	text-align: center;
 	font-size: 25pt;
@@ -115,4 +119,20 @@ a {
 .errorlist {
 	color: red;
 	list-style-type: none;
+}
+
+span.winner a, span.winner {
+	color: green;
+}
+
+span.loser a, span.loser {
+	color: red;
+}
+
+span.bold {
+	font-weight: bold;
+}
+
+.paginator {
+	margin-top: 10px
 }

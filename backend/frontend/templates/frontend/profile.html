@@ -23,7 +23,38 @@
 		</div>
 	</div>
 	<div class="history-section">
-	<h1>Здесь будет история твоих матчапов!</h1>
+	<h1>История матчапов</h1>
+		<div class='history-block'>
+			<ul>
+			{% for key, value in page_obj.object_list %}
+			<div>
+				<span>победитель</span>
+				<span class="winner">
+					<a href={% url 'competitor' value.winner.id %}>{{value.winner.name}}</a>
+				</span>
+				<span class="bold">{{value.winner_rating}}</span>
+				<span class="bold winner">+{{value.delta_winner}}</span>
+				<span>проигравший</span>
+				<span class="loser">
+					<a href={% url 'competitor' value.loser.id %}>{{ value.loser.name }}</a>
+				</span>
+				<span class="bold">{{value.loser_rating}}</span>
+				<span class="bold loser">{{value.delta_loser}}</span>
+			</div> 
+			{% endfor %}
+			<div class="paginator">
+				{% if page_obj.has_previous %}
+					<a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+				{% endif %}
+				<span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+				{% if page_obj.has_next %}
+					<a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+				{% endif %}
+			</div>
+
+		</div>
+		
 	</div>
+	
 </div>
 {% endblock %}

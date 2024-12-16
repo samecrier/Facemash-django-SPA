@@ -7,12 +7,22 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from profiles.forms import RegistrationForm
+from frontend.helpers import GetData
+from django.core.paginator import Paginator
 
 
 class ProfileView(View):
 
+	home_service = GetData()
+
 	def get(self, request):
-		return render(request, 'frontend/profile.html')
+		data = self.home_service.get_profile_matchups(request.user, 100)
+		data = sorted(data.items())
+		paginator = Paginator(data, 20)
+		page_number = request.GET.get('page', 1)
+		page_obj = paginator.get_page(page_number)
+		start_position = (page_obj.number - 1) * paginator.per_page
+		return render(request, 'frontend/profile.html', {'page_obj': page_obj})
 
 class RegisterView(FormView):
 	template_name = 'frontend/register.html'
