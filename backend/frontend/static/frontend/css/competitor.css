@@ -36,3 +36,32 @@ div.slider {
 	word-break: break-word;
 	white-space: normal;
 }
+.profile-info td.bio {
+	font-size: 15pt;
+	font-weight: normal;
+}
+
+.history-section {
+	font-size: 15pt;
+	font-weight: normal;
+	margin-top: 5px;
+}
+
+span.winner a, span.winner {
+	color: green;
+}
+
+span.loser a, span.loser {
+	color: red;
+}
+
+span.bold a {
+	color: black;
+}
+.paginator {
+	margin-top: 15px;
+}
+
+.paginator a {
+	color: black;
+}

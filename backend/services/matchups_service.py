@@ -42,7 +42,7 @@ class LocalMatchupService(MatchupService):
 	def get_competitor_matchups(competitor_id) -> QuerySet[Matchup]:
 		'''Возвращает все матчапы по competitor_id'''
 		competitor_matchups = Matchup.objects.filter(
-			Q(winner_id=competitor_id) | Q(loser_id=competitor_id))
+			Q(winner_id=competitor_id) | Q(loser_id=competitor_id)).order_by('-created_at')
 		return competitor_matchups
 
 	@staticmethod
@@ -76,7 +76,7 @@ class LocalMatchupService(MatchupService):
 		}
 		)
 		return updated_matchup
-
+	
 
 class APIMatchupService(MatchupService):
 	pass

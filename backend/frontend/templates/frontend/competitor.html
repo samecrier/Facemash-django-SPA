@@ -43,8 +43,49 @@
 					</tr>
 					<tr>
 						<td class="key">Bio</td>
-						<td class="value">{{ data.bio }}</td>
+						<td class="value bio">{{ data.bio }}</td>
 					</tr>
+					{% if page_obj.object_list %}
+					<tr>
+						<td class="key">History</td>
+						<td class="value">
+						<div class="history-section">
+						{% for value in page_obj.object_list %}
+							<div class="history-block">
+							{% if value.winner_id.id == data.id %}
+								<span class="bold">победила</span>
+								<span class="bold winner">+{{value.delta_winner}}</span>
+								<span class="bold">
+									<a href={% url 'competitor' value.loser_id.id %}>{{ value.loser_id.name }}</a>
+									{{ value.winner_id.rating.rating}}
+								</span>
+							</div> 
+							{% else %}
+								<span class="bold">проиграла</span>
+								<span class="bold loser">{{value.delta_loser}}</span>
+								<span class="bold">
+									<a href={% url 'competitor' value.winner_id.id %}>{{value.winner_id.name}}</a>
+									{{ value.winner_id.rating.rating}}
+								</span>
+								
+							</div> 
+							{% endif %}
+							{% endfor %}
+							<div class="paginator">
+								{% if page_obj.has_previous %}
+									<a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+								{% endif %}
+								<span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+								{% if page_obj.has_next %}
+									<a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+								{% endif %}
+							</div>
+						</div>
+						
+						</td>
+					</tr>
+					{% endif %}
+	
 				</tbody>
 				</table>
 

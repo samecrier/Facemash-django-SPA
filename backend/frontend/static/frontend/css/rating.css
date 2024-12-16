@@ -137,3 +137,11 @@ span.current {
 	word-break: break-word;
 	white-space: normal;
 }
+
+.link-to-competitor {
+	margin-top: 10px;
+}
+
+.link-to-competitor a {
+	color: black;
+}

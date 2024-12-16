@@ -92,6 +92,7 @@ class APICompetitorService(CompetitorService):
 		data = {}
 
 		data["name"] = competitor.name
+		data["id"] = competitor.id
 		data["age"] = competitor.age
 		data["city"] = competitor.city.city_eng
 		data["bio"] = competitor.details.bio

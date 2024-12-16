@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
 class Rating(models.Model):
-	competitor_id = models.ForeignKey(
+	competitor_id = models.OneToOneField(
 		'competitors.Competitor',
 		on_delete=models.CASCADE,
 		related_name='rating',

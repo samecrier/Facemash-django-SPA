@@ -32,5 +32,6 @@ class RatingView(View):
 				'page_obj': page_obj,
 				'paginator': paginator,
 				'start_position': start_position,
+				'is_auth': request.user.is_authenticated,
 			}
 		)

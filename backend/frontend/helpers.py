@@ -123,6 +123,7 @@ class GetData():
 		data["bio"] = self.competitor_service.get_competitor_bio(competitor_obj)
 		if not data["bio"]:
 			data["bio"] = '-'
+		data["matchups"] = self.matchup_service.get_competitor_matchups(competitor_id)
 		return data
 
 	def get_specific_matchup_guest(self, winner_id, winner_position, winner_image_index, 

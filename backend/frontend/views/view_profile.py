@@ -21,7 +21,6 @@ class ProfileView(View):
 		paginator = Paginator(data, 20)
 		page_number = request.GET.get('page', 1)
 		page_obj = paginator.get_page(page_number)
-		start_position = (page_obj.number - 1) * paginator.per_page
 		return render(request, 'frontend/profile.html', {'page_obj': page_obj})
 
 class RegisterView(FormView):
