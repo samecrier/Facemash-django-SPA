@@ -7,16 +7,16 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from profiles.forms import RegistrationForm
-from frontend.helpers import GetData
+from frontend.helpers import Helper
 from django.core.paginator import Paginator
 
 
 class ProfileView(View):
 
-	home_service = GetData()
+	helper_service = Helper()
 
 	def get(self, request):
-		data = self.home_service.get_profile_matchups(request.user, 100)
+		data = self.helper_service.get_profile_matchups(request.user, 100)
 		data = sorted(data.items())
 		paginator = Paginator(data, 20)
 		page_number = request.GET.get('page', 1)

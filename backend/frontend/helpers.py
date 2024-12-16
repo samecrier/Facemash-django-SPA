@@ -1,3 +1,4 @@
+from __future__ import annotations
 from services.competitors_service import LocalCompetitorService
 from services.ratings_service import LocalRatingService
 from services.profiles_service import LocalProfileService
@@ -5,18 +6,43 @@ from services.matchups_service import LocalMatchupService
 from django.utils.safestring import mark_safe
 import json
 from collections import defaultdict
+from typing import TYPE_CHECKING, Tuple
+if TYPE_CHECKING:
+	from matchups.models import Matchup, SavedMatchup
+	from competitors.models import Competitor
+	from ratings.models import Rating
 
-class GetData():
-	competitor_service = LocalCompetitorService()
-	rating_service = LocalRatingService()
-	profile_service = LocalProfileService()
-	matchup_service = LocalMatchupService()
+class Helper():
+	
+	def __init__(self,
+		competitor_service=LocalCompetitorService(),
+		rating_service = LocalRatingService(),
+		profile_service = LocalProfileService(),
+		matchup_service = LocalMatchupService(),
+	):
+		self.competitor_service = competitor_service
+		self.rating_service = rating_service
+		self.profile_service = profile_service
+		self.matchup_service = matchup_service
 
-	def get_rating_stat(self, competitor):
+	def get_rating_stat(self, competitor) -> int :
+		"""
+		Возвращает рейтинг объекта Competitor
+
+		:param competitor: Competitor 
+		return Rating.rating
+		"""
+
 		return self.rating_service.get_rating(competitor)
 		
+	def get_image_stats(self, competitor, initial_index=0) -> dict:
+		"""
+		Возвращает dict с различными image ключами
 
-	def get_image_stats(self, competitor, initial_index=0) -> list:
+		:param competitor: Competitor, 
+		:param initial_index: int - первое изображение
+		return dict
+		"""
 		images = [image.get_path() for image in competitor.images.all()]
 		initial_index = int(initial_index)
 		initial_image = images[initial_index]
@@ -29,88 +55,22 @@ class GetData():
 			"other_images":other_images, "image_count":image_count
 		}
 	
-	def get_data_competitors(self, competitors_number) -> dict:
-		data = defaultdict(dict)
-		competitors = []
-		for i in range(competitors_number):
-			competitor_number = i+1
-			competitor_number_key = f"competitor-{competitor_number}"
-			competitor = self.competitor_service.get_random_competitor()
-			while True:
-				competitor = self.competitor_service.get_random_competitor()
-				if competitor not in competitors:
-					data[competitor_number_key]["competitor"] = competitor
-					competitors.append(competitor)
-					break
-			data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
-			image_data = self.get_image_stats(competitor)
-			data[competitor_number_key]["images"] = image_data["images"]
-			data[competitor_number_key]["initial_index"] = 0
-			data[competitor_number_key]["forloop_index"] = 1
-		data = dict(data)
-		return data
-	
-	def get_enemy(self, winner_id, winner_position, winner_image_index, competitors_number=2) -> dict:
-		data = defaultdict(dict)
-		winner_image_index = int(winner_image_index)
-		competitors = []
-		winner_competitor = self.competitor_service.get_competitor(winner_id)
-		competitors.append(winner_competitor)
-		image_data = self.get_image_stats(winner_competitor, initial_index=winner_image_index)
-		data[f"competitor-{winner_position}"]["competitor"] = winner_competitor
-		data[f"competitor-{winner_position}"]["rating"] = self.get_rating_stat(winner_competitor)
-		data[f"competitor-{winner_position}"]["images"] = image_data["images"]
-		data[f"competitor-{winner_position}"]["initial_index"] = winner_image_index
-		data[f"competitor-{winner_position}"]["forloop_index"] = winner_image_index+1
-		
-		for i in range(1, competitors_number+1):
-			if i != int(winner_position):
-				competitor_number = i
-				competitor_number_key = f"competitor-{competitor_number}"
-				while True:
-					competitor = self.competitor_service.get_random_competitor()
-					if competitor not in competitors:
-						data[competitor_number_key]["competitor"] = competitor
-						competitors.append(competitor)
-						break
-				image_data = self.get_image_stats(competitor)
-				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
-				data[competitor_number_key]["images"] = image_data["images"]
-				data[competitor_number_key]["initial_index"] = 0
-				data[competitor_number_key]["forloop_index"] = 1
-		data = dict(sorted(data.items()))
-		return data
-	
-	def get_competitor_js(self, winner_id, loser_id, winner_position):
-		data = defaultdict(lambda: defaultdict(dict))
-		winner_obj = self.competitor_service.get_competitor(winner_id)
-		loser_obj = self.competitor_service.get_competitor(loser_id)
-		for i in range(1, 3):
-			if i != int(winner_position):
-				competitor_number = i
-				competitor_number_key = f"competitor-{competitor_number}"
-				competitor = self.competitor_service.get_random_competitor()
-				while True:
-					competitor = self.competitor_service.get_random_competitor()
-					if competitor != winner_obj and competitor != loser_obj:
-						data[competitor_number_key]["competitor"]["id"] = competitor.id
-						data[competitor_number_key]["competitor"]["name"] = competitor.name
-						data[competitor_number_key]["competitor"]["age"] = competitor.age
-						data[competitor_number_key]["competitor"]["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
-						break
-				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
-				data[competitor_number_key]["winner_id"] = competitor.id
-				data[competitor_number_key]["winner_position"] = i
-				data[competitor_number_key]["loser_id"] = winner_id
-				data[competitor_number_key]["initial_index"] = 0
-				data[competitor_number_key]["forloop_index"] = 1
-		data = dict(data)
-		return data
-	
-	def get_winner_rating(self, winner_id):
+	def get_winner_rating(self, winner_id) -> int:
+		"""
+		По строке с айди возвращает рейтинг компетитора
+
+		:param winner_id:Competitor|str(competitor.id)
+		return Rating.rating
+		"""
 		return self.rating_service.get_rating(winner_id)
 	
-	def get_competitor_profile(self, competitor_id):
+	def get_competitor_profile(self, competitor_id) -> dict:
+		"""
+		По строке с айди возвращает данные для компетитор профайла
+
+		:param competitor_id: str(competitor.id)
+		return dict
+		"""
 		competitor_obj = self.competitor_service.get_competitor(competitor_id)
 		data = {}
 		data["name"] = competitor_obj.name
@@ -125,84 +85,14 @@ class GetData():
 			data["bio"] = '-'
 		data["matchups"] = self.matchup_service.get_competitor_matchups(competitor_id)
 		return data
+	
+	def get_saved_matchup(self, request) -> SavedMatchup:
+		"""
+		Получает или создает сохраненный матчап
 
-	def get_specific_matchup_guest(self, winner_id, winner_position, winner_image_index, 
-						enemy_id, competitors_number=2):
-		data = defaultdict(dict)
-		winner_image_index = int(winner_image_index)
-		competitors = []
-		winner_competitor = self.competitor_service.get_competitor(winner_id)
-		competitors.append(winner_competitor)
-		image_data = self.get_image_stats(winner_competitor, initial_index=winner_image_index)
-		data[f"competitor-{winner_position}"]["competitor"] = winner_competitor
-		data[f"competitor-{winner_position}"]["rating"] = self.get_rating_stat(winner_competitor)
-		data[f"competitor-{winner_position}"]["images"] = image_data["images"]
-		data[f"competitor-{winner_position}"]["initial_index"] = winner_image_index
-		data[f"competitor-{winner_position}"]["forloop_index"] = winner_image_index+1
-		
-		for i in range(1, competitors_number+1):
-			if i != int(winner_position):
-				competitor_number = i
-				competitor_number_key = f"competitor-{competitor_number}"
-				competitor = self.competitor_service.get_competitor(enemy_id)
-				data[competitor_number_key]["competitor"] = competitor
-				competitors.append(competitor)
-				image_data = self.get_image_stats(competitor)
-				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
-				data[competitor_number_key]["images"] = image_data["images"]
-				data[competitor_number_key]["initial_index"] = 0
-				data[competitor_number_key]["forloop_index"] = 1
-		data = dict(sorted(data.items()))
-		return data
-	
-	def get_saved_data(self, competitor_1, competitor_2, competitor_1_index=0, competitor_2_index=0):
-		data = defaultdict(dict)
-		competitor_1_index = int(competitor_1_index)
-		image_data = self.get_image_stats(competitor_1, initial_index=competitor_1_index)
-		data["competitor-1"]["competitor"] = competitor_1
-		data["competitor-1"]["rating"] = self.get_rating_stat(competitor_1)
-		data["competitor-1"]["images"] = image_data["images"]
-		data["competitor-1"]["initial_index"] = competitor_1_index
-		data["competitor-1"]["forloop_index"] = competitor_1_index+1
-		
-		data["competitor-2"]["competitor"] = competitor_2
-		image_data = self.get_image_stats(competitor_2, initial_index=competitor_2_index)
-		data["competitor-2"]["rating"] = self.get_rating_stat(competitor_2)
-		data["competitor-2"]["images"] = image_data["images"]
-		data["competitor-2"]["initial_index"] = competitor_2_index
-		data["competitor-2"]["forloop_index"] = competitor_2_index+1
-		data = dict(sorted(data.items()))
-		return data
-	
-	def get_specific_matchup(self, competitor_1, competitor_2, competitor_1_position=1, competitor_1_index=0, competitors_number=2):
-		data = defaultdict(dict)
-		competitor_1_index = int(competitor_1_index)
-		competitors = []
-		competitor_1 = self.competitor_service.get_competitor(competitor_1)
-		competitors.append(competitor_1)
-		image_data = self.get_image_stats(competitor_1, initial_index=competitor_1_index)
-		data[f"competitor-{competitor_1_position}"]["competitor"] = competitor_1
-		data[f"competitor-{competitor_1_position}"]["rating"] = self.get_rating_stat(competitor_1)
-		data[f"competitor-{competitor_1_position}"]["images"] = image_data["images"]
-		data[f"competitor-{competitor_1_position}"]["initial_index"] = competitor_1_index
-		data[f"competitor-{competitor_1_position}"]["forloop_index"] = competitor_1_index+1
-		
-		for i in range(1, competitors_number+1):
-			if i != int(competitor_1_position):
-				competitor_number = i
-				competitor_number_key = f"competitor-{competitor_number}"
-				competitor = self.competitor_service.get_competitor(competitor_2)
-				data[competitor_number_key]["competitor"] = competitor
-				competitors.append(competitor)
-				image_data = self.get_image_stats(competitor)
-				data[competitor_number_key]["rating"] = self.get_rating_stat(competitor)
-				data[competitor_number_key]["images"] = image_data["images"]
-				data[competitor_number_key]["initial_index"] = 0
-				data[competitor_number_key]["forloop_index"] = 1
-		data = dict(sorted(data.items()))
-		return data
-	
-	def get_saved_matchup(self, request):
+		:param request: request
+		return SavedMatchup|False
+		"""
 		if request.user.is_authenticated:
 			try:
 				saved_matchup = request.user.saved_matchup
@@ -220,7 +110,16 @@ class GetData():
 			return False
 
 	def update_saved_matchup(self, profile_id, winner_id, winner_position,
-		winner_image_index, enemy_id):
+		winner_image_index, enemy_id) -> SavedMatchup:
+		"""
+		Обновляет последний сохраненный матчап и получает этот объект
+
+		:param profile_id: Profile, 
+		:param winner_id/enemy_id: str(Competitor.id)
+		:param winner_position: int - позиция на странице
+		:param winner_image_index: int -индекс фотографии
+		return SavedMatchup
+		"""
 		winner_id = self.competitor_service.get_competitor(winner_id)
 		enemy_id = self.competitor_service.get_competitor(enemy_id)
 		if winner_position == '1':
@@ -241,7 +140,11 @@ class GetData():
 			)
 		return updated_matchup
 	
-	def get_two_competitors(self):
+	def get_two_competitors(self) -> Tuple[Competitor, Competitor]:
+		"""
+		Возвращает два рандомных компетитора
+		return (Competitor, Competitor)
+		"""
 		competitor_1 = self.competitor_service.get_random_competitor()
 		while True:
 			competitor_2 = self.competitor_service.get_random_competitor()
@@ -249,8 +152,14 @@ class GetData():
 				break
 		return (competitor_1, competitor_2)
 	
-
 	def get_profile_matchups(self, profile_id, number=None):
+		"""
+		Получает number количество матчапов для профиля
+
+		:param profile_id: Profile
+		:param number: int - количество матчапов
+		return dict
+		"""
 		matchups = self.matchup_service.get_profile_matchups(profile_id).order_by('-created_at')
 		if number:
 			matchups = matchups[:number]
@@ -271,28 +180,3 @@ class GetData():
 			ratings[matchup.loser_id] += matchup.delta_loser_profile
 		data = dict(data)
 		return data
-	
-	def paginate_dict(data, page=1, per_page=10):
-		"""
-		Пагинация словаря с числовыми ключами.
-		
-		:param data: dict - исходный словарь
-		:param page: int - текущая страница (по умолчанию 1)
-		:param per_page: int - количество элементов на странице (по умолчанию 10)
-		:return: dict - часть словаря, соответствующая странице
-		"""
-		if not isinstance(data, dict):
-			raise ValueError("Data must be a dictionary")
-
-		# Сортируем словарь по ключам
-		sorted_keys = sorted(data.keys())
-		
-		# Определяем границы текущей страницы
-		start = (page - 1) * per_page
-		end = start + per_page
-
-		# Извлекаем нужные элементы
-		paginated_keys = sorted_keys[start:end]
-		paginated_dict = {key: data[key] for key in paginated_keys}
-
-		return paginated_dict

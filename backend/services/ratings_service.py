@@ -14,7 +14,7 @@ class LocalRatingService(RatingService):
 	
 	@staticmethod
 	def get_rating(competitor) -> int:
-		'''По id Competitor возвращаю его рейтинг'''
+		'''По id Competitor или объекту возвращаю его рейтинг'''
 		competitor_rating = Rating.objects.get(competitor_id=competitor)
 		return competitor_rating.rating
 	

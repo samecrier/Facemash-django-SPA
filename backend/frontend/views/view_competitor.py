@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-from frontend.helpers import GetData
+from frontend.helpers import Helper
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.core.paginator import Paginator
@@ -8,10 +8,10 @@ from django.core.paginator import Paginator
 
 class CompetitorView(LoginRequiredMixin, TemplateView):
 
-	home_helper = GetData()
+	helper_service = Helper()
 
 	def get(self, request, competitor_id: int):
-		data = self.home_helper.get_competitor_profile(competitor_id)
+		data = self.helper_service.get_competitor_profile(competitor_id)
 		matchups = data["matchups"]
 		paginator = Paginator(matchups, 10)
 		page_number = request.GET.get('page', 1)

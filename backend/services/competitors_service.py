@@ -23,7 +23,10 @@ class CompetitorService(ABC):
 class LocalCompetitorService(CompetitorService):
 
 	def get_competitor(self, competitor_id) -> Competitor:
-		'''Возвращает компетитора по id'''
+		'''
+		Принимает competitor_id=str(competitor_id)
+		Возвращает Competitor
+		'''
 		competitor = Competitor.objects.get(id=competitor_id)
 		return competitor
 
