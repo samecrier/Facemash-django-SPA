@@ -21,13 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
+	path('api/', include('apps.api.urls')),
 	path('', include('frontend.urls')),  # Маршруты из test_app без префикса
-	path('competitors', include('competitors.urls')),
-	path('profiles', include('profiles.urls')),
-	path('matchups', include('matchups.urls')),
-	path('tournaments', include('tournaments.urls')),
-	path('ratings', include('ratings.urls')),
-	path('services', include('services.urls')),
 ]
 
 if settings.DEBUG:

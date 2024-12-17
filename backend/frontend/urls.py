@@ -1,15 +1,16 @@
 from django.urls import path
-from .views import view_competitor, view_matchup, view_profile, view_rating, api_competitor
+from frontend.views.matchups.views import HomeView
+from frontend.views.competitors.views import CompetitorView
+from frontend.views.ratings.views import RatingView
+from frontend.views.profiles.views import ProfileView, RegisterView, LoginView
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-	path('', view_matchup.HomeView.as_view(), name='home'),  # Пример маршрута
-	path('competitor/<int:competitor_id>', view_competitor.CompetitorView.as_view(), name='competitor'),
-	path('rating/', view_rating.RatingView.as_view(), name='rating'),
-	path('profile/', view_profile.ProfileView.as_view(), name='profile'),
-	path('register/', view_profile.RegisterView.as_view(), name='register'),
-	path('login/', view_profile.LoginView.as_view(), name='login'),
+	path('', HomeView.as_view(), name='home'),  # Пример маршрута
+	path('competitor/<int:competitor_id>', CompetitorView.as_view(), name='competitor'),
+	path('rating/', RatingView.as_view(), name='rating'),
+	path('profile/', ProfileView.as_view(), name='profile'),
+	path('register/', RegisterView.as_view(), name='register'),
+	path('login/', LoginView.as_view(), name='login'),
 	path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), name='logout'),
-	path('register/', view_profile.RegisterView.as_view(), name='register'),
-	path('api/v01/competitor/<int:competitor_id>/', api_competitor.get_competitor_api, name='api-competitor'),
 ]

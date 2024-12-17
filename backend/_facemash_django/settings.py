@@ -38,14 +38,13 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
-	'test_app',
 	'frontend',
-	'services',
-	'competitors',
-	'profiles',
-	'matchups',
-	'tournaments',
-	'ratings',
+	'apps.competitors',
+	'apps.profiles',
+	'apps.matchups',
+	'apps.tournaments',
+	'apps.ratings',
+	'apps.api'
 ]
 
 MIDDLEWARE = [
