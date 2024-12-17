@@ -71,7 +71,7 @@ class Helper():
 		:param competitor_id: str(competitor.id)
 		return dict
 		"""
-		competitor_obj = self.competitor_service.get_competitor(competitor_id)
+		competitor_obj = self.competitor_service.get_competitor_object(competitor_id)
 		data = {}
 		data["name"] = competitor_obj.name
 		data["id"] = competitor_obj.id
@@ -120,8 +120,8 @@ class Helper():
 		:param winner_image_index: int -индекс фотографии
 		return SavedMatchup
 		"""
-		winner_id = self.competitor_service.get_competitor(winner_id)
-		enemy_id = self.competitor_service.get_competitor(enemy_id)
+		winner_id = self.competitor_service.get_competitor_object(winner_id)
+		enemy_id = self.competitor_service.get_competitor_object(enemy_id)
 		if winner_position == '1':
 			updated_matchup = self.matchup_service.update_saved_matchup(
 				profile_id=profile_id, 
@@ -153,6 +153,7 @@ class Helper():
 		return (competitor_1, competitor_2)
 	
 	def get_profile_matchups(self, profile_id, number=None):
+
 		"""
 		Получает number количество матчапов для профиля
 

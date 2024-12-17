@@ -25,21 +25,21 @@ class HomeView(View):
 					0,
 					competitor_2.id
 				)
-				data = self.data_service.get_data_saved(
-						updated_matchup.competitor_1,
-						updated_matchup.competitor_2,
-						updated_matchup.competitor_1_ii,
-						updated_matchup.competitor_2_ii,
+				data = self.data_service.matchup(
+						competitor_1_id=updated_matchup.competitor_1,
+						competitor_2_id=updated_matchup.competitor_2,
+						competitor_1_index=updated_matchup.competitor_1_ii,
+						competitor_2_index=updated_matchup.competitor_2_ii,
 					)
 				return redirect('home')
 			else:
 				saved_matchup = self.helper_service.get_saved_matchup(request)
 				if saved_matchup:
-					data = self.data_service.get_data_saved(
-						saved_matchup.competitor_1,
-						saved_matchup.competitor_2,
-						saved_matchup.competitor_1_ii,
-						saved_matchup.competitor_2_ii,
+					data = self.data_service.matchup(
+						competitor_1_id=saved_matchup.competitor_1,
+						competitor_2_id=saved_matchup.competitor_2,
+						competitor_1_index=saved_matchup.competitor_1_ii,
+						competitor_2_index=saved_matchup.competitor_2_ii,
 					)
 		else:
 			
@@ -51,17 +51,22 @@ class HomeView(View):
 			enemy_2 = request.session.get("enemy_2")
 
 			if enemy_1 and enemy_2:
-				print('ENEMY_1 ENEMY_2')
-				data = self.data_service.get_data_specific_matchup(enemy_1, enemy_2)
+				data = self.data_service.matchup(
+					competitor_1_id=enemy_1, 
+					competitor_2_id=enemy_2
+				)
 			elif enemy_id:
-				print('ENEMY_ID')
-				data = self.data_service.get_data_specific_matchup_guest(winner_id, winner_position, winner_image_index, enemy_id)
+				data = self.data_service.matchup(
+					competitor_1_id=winner_id,
+					competitor_2_id=enemy_id,
+					competitor_1_index=winner_image_index,
+					competitor_1_position=winner_position
+				)
 			# elif winner_id:
 			# 	print('WINNER_ID')
 			# 	data = self.data_service.get_data_enemy(winner_id, winner_position, winner_image_index)
 			else:
-				print('ELSE')
-				data = self.data_service.get_data_competitors(2)
+				data = self.data_service.matchup(competitors=2)
 				for i, competitor in enumerate(data):
 					request.session[f'enemy_{i+1}'] = data[competitor]['competitor'].id
 			if not enemy_id:

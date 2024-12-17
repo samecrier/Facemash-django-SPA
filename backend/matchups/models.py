@@ -40,10 +40,10 @@ class Matchup(models.Model):
 			self.competitor_service = competitor_service
 
 	def get_winner(self):
-		return(self.competitor_service.get_competitor(self.winner_id))
+		return(self.competitor_service.get_competitor_object(self.winner_id))
 	
 	def get_loser(self):
-		return(self.competitor_service.get_competitor(self.loser))
+		return(self.competitor_service.get_competitor_object(self.loser))
 	
 	def __str__(self):
 		return f"{self.winner_id} vs {self.loser_id}"

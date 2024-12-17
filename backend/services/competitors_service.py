@@ -9,7 +9,7 @@ from django.db.models import Q
 class CompetitorService(ABC):
 	
 	@abstractmethod
-	def get_competitor(self, competitor_id):
+	def get_competitor_object(self, competitor_id):
 		pass
 
 	@abstractmethod
@@ -22,7 +22,7 @@ class CompetitorService(ABC):
 
 class LocalCompetitorService(CompetitorService):
 
-	def get_competitor(self, competitor_id) -> Competitor:
+	def get_competitor_by_string(self, competitor_id) -> Competitor:
 		'''
 		Принимает competitor_id=str(competitor_id)
 		Возвращает Competitor
@@ -49,7 +49,7 @@ class LocalCompetitorService(CompetitorService):
 		
 	def get_images(self, competitor_id) -> QuerySet[CompetitorImage]:
 		'''Возваращает все фото Competitor по id'''
-		competitor = self.get_competitor(competitor_id)
+		competitor = self.get_competitor_object(competitor_id)
 		competitor_images = competitor.images.all()
 		return competitor_images
 	
@@ -77,11 +77,20 @@ class LocalCompetitorService(CompetitorService):
 			Q(id__in=matchups.values_list('loser_id', flat=True))
 			).distinct()  # distinct удаляет дубликаты
 		return competitors
+	
+	def get_competitor_object(self, competitor_obj):
+		if isinstance(competitor_obj, Competitor):
+			return competitor_obj
+		elif isinstance(competitor_obj, (str, int)):
+			return self.get_competitor_by_string(competitor_obj)
+		else:
+			print(f'Не вернулся ничего из {competitor_obj}, type{type(competitor_obj)}')
+			return None
 
 	
 class APICompetitorService(CompetitorService):
 	
-	def get_competitor(self, competitor_id):
+	def get_competitor_object(self, competitor_id):
 		return Competitor.objects.get(id=competitor_id)
 
 	def fetch_competitors(self, competitor_ids):
@@ -91,7 +100,7 @@ class APICompetitorService(CompetitorService):
 		pass
 	
 	def get_competitor_data(self, competitor_id):
-		competitor = self.get_competitor(competitor_id)
+		competitor = self.get_competitor_object(competitor_id)
 		data = {}
 
 		data["name"] = competitor.name

@@ -3,7 +3,7 @@ from services.competitors_service import LocalCompetitorService
 from services.matchups_service import LocalMatchupService
 from services.ratings_service import LocalRatingService
 from services.profiles_service import LocalProfileService
-from services.ratings_system import EloRatingSystem32
+from services.ratings_system import EloRatingSystem32, EloRatingSystem64
 
 class MatchupHandler():
 
@@ -12,11 +12,11 @@ class MatchupHandler():
 		self.matchup_service = LocalMatchupService()
 		self.rating_service = LocalRatingService()
 		self.profile_service = LocalProfileService()
-		self.rating_system = EloRatingSystem32()
+		self.rating_system = EloRatingSystem64()
 		
 		self.request = request
-		self.winner = self.competitor_service.get_competitor(winner_id)
-		self.loser = self.competitor_service.get_competitor(loser_id)
+		self.winner = self.competitor_service.get_competitor_object(winner_id)
+		self.loser = self.competitor_service.get_competitor_object(loser_id)
 	
 	@transaction.atomic
 	def process_matchup(self) -> None:

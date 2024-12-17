@@ -11,5 +11,5 @@ urlpatterns = [
 	path('login/', view_profile.LoginView.as_view(), name='login'),
 	path('logout/', auth_views.LogoutView.as_view(next_page='/login/'), name='logout'),
 	path('register/', view_profile.RegisterView.as_view(), name='register'),
-	path('api/v01/competitor/<int:competitor_id>/', api_competitor.get_competitor, name='api-competitor'),
+	path('api/v01/competitor/<int:competitor_id>/', api_competitor.get_competitor_api, name='api-competitor'),
 ]
