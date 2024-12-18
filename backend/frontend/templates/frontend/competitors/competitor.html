@@ -90,12 +90,13 @@
 
 	</div>
 </main>
-
+{% endblock%}
+{% block scripts %}
 <script id="image-data-slider-1" type="application/json">
-    {
+	{
 		"images" : {{ data.images }}
 	}
 </script>
 
 <script src="{% static 'frontend/js/profile-slider.js' %}" type="module" defer></script>
-{% endblock%}
+{% endblock %}

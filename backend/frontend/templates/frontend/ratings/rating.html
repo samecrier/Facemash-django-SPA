@@ -74,8 +74,10 @@
 		</div>
 	</div>
 </main>
+{% endblock%}
+{% block scripts %}
 <script> 
 	const isAuth = {{ is_auth|yesno:"true,false" }}; 
 </script>
 <script src="{% static 'frontend/js/rating-competitor.js' %}" type="module" defer></script>
-{% endblock%}
+{% endblock %}

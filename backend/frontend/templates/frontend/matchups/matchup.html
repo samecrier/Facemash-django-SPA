@@ -7,81 +7,82 @@
 
 
 {% block content %}
-	<main>
-		<div class="wrapper">
-			<div class="competitors-block">
-			{% for competitor_key, competitor_data in data.items %}
-				<div class="{% if forloop.first %}competitor-1{% endif %} competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
-					<div class="slider">
-						<div class="slider-controls">
-						</div>
-						<div class="slider-images">
-							{% for image in competitor_data.competitor.images.all %}
-								{% if forloop.counter == competitor_data.forloop_index %}
-									<a href="{% url 'competitor' competitor_data.competitor.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
-								{% endif %}
-							{% endfor%}
-						</div>
-						<script id="image-data-slider-{{forloop.counter}}" type="application/json">
-							{
-								"images": {{ competitor_data.images }},
-								"initial_index": {{ competitor_data.initial_index }}
-							}
-						</script>
+<main>
+	<div class="wrapper">
+		<div class="competitors-block">
+		{% for competitor_key, competitor_data in data.items %}
+			<div class="{% if forloop.first %}competitor-1{% endif %} competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
+				<div class="slider">
+					<div class="slider-controls">
 					</div>
-					<div class="bio">
-						<p>{{ competitor_data.competitor.name}}{% if competitor_data.competitor.age %}, {{ competitor_data.competitor.age }}{% endif %}</p>
-						<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
+					<div class="slider-images">
+						{% for image in competitor_data.competitor.images.all %}
+							{% if forloop.counter == competitor_data.forloop_index %}
+								<a href="{% url 'competitor' competitor_data.competitor.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
+							{% endif %}
+						{% endfor%}
 					</div>
-					<div class="button">
-						<form method="post">
-						{% csrf_token %}
-							<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
-							<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
-							<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
-							<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
-							<button type="button" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
-						</form>
-					</div>
+					<script id="image-data-slider-{{forloop.counter}}" type="application/json">
+						{
+							"images": {{ competitor_data.images }},
+							"initial_index": {{ competitor_data.initial_index }}
+						}
+					</script>
 				</div>
-			{% if not forloop.last %}
-				{% if user.is_authenticated %}
-				
-				<div class="refresh-block">
-					<div>
-						<a href='/?mode=refresh'><img src="{% static 'frontend/img/refresh.png' %}" width="15px" alt="Image"></a>
-					</div>
+				<div class="bio">
+					<p>{{ competitor_data.competitor.name}}{% if competitor_data.competitor.age %}, {{ competitor_data.competitor.age }}{% endif %}</p>
+					<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
 				</div>
-				{% else%}
-				<div class="separate-block"></div>
-				{% endif %}
+				<div class="button">
+					<form method="post">
+					{% csrf_token %}
+						<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
+						<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
+						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
+						<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
+						<button type="button" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
+					</form>
+				</div>
+			</div>
+		{% if not forloop.last %}
+			{% if user.is_authenticated %}
+			
+			<div class="refresh-block">
+				<div>
+					<a href='/?mode=refresh'><img src="{% static 'frontend/img/refresh.png' %}" width="15px" alt="Image"></a>
+				</div>
+			</div>
+			{% else%}
+			<div class="separate-block"></div>
 			{% endif %}
-			{% endfor %}
-			</div>
+		{% endif %}
+		{% endfor %}
+		</div>
 
-			<div class="top-rating">
-			<h1>Топ рейтинга</h1>
-			<table>
-				<tbody>
-					{% for top_competitor, rating in ratings %}
-					<tr>
-						<td>{{ forloop.counter }}</td>
-						<td><a class="profile-ref" href="{% url 'competitor' top_competitor.id %}">{{ top_competitor.name }}</a></td>
-						<td>{{ top_competitor.city.city_eng }}</td>
-						<td>{{ rating }}</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-				</table>
+		<div class="top-rating">
+		<h1>Топ рейтинга</h1>
+		<table>
+			<tbody>
+				{% for top_competitor, rating in ratings %}
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td><a class="profile-ref" href="{% url 'competitor' top_competitor.id %}">{{ top_competitor.name }}</a></td>
+					<td>{{ top_competitor.city.city_eng }}</td>
+					<td>{{ rating }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+			</table>
 
-
-
-			</div>
 
 
 		</div>
-	</main>
 
+
+	</div>
+</main>
+{% endblock %}
+{% block scripts%}
 	<script src="{% static 'frontend/js/utils.js' %}" type="module" defer></script>
 	<script src="{% static 'frontend/js/slider-utility.js' %}" type="module" defer></script>
 	<script src="{% static 'frontend/js/slider.js' %}" type="module" defer></script>
