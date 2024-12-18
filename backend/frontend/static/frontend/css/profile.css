@@ -13,6 +13,10 @@ div.wrapper {
 	width: 60%;
 }
 
+.history-section h1 {
+	margin: 0;
+	line-height: 1;
+}
 .history-block {
 	margin-top: 25px;
 }

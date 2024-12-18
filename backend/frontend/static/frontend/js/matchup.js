@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const loserElement = document.querySelector(`#${competitorKey}`);
                 const loserData = data.loser_data[competitorKey];
                 loserElement.querySelector(".bio").innerHTML = `
-                    <p>${loserData.competitor.name}, ${loserData.competitor.age}</p>
+                    <p>${loserData.competitor.name}${loserData.competitor.age !== null ? `, ${loserData.competitor.age}` : ""}</p>
                     <p class='competitor-rating'>Rating: ${loserData.rating}</p>
                 `;
 

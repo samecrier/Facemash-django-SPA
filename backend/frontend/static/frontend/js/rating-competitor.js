@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				const data = await response.json();
 				
 				const profileDetail = document.getElementById('profile-detail');
+
 				if (isAuth) {
 					profileDetail.innerHTML = `
 						<div class="slider">
@@ -25,10 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
 										<td class="key">Name</td>
 										<td class="value">${data.name}</td>
 									</tr>
-									<tr>
-										<td class="key">Age</td>
-										<td class="value">${data.age}</td>
-									</tr>
+									${data.age !== null 
+										? `<tr>
+											<td class="key">Age</td>
+											<td class="value">${data.age}</td>
+										</tr>`
+										: ''}
 									<tr>
 										<td class="key">City</td>
 										<td class="value">${data.city}</td>

@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
-from service.ratings.service import LocalRatingService, APIRatingService
-from service.matchups.helpers import MatchupHelper, SavedMatchupHelper
-from service.matchups.data_service import MatchupGetData, MatchupGetDataJS
-from service.matchups.handler import MatchupHandler
+from services.ratings.service import LocalRatingService, APIRatingService
+from services.matchups.helper import MatchupHelper, SavedMatchupHelper
+from services.matchups.data_service import MatchupGetData, MatchupGetDataJS
+from services.matchups.handler import MatchupHandler
 
 
 class HomeView(View):
@@ -81,7 +81,7 @@ class HomeView(View):
 		
 		return render(
 			request, 
-			'frontend/matchup.html',
+			'frontend/matchups/matchup.html',
 			{
 				'data': data,
 				'ratings': ratings,

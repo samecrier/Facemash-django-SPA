@@ -1,9 +1,9 @@
 from django.db import transaction
-from service.competitors.service import LocalCompetitorService
-from service.matchups.service import LocalMatchupService
-from service.ratings.service import LocalRatingService
-from service.profiles.service import LocalProfileService
-from service.ratings.ratings_system import EloRatingSystem32, EloRatingSystem64
+from services.competitors.service import LocalCompetitorService
+from services.matchups.service import LocalMatchupService
+from services.ratings.service import LocalRatingService
+from services.profiles.service import LocalProfileService
+from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
 
 class MatchupHandler():
 

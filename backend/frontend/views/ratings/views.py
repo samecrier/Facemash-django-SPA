@@ -1,7 +1,7 @@
 from django.views import View
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from service.ratings.service import LocalRatingService
+from services.ratings.service import LocalRatingService
 from django.http import Http404
 
 
@@ -27,7 +27,7 @@ class RatingView(View):
 		start_position = (page_obj.number - 1) * paginator.per_page
 		return render(
 			request,
-			'frontend/rating.html', 
+			'frontend/ratings/rating.html', 
 			{
 				'page_obj': page_obj,
 				'paginator': paginator,

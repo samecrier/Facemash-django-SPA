@@ -1,6 +1,6 @@
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from service.matchups.service import LocalMatchupService
+from services.matchups.service import LocalMatchupService
 from apps.profiles.models import User
 from django.contrib.auth.models import Group
 

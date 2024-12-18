@@ -1,46 +1,32 @@
 .wrapper-rating{
 	display: flex;
-	margin: 100px;
 	margin-top: 60px;
 }
 
-.headers h1 {
+.heading h1 {
 	display: inline-block;
 }
 
-.headers a {
+.heading a {
 	color: black;
 	font-weight: bold;
 	font-size: 20pt;
 	text-decoration: underline;
 }
 
-.headers p {
+.heading p {
 	color: black;
 	font-weight: bold;
 	font-size: 20pt;
 }
 
-.headers a:hover {
+.heading a:hover {
 	color: #000cff;
 	text-decoration: none;
 }
 
-.rating h1 {
-	margin: 0;
-	line-height: 1;
-}
-.rating table {
-	margin-top: 23px;
-	border-collapse: collapse; /* Убирает промежутки между ячейками */
-	width: 100%;
-}
-
-.rating td, th {
-	padding: 5px; /* Добавляет немного отступов */
-	text-align: left; /* Выравнивает текст по левому краю */
-	white-space: nowrap; /* Запрет на перенос текста */
-	max-width: 500px; /* Ограничение ширины ячейки */
+.top-rating {
+	margin-left: 100px;
 }
 
 td.competitor-name {

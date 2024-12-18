@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from apps.ratings.models import Rating, RatingProfile
-from service.ratings.ratings_system import EloRatingSystem
-from service.competitors.service import LocalCompetitorService
+from services.ratings.rating_systems import EloRatingSystem
+from services.competitors.service import LocalCompetitorService
 from typing import List
 
 class RatingService(ABC):

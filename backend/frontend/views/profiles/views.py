@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from apps.profiles.forms import RegistrationForm
-from service.profiles.data_service import ProfileGetData
+from services.profiles.data_service import ProfileGetData
 from django.core.paginator import Paginator
 
 
@@ -21,10 +21,10 @@ class ProfileView(View):
 		paginator = Paginator(data, 20)
 		page_number = request.GET.get('page', 1)
 		page_obj = paginator.get_page(page_number)
-		return render(request, 'frontend/profile.html', {'page_obj': page_obj})
+		return render(request, 'frontend/profiles/profile.html', {'page_obj': page_obj})
 
 class RegisterView(FormView):
-	template_name = 'frontend/register.html'
+	template_name = 'frontend/profiles/register.html'
 	form_class = RegistrationForm
 	success_url = reverse_lazy('home')
 
@@ -43,7 +43,7 @@ class RegisterView(FormView):
 		return self.render_to_response(self.get_context_data(form=form))
 	
 class LoginView(LoginView):
-	template_name = 'frontend/login.html'
+	template_name = 'frontend/profiles/login.html'
 	authentication_form = AuthenticationForm
 
 	def get_success_url(self):

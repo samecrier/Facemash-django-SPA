@@ -1,15 +1,15 @@
 from __future__ import annotations
-from service.competitors.service import LocalCompetitorService
-from service.ratings.service import LocalRatingService
-from service.profiles.service import LocalProfileService
-from service.matchups.service import LocalMatchupService
-from service.matchups.data_helper import DataHelper
+from services.competitors.service import LocalCompetitorService
+from services.ratings.service import LocalRatingService
+from services.profiles.service import LocalProfileService
+from services.matchups.service import LocalMatchupService
+from services.matchups.data_helper import DataHelper
 from django.utils.safestring import mark_safe
 import json
 from collections import defaultdict
 from typing import TYPE_CHECKING, Tuple
-from service.helpers import Helper
-from service.matchups.helpers import MatchupHelper
+from services.helpers import Helper
+from services.matchups.helper import MatchupHelper
 
 if TYPE_CHECKING:
 	from apps.matchups.models import Matchup, SavedMatchup

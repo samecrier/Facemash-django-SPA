@@ -1,7 +1,7 @@
-from service.competitors.service import LocalCompetitorService
-from service.matchups.service import LocalMatchupService
-from service.ratings.service import LocalRatingService
-from service.helpers import Helper
+from services.competitors.service import LocalCompetitorService
+from services.matchups.service import LocalMatchupService
+from services.ratings.service import LocalRatingService
+from services.helpers import Helper
 
 
 class CompetitorGetData():

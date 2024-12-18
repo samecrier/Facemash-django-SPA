@@ -9,12 +9,12 @@
 <main>
 	<div class="wrapper-rating">
 		<div class="overall-rating">
-			<div class="rating">
-				<div class="headers">
+			<div class="top-rating">
+				<div class="heading">
 				{% if user.is_authenticated %}
 					<a href="?type=global">Общий рейтинг</a>/ <a href="?type=profile">Рейтинг профиля</a>
 				{% else %}
-					<p class="header-nonauth">Общий рейтинг</p>
+					<p class="heading-nonauth">Общий рейтинг</p>
 				{% endif %}
 				</div>
 			<table>
@@ -22,8 +22,8 @@
 					{% for competitor, rating in page_obj%}
 					<tr class="competitor-row" data-competitor-id="{{ competitor.id }}">
 						<td>{{ start_position|add:forloop.counter }}</td>
-						<td class="competitor-name">{{ competitor.name_id }}</td>
-						<td>{{ competitor.age }}</td>
+						<td class="competitor-name">{{ competitor.name }}</td>
+						<td>{% if competitor.age %}{{ competitor.age }}{% else %}-{% endif %}</td>
 						<td>{{ competitor.city.city_eng }}</td>
 						<td>{{ rating }}</td>
 					</tr>

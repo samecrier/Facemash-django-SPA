@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from service.competitors.service import LocalCompetitorService
-from service.ratings.service import LocalRatingService
+from services.competitors.service import LocalCompetitorService
+from services.ratings.service import LocalRatingService
 
 class Command(BaseCommand):
 	help = 'Добавить рейтинг для все компетиторов'

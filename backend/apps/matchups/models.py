@@ -1,5 +1,5 @@
 from django.db import models
-from service.competitors.service import LocalCompetitorService
+from services.competitors.service import LocalCompetitorService
 
 # Create your models here.
 class Matchup(models.Model):

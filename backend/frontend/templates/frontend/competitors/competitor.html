@@ -12,12 +12,9 @@
 			<div class="slider-controls">
 			</div>
 			<div class="slider-images">
-				
 					<img id="current-image" src="/" alt="Image">
-
 			</div>
 		</div>
-
 		<div class="profile-info">
 			<table>
 				<tbody>
@@ -29,10 +26,12 @@
 						<td class="key">Name</td>
 						<td class="value">{{ data.name }}</td>
 					</tr>
+					{% if data.age%}
 					<tr>
 						<td class="key">Age</td>
 						<td class="value">{{ data.age }}</td>
 					</tr>
+					{% endif %}
 					<tr>
 						<td class="key">City</td>
 						<td class="value">{{ data.city }}</td>

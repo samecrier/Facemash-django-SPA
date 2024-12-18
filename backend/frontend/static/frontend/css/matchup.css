@@ -1,0 +1,91 @@
+div.wrapper {
+	display: flex;
+	margin-top: 10px;
+} 
+
+div.competitors-block{
+	display:flex;
+}
+
+div.competitor {
+	margin: 40px 0px 0px 0px;
+	font-size: 25pt;
+	box-sizing: border-box;
+} 
+
+div.competitor-1 {
+	margin: 40px 0px 0px 50px;
+	font-size: 25pt;
+	box-sizing: border-box;
+} 
+
+div.refresh-block {
+	width: 40px;
+	margin-top: 45px;
+	text-align: center;
+	align-items: center;
+	font-weight: bold;
+	color: #000cff;
+}
+
+div.separate-block {
+	width: 40px;
+}
+
+.slider-images a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+.bio {
+	width: 100%; /* Устанавливаем ширину 50% от competitor */
+	margin: 10px auto;
+}
+
+.bio p {
+	text-align: center;
+	font-weight: bold;
+	font-size: 20pt;
+}
+
+.button {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.button button {
+	width: 80%;
+	background: #000cff; /* Градиент от светло-голубого к темно-голубому */
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: Consolas;
+	cursor: pointer;
+	text-align: center;
+	margin: 0 auto; /* Обеспечивает горизонтальное центрирование блока */
+	display: block; /* Делает кнопку блочным элементом */
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.button button:hover{
+	color: #000cff;
+	background-color: black;
+}
+
+.top-rating {
+	margin-left: 100px;
+}
+
+.top-rating td,th {
+	padding-right: 50px;
+}
+
+a.profile-ref {
+	color: black;
+}

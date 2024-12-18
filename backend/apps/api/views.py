@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from service.competitors.service import APICompetitorService
+from services.competitors.service import APICompetitorService
 
 def get_competitor_api(request, competitor_id):
 	# Получаем профиль

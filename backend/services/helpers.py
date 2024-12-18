@@ -1,8 +1,8 @@
 from __future__ import annotations
-from service.competitors.service import LocalCompetitorService
-from service.ratings.service import LocalRatingService
-from service.profiles.service import LocalProfileService
-from service.matchups.service import LocalMatchupService
+from services.competitors.service import LocalCompetitorService
+from services.ratings.service import LocalRatingService
+from services.profiles.service import LocalProfileService
+from services.matchups.service import LocalMatchupService
 from django.utils.safestring import mark_safe
 import json
 from typing import TYPE_CHECKING
