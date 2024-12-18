@@ -7,12 +7,13 @@ from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
 
 class MatchupHandler():
 
-	def __init__(self, request, winner_id, loser_id):
+	def __init__(self, request, winner_id, loser_id, 
+				rating_system=EloRatingSystem64()):
 		self.competitor_service = LocalCompetitorService()
 		self.matchup_service = LocalMatchupService()
 		self.rating_service = LocalRatingService()
 		self.profile_service = LocalProfileService()
-		self.rating_system = EloRatingSystem64()
+		self.rating_system = rating_system
 		
 		self.request = request
 		self.winner = self.competitor_service.get_competitor_object(winner_id)
@@ -20,6 +21,9 @@ class MatchupHandler():
 	
 	@transaction.atomic
 	def process_matchup(self) -> None:
+		"""
+		Процесс расчета рейтингов и создания Matchup
+		"""
 		curr_winner_rating = self.rating_service.get_rating(self.winner)
 		curr_loser_rating = self.rating_service.get_rating(self.loser)
 

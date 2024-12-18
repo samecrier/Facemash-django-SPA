@@ -75,7 +75,17 @@ class MatchupGetData():
 		return data
 
 	def data_matchup(self, competitors=None, **kwargs):
-		
+		"""
+		Процесс создания матчапа
+
+		:param competitors: int - число Competitor в матчапе, если в **kwargs
+			не передается competitors число, то добавляет рандомных Competitor
+		:param **kwargs - передаются параметры по шаблону name_property,
+			где name - уникальное название, а property - это свойства(стандарнтными
+			являются id, index и position). ID - является обязательным свойством
+			для name
+		return dict - Подготовленная data для любого Matchup
+		"""
 		raw_data = DataHelper.dict_from_params(kwargs)
 		template_data = {}
 		for key in raw_data:
