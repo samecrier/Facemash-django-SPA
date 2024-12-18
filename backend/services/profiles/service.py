@@ -15,6 +15,11 @@ class ProfileService(ABC):
 class LocalProfileService(ProfileService):
 	
 	def get_guest_profile(self):
+		"""
+		Возвращает User='guest' по вызову
+		
+		return User('guest')
+		"""
 		return User.objects.get(username='guest')
 
 class APIProfileService(ProfileService):

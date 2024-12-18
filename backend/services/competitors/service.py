@@ -23,15 +23,30 @@ class CompetitorService(ABC):
 class LocalCompetitorService(CompetitorService):
 
 	def get_competitor_by_string(self, competitor_id) -> Competitor:
-		'''
-		Принимает competitor_id=str(competitor_id)
-		Возвращает Competitor
-		'''
+		"""
+		Принимает строку с айди компетитора и возвращает объект
+
+		:param competitor_id: str(competitor_id)
+		return Competitor
+		"""
 		competitor = Competitor.objects.get(id=competitor_id)
 		return competitor
+	
+	def get_competitor_object(self, competitor_obj):
+		if isinstance(competitor_obj, Competitor):
+			return competitor_obj
+		elif isinstance(competitor_obj, (str, int)):
+			return self.get_competitor_by_string(competitor_obj)
+		else:
+			print(f'Не вернулся ничего из {competitor_obj}, type{type(competitor_obj)}')
+			return None
 
 	def get_random_competitor(self) -> Competitor:
-		'''Возвращает рандомного компетитора из базы данных'''
+		"""
+		Возвращает рандомного компетитора из базы данных
+		
+		return Competitor 
+		"""
 		id_range = Competitor.objects.aggregate(
 			min_id = Min('id'),
 			max_id = Max('id')
@@ -48,46 +63,55 @@ class LocalCompetitorService(CompetitorService):
 				return competitor
 		
 	def get_images(self, competitor_id) -> QuerySet[CompetitorImage]:
-		'''Возваращает все фото Competitor по id'''
+		"""
+		Возваращает все фото Competitor по строке с id или объекты
+
+		:param competitor_id: Competitor|str(competitor_id)
+		return list[CompetitorImage]
+		"""
 		competitor = self.get_competitor_object(competitor_id)
 		competitor_images = competitor.images.all()
 		return competitor_images
 	
-	def fetch_competitors(self, competitor_ids) -> QuerySet[Competitor]:
-		'''По листу с id или объектами
-		возвращаю лист с объектами Competitor'''
-		competitors = []
-		for competitor_id in competitor_ids:
-			if isinstance(competitor_id, Competitor):
-				competitors.append(competitor_id)
-			else:
-				competitor = Competitor.objects.get(id=competitor_id)
-				competitors.append(competitor)
-		return competitors
-	
 	def get_all_competitors(self):
 		return Competitor.objects.all()
 	
-	def get_competitor_bio(self, competitor_obj):
-		return competitor_obj.details.bio
+	def get_competitor_bio(self, competitor_id):
+		"""
+		По строке с id или объекту Competitor получает CompetitorDetail
+		
+		:param competitor_id: Competitor|str(competitor_id)
+		return CompetitorDetail
+		"""
+		competitor = self.get_competitor_object(competitor_id)
+		return competitor.details.bio
 	
 	def get_competitors_from_matchups(self, matchups):
+		"""
+		Возвращает всех Competitor из указанных матчапов
+
+		:param matchups: Matchup
+		return list[Competitor]
+		"""
 		competitors = Competitor.objects.filter(
 			Q(id__in=matchups.values_list('winner_id', flat=True)) |
 			Q(id__in=matchups.values_list('loser_id', flat=True))
 			).distinct()  # distinct удаляет дубликаты
 		return competitors
 	
-	def get_competitor_object(self, competitor_obj):
-		if isinstance(competitor_obj, Competitor):
-			return competitor_obj
-		elif isinstance(competitor_obj, (str, int)):
-			return self.get_competitor_by_string(competitor_obj)
-		else:
-			print(f'Не вернулся ничего из {competitor_obj}, type{type(competitor_obj)}')
-			return None
+	def fetch_competitors(self, competitor_ids) -> QuerySet[Competitor]:
+		"""
+		По листу с id или объектами
 
-	
+		:param competitor_ids:list[Competitor.id|Competitor]
+		возвращаю лист с объектами Competitor
+		"""
+		competitors = []
+		for competitor_id in competitor_ids:
+			competitor = self.get_competitor_object(competitor_id)
+			competitors.append(competitor)
+		return competitors
+
 class APICompetitorService(CompetitorService):
 	
 	def get_competitor_object(self, competitor_id):
