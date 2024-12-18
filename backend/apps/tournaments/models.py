@@ -1,12 +1,12 @@
 from django.db import models
 
 # Create your models here.
-class TournamentSystem(models.model):
+class TournamentSystem(models.Model):
 	system_name = models.CharField(max_length=255)
 	created_at = models.DateTimeField(auto_now_add=True)
 	
 	def __str__(self):
-		return f'{self.name}'
+		return f'{self.system_name}'
 
 
 class TournamentRatingSystem(models.Model):
@@ -14,7 +14,7 @@ class TournamentRatingSystem(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)
 	
 	def __str__(self):
-		return f'{self.name}'
+		return f'{self.rating_system_name}'
 
 
 class TemplateTournament(models.Model):
@@ -45,7 +45,7 @@ class TemplateRound(models.Model):
 		'tournaments.TemplateTournament',
 		on_delete=models.CASCADE,
 		related_name='template_rounds',
-		db_column='template_tournament_id'
+		db_column='template_round'
 	)
 	tournament_rating_system_id = models.ForeignKey(
 		'tournaments.TournamentRatingSystem',
@@ -73,7 +73,7 @@ class TournamentBase(models.Model):
 	template_tournament_id = models.ForeignKey(
 		'tournaments.TemplateTournament',
 		on_delete=models.PROTECT,
-		related_name='template_rounds',
+		related_name='tournaments',
 		db_column='template_tournament_id'
 	)
 	competitors_number = models.PositiveIntegerField()
@@ -96,19 +96,20 @@ class TournamentBase(models.Model):
 class TournamentCompetitor(models.Model):
 	STATUS_CHOICES = [
 		('active', 'active'),
-		('eliminated', 'eliminated')
+		('eliminated', 'eliminated'),
+		('finished', 'finished')
 	]
-	competitor_id = models.ForeignKey(
-		'competitors.Competitor',
-		on_delete=models.CASCADE,
-		related_name='tournament_participation',
-		db_column='competitor_id'
-	)
 	tournament_base_id = models.ForeignKey(
 		'tournaments.TournamentBase',
 		on_delete=models.CASCADE,
-		related_name='tournament_competitors',
+		related_name='competitors',
 		db_column='tournament_base_id'
+	)
+	competitor_id = models.ForeignKey(
+		'competitors.Competitor',
+		on_delete=models.CASCADE,
+		related_name='tournaments_participation',
+		db_column='competitor_id'
 	)
 	status = models.CharField(
 		max_length=255,
@@ -129,7 +130,7 @@ class TournamentRound(models.Model):
 	tournament_base_id = models.ForeignKey(
 		'tournaments.TournamentBase',
 		on_delete=models.CASCADE,
-		related_name='tournament_rounds',
+		related_name='rounds',
 		db_column='tournament_base_id'
 	)
 	round_number = models.PositiveIntegerField()
@@ -139,8 +140,8 @@ class TournamentRound(models.Model):
 		choices=STATUS_CHOICES, 
 		default='not started')
 	winners = models.ManyToManyField(
-		'competitors.TournamentCompetitor',
-		related_name='tournament_round_winners'
+		'tournaments.TournamentCompetitor',
+		related_name='round_winners'
 	)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
@@ -160,7 +161,7 @@ class RoundCompetitor(models.Model):
 	tournament_competitor_id = models.ForeignKey(
 		'tournaments.TournamentCompetitor',
 		on_delete=models.CASCADE,
-		related_name='tournament_competitor_rounds',
+		related_name='round_status',
 		db_column='tournament_competitor_id'
 	)
 	tournament_round_id = models.ForeignKey(
@@ -179,7 +180,7 @@ class RoundCompetitor(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 
 
-class TournamentMatchup:
+class TournamentMatchup(models.Model):
 
 	tournament_round_id = models.ForeignKey(
 		'tournaments.TournamentRound',
@@ -194,12 +195,12 @@ class TournamentMatchup:
 	winner_id = models.ForeignKey(
 		'tournaments.RoundCompetitor',
 		on_delete=models.CASCADE,
-		related_name='matchups_winners',
+		related_name='matchup_winner',
 		db_column='winner_id'
 	)
 	losers = models.ManyToManyField(
-		'tournaments .RoundCompetitor',
-		related_name='matchups_losers'
+		'tournaments.RoundCompetitor',
+		related_name='matchup_losers'
 	)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

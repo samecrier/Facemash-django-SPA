@@ -7,7 +7,7 @@ from services.matchups.data_service import MatchupGetData, MatchupGetDataJS
 from services.matchups.handler import MatchupHandler
 
 
-class HomeView(View):
+class MatchupView(View):
 
 	matchup_helper_service = MatchupHelper()
 	saved_matchup_helper_service = SavedMatchupHelper()
