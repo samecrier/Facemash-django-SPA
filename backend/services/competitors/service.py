@@ -111,6 +111,10 @@ class LocalCompetitorService(CompetitorService):
 			competitor = self.get_competitor_object(competitor_id)
 			competitors.append(competitor)
 		return competitors
+	
+	def fetch_competitors_by_location(self, cities_ids):
+		return Competitor.objects.filter(city__id__in=cities_ids)
+
 
 class APICompetitorService(CompetitorService):
 	
@@ -136,5 +140,5 @@ class APICompetitorService(CompetitorService):
 			data["bio"] = '-'
 		data["images"] = [{"url": image.get_path()} for image in competitor.images.all()]
 		return data
-
+	
 

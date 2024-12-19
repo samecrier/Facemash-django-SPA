@@ -1,0 +1,30 @@
+.wrapper-create {
+	margin-top: 50px;
+	margin-left: 100px;
+	margin-right: 100px;
+	display: flex;
+}
+
+.selected-section {
+	width: 70%;
+}
+.settings-section {
+	width: 30%;
+	margin-left: 25px;
+}
+.checkbox-container {
+	display: flex;
+	flex-wrap: wrap; /* Позволяет переносить элементы на следующую строку */
+	margin-top: 25px;
+	gap: 10px; /* Добавляет промежуток между элементами */
+}
+
+.checkbox-item {
+	font-size: 10pt;
+}
+
+.button button {
+	width: 250px;
+	text-align: center;
+	margin: 0 0;
+}

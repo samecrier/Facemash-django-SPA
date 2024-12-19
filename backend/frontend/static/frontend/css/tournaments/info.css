@@ -1,37 +1,25 @@
-.wrapper-rating{
+.wrapper-tournament-info {
 	display: flex;
-	margin-top: 60px;
-}
-
-.heading h1 {
-	display: inline-block;
-}
-
-.heading a {
-	color: black;
-	font-weight: bold;
-	font-size: 20pt;
-	text-decoration: underline;
-}
-.heading a.active {
-	color: #000cff;
-}
-.heading p {
-	color: black;
-	font-weight: bold;
-	font-size: 20pt;
-}
-
-.heading a:hover {
-	color: #000cff;
-	text-decoration: none;
-}
-
-.top-rating {
+	margin-top: 50px;
 	margin-left: 100px;
+}
+
+.table-info { 
 	width: 430px;
 }
 
+.table-info table {
+	margin-top: 23px;
+	border-collapse: collapse; /* Убирает промежутки между ячейками */
+	width: 100%; /* Таблица занимает всю ширину */
+}
+
+.table-info td, th {
+	padding: 5px; /* Добавляет немного отступов */
+	text-align: left; /* Выравнивает текст по левому краю */
+	white-space: nowrap; /* Запрет на перенос текста */
+	max-width: 500px; /* Ограничение ширины ячейки */
+}
 td.competitor-name {
 	text-decoration: underline;
 }
@@ -62,22 +50,22 @@ span.current {
 
 
 .slider {
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
+	width: 100%;
+	max-width: 600px;
+	text-align: center;
 }
 
 .slider img {
 	height: 600px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-bottom: 10px;
 }
 
 .slider-controls {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
+	display: flex;
+	justify-content: center;
+	gap: 5px;
 }
 
 .slider-controls input {
@@ -133,4 +121,32 @@ span.current {
 
 .link-to-competitor a {
 	color: black;
+}
+
+.a-button {
+	margin-top: 10px;
+	display: flex; /* Используем Flexbox для центровки */
+	justify-content: center; /* Центрирование по горизонтали */
+	align-items: center; /* Центрирование по вертикали */
+	width: 300px;
+	height: 50px;
+	margin: 20px auto;
+	border-radius: 10px;
+	background-color:#000cff;
+	text-align: center;
+	font-size: 20pt;
+	font-weight: bold;
+}
+
+.a-button a, a:visited{
+	text-decoration: none;
+	color: white;
+}
+
+.a-button:hover{
+	background-color: black;
+}
+
+.a-button:hover a{
+	color: #000cff;
 }

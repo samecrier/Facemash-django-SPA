@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block css %}
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/main.css' %}">
+{% endblock %}
+{% block title%}
+Турниры
+{% endblock %}
+
+
+{% block content%}
+<div class="wrapper-tournament-main">
+	<div class="tournaments-list">
+	{% for tournament in tournaments %}
+		<a href="{% url 'tournament-info' tournament.id%}">Турнир id#{{ tournament.id }}</a>
+	{% endfor %}
+	</div>
+	<div class="a-button">
+	<a href="{% url 'tournament-create'%}">Создать турнир</a>
+	</div>
+</div>
+{% endblock %}

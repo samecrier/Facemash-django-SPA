@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css%}
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/create.css' %}">
+{% endblock %}
+{% block title %}
+Создать турнир
+{% endblock %}
+
+
+{% block content %}
+<form method="POST" class="send-cities" action="{% url 'tournament-create' %}">
+	<div class="wrapper-create">
+		<div class="selected-section">
+			<h1>Страница создания турнира</h1>
+			{% csrf_token %}
+
+			{% if location_form.errors %}
+				<div class="errorlist">
+					<strong>Ошибки:</strong>
+					<ul>
+						{% for field, errors in location_form.errors.items %}
+							{% for error in errors %}
+								<li>{{ error }}</li>  <!-- Выводим только текст ошибки -->
+							{% endfor %}
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+			
+			<label class="selection-label">Выберите элементы</label>
+			
+			<div class="checkbox-container">
+				{% for checkbox in location_form.cities %}
+					<div class="checkbox-item">
+						{{ checkbox }}
+					</div>
+				{% endfor %}
+			</div>
+			<div class="button">
+				<button type="submit">Начать игру</button>
+			</div>
+		</div>
+		<div class="settings-section">
+			<h1>Параметры</h1>
+			<p id="user-count-display">Выбрано пользователей: 0</p>
+			<br>
+			<label for="id_num_participants">{{ location_form.num_participants.label }} {{ location_form.num_participants }}</p>
+			<br>
+			<label for="id_num_rounds">{{ location_form.num_rounds.label }}</label> {{ location_form.num_rounds }}</p>
+			<br>
+			<label for="id_num_per_matchup">{{ location_form.num_per_matchup.label }}</label> {{ location_form.num_per_matchup }}</p>
+			<br>
+		</div>
+	</div>
+</form>
+
+
+{% endblock %}
+
+{% block scripts%}
+	<script src="{% static 'frontend/js/tournament-create.js' %}" type="module" defer></script>
+	<script src="{% static 'frontend/js/tournament-update.js' %}" type="module" defer></script>
+{% endblock %}

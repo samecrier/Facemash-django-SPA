@@ -74,7 +74,8 @@ class TournamentBase(models.Model):
 		'tournaments.TemplateTournament',
 		on_delete=models.PROTECT,
 		related_name='tournaments',
-		db_column='template_tournament_id'
+		db_column='template_tournament_id',
+		null=True, blank=True
 	)
 	competitors_number = models.PositiveIntegerField()
 	rounds_number = models.PositiveIntegerField()
@@ -113,7 +114,8 @@ class TournamentCompetitor(models.Model):
 	)
 	status = models.CharField(
 		max_length=255,
-		choices=STATUS_CHOICES
+		choices=STATUS_CHOICES,
+		default='active'
 		)
 	final_position = models.PositiveIntegerField(null=True, blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
@@ -133,7 +135,7 @@ class TournamentRound(models.Model):
 		related_name='rounds',
 		db_column='tournament_base_id'
 	)
-	round_number = models.PositiveIntegerField()
+	round_number = models.PositiveIntegerField(default=1)
 	competitors_in_matchup = models.PositiveIntegerField()
 	status = models.CharField(
 		max_length=255,

@@ -106,7 +106,7 @@ class APIRatingService(RatingService):
 		data = []
 		for competitor, rating in competitors:
 			data_competitor = {}
-			data_competitor["name"] = competitor.name_id
+			data_competitor["name"] = competitor.name
 			data_competitor["id"] = competitor.id
 			data_competitor["city"] = competitor.city.city_eng
 			data_competitor["rating"] = rating

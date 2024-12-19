@@ -107,3 +107,30 @@ nav.navbar a.active{
 	white-space: nowrap; /* Запрет на перенос текста */
 	max-width: 500px; /* Ограничение ширины ячейки */
 }
+
+.button {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.button button {
+	width: 80%;
+	background: #000cff; /* Градиент от светло-голубого к темно-голубому */
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: Consolas;
+	cursor: pointer;
+	text-align: center;
+	margin: 0 auto; /* Обеспечивает горизонтальное центрирование блока */
+	display: block; /* Делает кнопку блочным элементом */
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.button button:hover{
+	color: #000cff;
+	background-color: black;
+}
