@@ -78,6 +78,7 @@ class TournamentBase(models.Model):
 		null=True, blank=True
 	)
 	competitors_number = models.PositiveIntegerField()
+	competitors_remaining = models.PositiveIntegerField()
 	rounds_number = models.PositiveIntegerField()
 	status = models.CharField(
 		max_length=255,
@@ -118,6 +119,7 @@ class TournamentCompetitor(models.Model):
 		default='active'
 		)
 	final_position = models.PositiveIntegerField(null=True, blank=True)
+	delta_tournament = models.IntegerField(default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
@@ -135,6 +137,7 @@ class TournamentRound(models.Model):
 		related_name='rounds',
 		db_column='tournament_base_id'
 	)
+	rating_system = models.CharField(max_length=255, default='elo_32')
 	round_number = models.PositiveIntegerField(default=1)
 	competitors_in_matchup = models.PositiveIntegerField()
 	status = models.CharField(
@@ -153,6 +156,7 @@ class RoundCompetitor(models.Model):
 	STATUS_CHOICES = [
 		('qualified', 'qualified'),
 		('eliminated', 'eliminated'),
+		('in schedule', 'in schedule'),
 		('not played', 'not played')
 	]
 	RESULT_CHOICES = [
@@ -172,6 +176,7 @@ class RoundCompetitor(models.Model):
 		related_name='round_competitors',
 		db_column='tournament_round_id'
 	)
+	delta_tournament = models.IntegerField(default=0)
 	status = models.CharField(
 		max_length=255,
 		choices=STATUS_CHOICES,
@@ -183,7 +188,7 @@ class RoundCompetitor(models.Model):
 
 
 class TournamentMatchup(models.Model):
-
+	
 	tournament_round_id = models.ForeignKey(
 		'tournaments.TournamentRound',
 		on_delete=models.CASCADE,
@@ -198,11 +203,13 @@ class TournamentMatchup(models.Model):
 		'tournaments.RoundCompetitor',
 		on_delete=models.CASCADE,
 		related_name='matchup_winner',
-		db_column='winner_id'
+		db_column='winner_id',
+		null=True, blank=True
 	)
 	losers = models.ManyToManyField(
 		'tournaments.RoundCompetitor',
 		related_name='matchup_losers'
 	)
+	matchup_number = models.PositiveIntegerField()
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

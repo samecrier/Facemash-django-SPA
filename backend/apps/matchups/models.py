@@ -29,6 +29,13 @@ class Matchup(models.Model):
 		related_name='matchups',
 		db_column='profile_id'
 	)
+	tournament_matchup_id = models.ForeignKey(
+		'tournaments.TournamentMatchup',
+		on_delete=models.SET_NULL,
+		null=True, blank=True,
+		related_name='matchups',
+		db_column='tournament_matchup_id'
+	)
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	competitor_service = None

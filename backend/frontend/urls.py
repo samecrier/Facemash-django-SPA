@@ -10,8 +10,9 @@ urlpatterns = [
 	path('', MatchupView.as_view(), name='home'),  # Пример маршрута
 	
 	path('tournament/', HomeTournamentView.as_view(), name='tournament-home'),
-	path('tournament/<int:tournament_id>/<int:round_id>/<int:matchup_id>', MatchupTournamentView.as_view(), name='tournament-matchup'),
-	path('tournament/<int:tournament_id>/<int:round_id>', StageTournamentView.as_view(), name='tournament-stage'),
+	path('tournament/<int:tournament_id>/<int:round_number>/0', MatchupTournamentView.as_view(), name='tournament-matchup-actual'),
+	path('tournament/<int:tournament_id>/<int:round_number>/<int:matchup_number>', MatchupTournamentView.as_view(), name='tournament-matchup'),
+	path('tournament/<int:tournament_id>/<int:round_number>', StageTournamentView.as_view(), name='tournament-stage'),
 	path('tournament/<int:tournament_id>', TournamentView.as_view(), name='tournament-info'),
 	path('tournament/<int:tournament_id>/confirmation', ConfirmationCreateTournamentView.as_view(), name='tournament-confirmation'),
 	path('tournament/<int:tournament_id>/winner', WinnerTournamentView.as_view(), name='tournament-winner'),

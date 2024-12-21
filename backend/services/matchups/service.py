@@ -20,7 +20,8 @@ class LocalMatchupService(MatchupService):
 			delta_winner, delta_loser,
 			delta_winner_profile,
 			delta_loser_profile,
-			profile_id
+			profile_id,
+			tournament_matchup_id
 			
 	) -> None:
 		"""Просто создаю Matchup"""
@@ -33,7 +34,8 @@ class LocalMatchupService(MatchupService):
 			delta_loser=delta_loser,
 			delta_winner_profile=delta_winner_profile,
 			delta_loser_profile=delta_loser_profile,
-			profile_id=profile_id
+			profile_id=profile_id,
+			tournament_matchup_id=tournament_matchup_id
 		)
 		matchup.save()
 	

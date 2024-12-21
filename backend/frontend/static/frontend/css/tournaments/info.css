@@ -115,14 +115,6 @@ span.current {
 	white-space: normal;
 }
 
-.link-to-competitor {
-	margin-top: 10px;
-}
-
-.link-to-competitor a {
-	color: black;
-}
-
 .a-button {
 	margin-top: 10px;
 	display: flex; /* Используем Flexbox для центровки */
@@ -149,4 +141,12 @@ span.current {
 
 .a-button:hover a{
 	color: #000cff;
+}
+
+.rounds-info {
+	margin-top: 10px;
+}
+
+.rounds-info a {
+	color: black;
 }

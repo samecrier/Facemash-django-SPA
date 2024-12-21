@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block css %}
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/stage.css' %}">
+{% endblock %}
+{% block title%}
+Турниры
+{% endblock %}
+
+
+{% block content%}
+<div class="wrapper-tournament-stage">
+	<a href="{% url 'tournament-matchup' actual_round.tournament_base_id.id actual_round.round_number 0%}">Перейти к последнему матчапу раунда {{ actual_round.round_number }}</a>
+</div>
+{% endblock %}

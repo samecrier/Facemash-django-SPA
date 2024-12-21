@@ -5,6 +5,8 @@ from services.ratings.service import LocalRatingService
 from services.profiles.service import LocalProfileService
 from services.tournaments.service import LocalTournamentService
 from services.tournaments.helper import TournamentHelper
+from services.matchups.handler import MatchupHandler
+from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
 
 class TournamentHandler():
 	
@@ -15,7 +17,7 @@ class TournamentHandler():
 			rating_service = LocalRatingService(),
 			profile_service = LocalProfileService(),
 			tournament_service = LocalTournamentService(),
-			tournament_helper = TournamentHelper()
+			tournament_helper = TournamentHelper(),
 	):
 		self.competitor_service = competitor_service
 		self.matchup_service = matchup_service
@@ -40,10 +42,20 @@ class TournamentHandler():
 			competitors_number=participants,
 			rounds_number=rounds
 		)
-		round_obj = self.tournament_service.create_tournament_round(
-			tournament_base_id=tournament_obj,
-			competitors_in_matchup=in_matchup
-		)
+
+		for round_number in range(1, tournament_obj.rounds_number+1):
+			if round_number == 1:
+				round_obj = self.tournament_service.create_tournament_round(
+					tournament_base_id=tournament_obj,
+					competitors_in_matchup=in_matchup,
+					round_number=round_number
+				)
+			else:
+				self.tournament_service.create_tournament_round(
+					tournament_base_id=tournament_obj,
+					competitors_in_matchup=in_matchup,
+					round_number=round_number
+				)
 		for competitor in competitors:
 			tournament_competitor_obj = self.tournament_service.create_tournament_competitor(
 				tournament_base_id=tournament_obj,
@@ -54,3 +66,48 @@ class TournamentHandler():
 				tournament_round_id=round_obj,
 			)
 		return round_obj
+
+	@transaction.atomic
+	def process_tournament_matchup(self, request, matchup_id, winner_id, loser_ids):
+		rating_systems = {
+			'elo_32': EloRatingSystem32()
+		}
+		matchup_obj = self.tournament_service.get_matchup_obj_by_id(matchup_id)
+		
+		winner_id = int(winner_id)
+		loser_ids = [int(loser_id) for loser_id in loser_ids]
+		delta_data = {loser_id:0 for loser_id in loser_ids}
+		delta_data[winner_id] = 0
+		round_obj = matchup_obj.tournament_round_id
+	
+		matchup_handler = MatchupHandler(
+			request=request,
+			winner_id = winner_id,
+			loser_id=loser_ids,
+			rating_system=rating_systems[round_obj.rating_system],
+			tournament_matchup_id=matchup_obj
+		)
+		matchup_handler.process_matchup()
+
+		tournament_base = matchup_obj.tournament_round_id.tournament_base_id
+		
+		for round_competitor in matchup_obj.competitors_in_matchup.all():
+			competitor = round_competitor.tournament_competitor_id.competitor_id
+			if competitor.id == winner_id:
+				round_competitor.result = 1
+				matchup_obj.winner_id = round_competitor
+			else:
+				matchup_obj.losers.add(round_competitor)
+				round_competitor.result = 0
+				tournament_competitor = round_competitor.tournament_competitor_id
+				tournament_competitor.status = 'eliminated'
+				tournament_competitor.final_position = tournament_base.competitors_remaining
+				tournament_base.competitors_remaining = tournament_base.competitors_remaining-1
+				
+				tournament_competitor.save()
+				tournament_base.save()
+			
+			matchup_obj.save()
+			round_competitor.save()
+
+		print(matchup_id, '/', winner_id)

@@ -56,7 +56,7 @@
 								<span class="bold winner">+{{value.delta_winner}}</span>
 								<span class="bold">
 									<a href={% url 'competitor' value.loser_id.id %}>{{ value.loser_id.name }}</a>
-									{{ value.winner_id.rating.rating}}
+									{{ value.loser_id.rating.rating}}
 								</span>
 							</div> 
 							{% else %}
