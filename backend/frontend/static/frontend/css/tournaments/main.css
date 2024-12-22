@@ -2,7 +2,15 @@
 	margin-top: 50px;
 	margin-left: 100px;
 }
+.tournaments-list {
+	display: flex;
+	flex-direction: column;
+}
 
+.tournament {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
 .a-button {
 	margin-top: 10px;
 	margin-bottom: 10px;

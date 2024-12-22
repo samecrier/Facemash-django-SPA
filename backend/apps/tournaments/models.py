@@ -19,8 +19,8 @@ class TournamentRatingSystem(models.Model):
 
 class TemplateTournament(models.Model):
 	STATUS_CHOICES = [
-		('available', 'available'),    # Завершён
-		('archieved', 'archieved'),      # Отменён
+		('available', 'available'),
+		('archived', 'archived'),
 	]
 
 	template_name = models.CharField(max_length=255)
@@ -62,7 +62,8 @@ class TournamentBase(models.Model):
 	STATUS_CHOICES = [
 		('not started', 'not started'),
 		('in progress', 'in progress'),
-		('completed', 'completed')
+		('completed', 'completed'),
+		('archived', 'archived')
 	]
 	profile_id = models.ForeignKey(
 		'profiles.User',
@@ -97,15 +98,17 @@ class TournamentBase(models.Model):
 
 class TournamentCompetitor(models.Model):
 	STATUS_CHOICES = [
+		('not started', 'not started'),
 		('active', 'active'),
 		('eliminated', 'eliminated'),
-		('finished', 'finished')
+		('winner', 'winner')
 	]
 	tournament_base_id = models.ForeignKey(
 		'tournaments.TournamentBase',
-		on_delete=models.CASCADE,
+		on_delete=models.SET_NULL,
 		related_name='competitors',
-		db_column='tournament_base_id'
+		db_column='tournament_base_id',
+		null=True
 	)
 	competitor_id = models.ForeignKey(
 		'competitors.Competitor',
@@ -116,10 +119,11 @@ class TournamentCompetitor(models.Model):
 	status = models.CharField(
 		max_length=255,
 		choices=STATUS_CHOICES,
-		default='active'
+		default='not started'
 		)
 	final_position = models.PositiveIntegerField(null=True, blank=True)
 	delta_tournament = models.IntegerField(default=0)
+	delta_tournament_profile = models.IntegerField(default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
@@ -172,11 +176,13 @@ class RoundCompetitor(models.Model):
 	)
 	tournament_round_id = models.ForeignKey(
 		'tournaments.TournamentRound',
-		on_delete=models.CASCADE,
+		on_delete=models.SET_NULL,
 		related_name='round_competitors',
-		db_column='tournament_round_id'
+		db_column='tournament_round_id',
+		null=True
 	)
-	delta_tournament = models.IntegerField(default=0)
+	delta_round = models.IntegerField(default=0)
+	delta_round_profile = models.IntegerField(default=0)
 	status = models.CharField(
 		max_length=255,
 		choices=STATUS_CHOICES,
@@ -191,9 +197,10 @@ class TournamentMatchup(models.Model):
 	
 	tournament_round_id = models.ForeignKey(
 		'tournaments.TournamentRound',
-		on_delete=models.CASCADE,
+		on_delete=models.SET_NULL,
 		related_name='round_matchups',
-		db_column='tournament_round_id'
+		db_column='tournament_round_id',
+		null=True
 	)
 	competitors_in_matchup = models.ManyToManyField(
 		'tournaments.RoundCompetitor',

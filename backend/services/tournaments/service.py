@@ -20,8 +20,11 @@ class LocalTournamentService(TournamentService):
 		if isinstance(tournament_id, (str, int)):
 			return self.get_tournament_by_string(tournament_id)
 	
-	def get_tournaments(self):
+	def get_tournaments(self, order_by=None):
+		if order_by:
+			return TournamentBase.objects.all().order_by(order_by)
 		return TournamentBase.objects.all()
+		
 	
 	def create_tournament_base(self, profile_id, competitors_number, rounds_number):
 		tournament_base = TournamentBase.objects.create(
@@ -112,6 +115,20 @@ class LocalTournamentService(TournamentService):
 			return None
 		else:
 			return next_rounds[0]
+	
+	def get_winner_tournament_competitor(self, tournament_obj):
+		return tournament_obj.competitors.filter(status='active').first()
+
+	def update_winner(self, tournament_competitor_obj):
+		tournament_competitor_obj.status = 'winner'
+		tournament_competitor_obj.final_position = 1
+		tournament_competitor_obj.save()
+		return tournament_competitor_obj
+
+	def update_tournament_status(self, tournament_base_obj, winner_obj):
+		tournament_base_obj.status= 'completed'
+		tournament_base_obj.winner_id = winner_obj.competitor_id
+		tournament_base_obj.save()
 
 
 class APITournamentService(TournamentService):

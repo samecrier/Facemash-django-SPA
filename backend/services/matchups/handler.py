@@ -4,6 +4,7 @@ from services.matchups.service import LocalMatchupService
 from services.ratings.service import LocalRatingService
 from services.profiles.service import LocalProfileService
 from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
+from collections import defaultdict
 
 class MatchupHandler():
 
@@ -21,10 +22,8 @@ class MatchupHandler():
 		self.winner_id = winner_id
 		self.losers = loser_id
 
-		self.delta_winner = 0
-		self.delta_loser = 0
-		self.delta_winner_profile = 0
-		self.delta_loser_profile = 0
+		self.delta = defaultdict(int)
+		self.delta_profile = defaultdict(int)
 	
 	@transaction.atomic
 	def process_matchup(self) -> None:
@@ -32,32 +31,32 @@ class MatchupHandler():
 		Процесс расчета рейтингов и создания Matchup
 		"""
 
-		winner = self.competitor_service.get_competitor_object(self.winner_id)
+		winner_obj = self.competitor_service.get_competitor_object(self.winner_id)
 		if self.request.user.is_authenticated:
 			profile_id = self.request.user
 		else:
 			profile_id = self.profile_service.get_guest_profile()
-		curr_winner_rating = self.rating_service.get_rating(winner)
-		curr_winner_rating_profile = self.rating_service.get_rating_profile(profile_id, winner)
+		curr_winner_rating = self.rating_service.get_rating(winner_obj)
+		curr_winner_rating_profile = self.rating_service.get_rating_profile(profile_id, winner_obj)
 		
 		if isinstance(self.losers, (int, str)):
-			loser = self.losers
-			self.solo_matchup(winner, loser, curr_winner_rating, curr_winner_rating_profile)
+			loser_obj = self.losers
+			self.solo_matchup(winner_obj, loser_obj, curr_winner_rating, curr_winner_rating_profile)
 		elif isinstance(self.losers, list):
-			for loser in self.losers:
-				self.solo_matchup(winner, loser, curr_winner_rating, curr_winner_rating_profile)
+			for loser_obj in self.losers:
+				self.solo_matchup(winner_obj, loser_obj, curr_winner_rating, curr_winner_rating_profile)
 	
-	def solo_matchup(self, winner, loser, curr_winner_rating, curr_winner_rating_profile):
+	def solo_matchup(self, winner_obj, loser_obj, curr_winner_rating, curr_winner_rating_profile):
 		
-		loser = self.competitor_service.get_competitor_object(loser)
-		curr_loser_rating = self.rating_service.get_rating(loser)
+		loser_obj = self.competitor_service.get_competitor_object(loser_obj)
+		curr_loser_rating = self.rating_service.get_rating(loser_obj)
 
 		delta = self.rating_system.delta(curr_winner_rating, curr_loser_rating)
 		delta_winner = delta
 		delta_loser = -delta
 
-		self.delta_winner += delta_winner
-		self.delta_loser += delta_loser
+		self.delta[winner_obj] += delta_winner
+		self.delta[loser_obj] += delta_loser
 
 		if self.request.user.is_authenticated:
 			profile_id = self.request.user
@@ -65,19 +64,19 @@ class MatchupHandler():
 			profile_id = self.profile_service.get_guest_profile()
 		
 
-		curr_loser_rating_profile = self.rating_service.get_rating_profile(profile_id, loser)
+		curr_loser_rating_profile = self.rating_service.get_rating_profile(profile_id, loser_obj)
 		
 		delta_profile = self.rating_system.delta(curr_winner_rating_profile, curr_loser_rating_profile)
 		delta_winner_profile = delta_profile
 		delta_loser_profile = -delta_profile
 
-		self.delta_winner_profile += delta_winner_profile
-		self.delta_loser_profile += delta_loser_profile
+		self.delta_profile[winner_obj] += delta_winner_profile
+		self.delta_profile[loser_obj] += delta_loser_profile
 
 
 		self.matchup_service.create_matchup(
-				winner_id=winner,
-				loser_id=loser,
+				winner_id=winner_obj,
+				loser_id=loser_obj,
 				delta_winner=delta_winner,
 				delta_loser=delta_loser,
 				delta_winner_profile=delta_winner_profile,
@@ -87,8 +86,8 @@ class MatchupHandler():
 				tournament_matchup_id=self.tournament_matchup_id
 		)
 		
-		self.rating_service.update_matchup_rating(winner, delta_winner, 1)
-		self.rating_service.update_matchup_rating(loser, delta_loser, 0)
+		self.rating_service.update_matchup_rating(winner_obj, delta_winner, 1)
+		self.rating_service.update_matchup_rating(loser_obj, delta_loser, 0)
 
-		self.rating_service.update_matchup_ratingprofile(profile_id, winner, delta_winner_profile, 1)
-		self.rating_service.update_matchup_ratingprofile(profile_id, loser, delta_loser_profile, 0)
+		self.rating_service.update_matchup_ratingprofile(profile_id, winner_obj, delta_winner_profile, 1)
+		self.rating_service.update_matchup_ratingprofile(profile_id, loser_obj, delta_loser_profile, 0)

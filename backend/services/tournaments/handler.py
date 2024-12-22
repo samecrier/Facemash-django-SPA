@@ -33,8 +33,10 @@ class TournamentHandler():
 			profile_id = request.user
 			competitors = self.competitor_service.fetch_competitors_by_location(cities)
 			competitor_for_tournament = self.tournament_helper.choose_random_competitors(competitors, participants)
-			round_obj = self.initiate_of_tournament(profile_id, competitor_for_tournament, participants, rounds, in_matchup)
-		
+			tournament_obj, round_obj = self.initiate_of_tournament(profile_id, competitor_for_tournament, participants, rounds, in_matchup)
+			tournament_id = tournament_obj.id
+			round_number = round_obj.round_number
+			return (tournament_id, round_number)
 	
 	def initiate_of_tournament(self, profile_id, competitors, participants, rounds, in_matchup):
 		tournament_obj = self.tournament_service.create_tournament_base(
@@ -65,7 +67,7 @@ class TournamentHandler():
 				tournament_competitor_id=tournament_competitor_obj,
 				tournament_round_id=round_obj,
 			)
-		return round_obj
+		return (tournament_obj, round_obj)
 
 	@transaction.atomic
 	def process_tournament_matchup(self, request, matchup_id, winner_id, loser_ids):
@@ -90,24 +92,36 @@ class TournamentHandler():
 		matchup_handler.process_matchup()
 
 		tournament_base = matchup_obj.tournament_round_id.tournament_base_id
-		
+		print('МАТЧАП ДЕЛЬТА')
+		print(matchup_handler.delta)
 		for round_competitor in matchup_obj.competitors_in_matchup.all():
 			competitor = round_competitor.tournament_competitor_id.competitor_id
+			tournament_competitor = round_competitor.tournament_competitor_id
 			if competitor.id == winner_id:
 				round_competitor.result = 1
+				round_competitor.status = 'qualified'
+				round_competitor.delta_round = matchup_handler.delta[competitor]
+				round_competitor.delta_round_profile = matchup_handler.delta_profile[competitor]
+				tournament_competitor.delta_tournament += matchup_handler.delta[competitor]
+				tournament_competitor.delta_tournament_profile += matchup_handler.delta_profile[competitor]
+				if tournament_competitor.status == 'not started':
+					tournament_competitor.status = 'active'
 				matchup_obj.winner_id = round_competitor
 			else:
 				matchup_obj.losers.add(round_competitor)
 				round_competitor.result = 0
-				tournament_competitor = round_competitor.tournament_competitor_id
 				tournament_competitor.status = 'eliminated'
+				round_competitor.status = 'eliminated'
+				round_competitor.delta_round = matchup_handler.delta[competitor]
+				round_competitor.delta_round_profile = matchup_handler.delta_profile[competitor]
+				tournament_competitor.delta_tournament += matchup_handler.delta[competitor]
+				tournament_competitor.delta_tournament_profile += matchup_handler.delta_profile[competitor]
 				tournament_competitor.final_position = tournament_base.competitors_remaining
 				tournament_base.competitors_remaining = tournament_base.competitors_remaining-1
-				
-				tournament_competitor.save()
 				tournament_base.save()
 			
-			matchup_obj.save()
+			tournament_competitor.save()
 			round_competitor.save()
+			matchup_obj.save()
 
 		print(matchup_id, '/', winner_id)

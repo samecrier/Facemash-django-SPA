@@ -38,9 +38,8 @@ class CreateTournamentView(View):
 			participants = location_form.cleaned_data['num_participants']
 			rounds = location_form.cleaned_data['num_rounds']
 			in_matchup = location_form.cleaned_data['num_per_matchup']
-			self.handler_service.process_tournament(request, cities, participants, rounds, in_matchup)
-			
-			return redirect(reverse('tournament-create'))  # Редирект при успешной обработке
+			tournament_id, round_number = self.handler_service.process_tournament(request, cities, participants, rounds, in_matchup)
+			return redirect('tournament-stage', tournament_id, round_number) # Редирект при успешной обработке
 		else:
 			# Возвращаем форму с ошибками
 			return render(request, 'frontend/tournaments/create.html', {'location_form': location_form})
@@ -77,6 +76,7 @@ class StageTournamentView(View):
 	def get(self, request, tournament_id, round_number):
 		actual_round = self.helper_service.get_certain_round_obj(tournament_id, round_number)
 		generate_matchups = self.helper_service.get_actual_matchups(actual_round)
+		
 		return render(request, 'frontend/tournaments/stage.html', {'actual_round':actual_round})
 		# matchups = self.helper_service.get_actual_matchup(actual_round)
 

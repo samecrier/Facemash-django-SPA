@@ -34,7 +34,7 @@ class TournamentHelper():
 		return participants_list
 	
 	def get_tournaments_base(self):
-		tournaments = self.tournament_service.get_tournaments()
+		tournaments = self.tournament_service.get_tournaments(order_by='created_at')
 		return tournaments
 	
 	def get_competitors_info(self, tournament_id):
@@ -81,12 +81,18 @@ class TournamentHelper():
 			data[f'{i}_id'] = competitor.id
 		return data
 	
+	def end_tournament(self, tournament_base_obj):
+		winner_obj = self.tournament_service.get_winner_tournament_competitor(tournament_base_obj)
+		update_winner = self.tournament_service.update_winner(winner_obj)
+		self.tournament_service.update_tournament_status(tournament_base_obj, update_winner)
+
 	def turn_next_round(self, tournament_id, round_number):
 		round_obj = self.tournament_service.get_round_obj_by_tournament_string(tournament_id, round_number)
 		self.tournament_service.update_status_round(round_obj, 'completed')
 		tournament_base_obj = round_obj.tournament_base_id
 		next_round_obj = self.tournament_service.next_round(tournament_base_obj, round_number)
 		if not next_round_obj:
+			self.end_tournament(tournament_base_obj)
 			return None
 		else:
 			next_round_competitors = tournament_base_obj.competitors.filter(status='active').order_by('?')
@@ -112,7 +118,7 @@ class TournamentHelper():
 	
 	def get_winner(self, tournament_id):
 		tournament = self.tournament_service.get_tournament_by_string(tournament_id)
-		return tournament.competitors.filter(status='active').first().competitor_id
+		return tournament.winner_id
 		
 
 	@transaction.atomic
