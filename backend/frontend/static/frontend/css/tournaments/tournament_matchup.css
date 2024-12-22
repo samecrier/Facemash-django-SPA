@@ -1,0 +1,36 @@
+div.wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+} 
+
+.tournament-matchup-info{
+	display: flex;
+	justify-content: center;
+}
+
+.competitors-block {
+	display: flex;
+	justify-content: space-evenly;
+	margin-left: 0px;
+}
+
+.competitor:last-child .slider-images {
+	margin-right: 0px;
+}
+
+.slider-images {
+	margin-right: 0;
+
+}
+div.competitor {
+	margin-left: 0px;
+} 
+
+div.competitor-1 {
+	margin-left: 0px;
+} 
+
+div.refresh-block {
+	color: #8800ff;
+}

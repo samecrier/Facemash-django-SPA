@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block css %}
+<link rel="stylesheet" href="{% static 'css/base_tournament.css' %}">
 <link rel="stylesheet" href="{% static 'frontend/css/matchup.css' %}">
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/tournament_matchup.css' %}">
 {% endblock %}
 {% block title%}Facemash{% endblock %}
 
@@ -9,8 +11,10 @@
 {% block content %}
 <main>
 	<div class="wrapper">
+		<div class="tournament-matchup-info">
+		<h1>{{matchup.matchup_number}} матчап</h1>
+		</div>
 		<div class="competitors-block">
-		{{matchup.matchup_number}}
 		{% for competitor_key, competitor_data in data.items %}
 			<div class="{% if forloop.first %}competitor-1{% endif %} competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
 				<div class="slider">

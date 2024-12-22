@@ -72,13 +72,16 @@ class TournamentView(View):
 
 class StageTournamentView(View):
 	helper_service = TournamentHelper()
-
+	data_service = TournamentGetData()
+	
 	def get(self, request, tournament_id, round_number):
 		actual_round = self.helper_service.get_certain_round_obj(tournament_id, round_number)
-		generate_matchups = self.helper_service.get_actual_matchups(actual_round)
-		
-		return render(request, 'frontend/tournaments/stage.html', {'actual_round':actual_round})
-		# matchups = self.helper_service.get_actual_matchup(actual_round)
+		matchups = self.helper_service.get_actual_matchups(actual_round)
+		data = self.data_service.get_data_stage(request, matchups)
+		return render(request, 'frontend/tournaments/stage.html',
+			{
+				'data': data
+			})
 
 
 class MatchupTournamentView(View):

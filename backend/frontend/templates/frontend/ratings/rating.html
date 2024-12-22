@@ -21,9 +21,9 @@
 			<table>
 				<tbody>
 					{% for competitor, rating in page_obj%}
-					<tr class="competitor-row" data-competitor-id="{{ competitor.id }}">
+					<tr class="competitor-row">
 						<td>{{ start_position|add:forloop.counter }}</td>
-						<td class="competitor-name">{{ competitor.name }}</td>
+						<td class="competitor-name" data-competitor-id="{{ competitor.id }}">{{ competitor.name }}</td>
 						<td>{% if competitor.age %}{{ competitor.age }}{% else %}-{% endif %}</td>
 						<td>{{ competitor.city.city_eng }}</td>
 						<td>{{ rating }}</td>

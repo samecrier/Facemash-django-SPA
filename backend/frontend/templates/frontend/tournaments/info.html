@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% load static%}
 {% block css %}
+<link rel="stylesheet" href="{% static 'css/base_tournament.css' %}">
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/info.css' %}">
 {% endblock %}
 {% block title%}
-Турниры
+Tournament Info Page
 {% endblock %}
 
 
@@ -12,15 +13,18 @@
 <main>
 	<div class="wrapper-tournament-info">
 		<div class="list-info">
+			<div class="tournament-competitors-info">
+				<h1>Участники</h1>
+			</div>
 			<div class="table-info">
 			<table>
 				<tbody>
 					{% for competitor in page_obj%}
-					<tr class="competitor-row" data-competitor-id="{{ competitor.id }}">
+					<tr class="competitor-row" >
 						<td>{{ start_position|add:forloop.counter }}</td>
-						<td class="competitor-name">{{ competitor.name }}</td>
+						<td class="competitor-name" data-competitor-id="{{ competitor.id }}">{{ competitor.name }}</td>
 						<td>{% if competitor.age %}{{ competitor.age }}{% else %}-{% endif %}</td>
-						<td>{{ competitor.city.city_eng }}</td>
+						<td class="competitor-city">{{ competitor.city.city_eng }}</td>
 						<td>{{ competitor.rating.rating }}</td>
 					</tr>
 					{% endfor %}
@@ -66,9 +70,6 @@
 			<div class="a-button">
 				<a href='{% url 'tournament-stage' actual_round.tournament_base_id.id actual_round.round_number%}'>Перейти к турниру</a>
 			</div>
-			<div class="rounds-info">
-			Актуальный раунд: <a href="{% url 'tournament-stage' actual_round.tournament_base_id.id actual_round.round_number%}">{{ actual_round.round_number }}</a>
-			</div>
 		</div>
 		<div id="profile-detail">
 			<div id="profile-photos"></div>
@@ -82,6 +83,3 @@
 </script>
 <script src="{% static 'frontend/js/rating-competitor.js' %}" type="module" defer></script>
 {% endblock %}
-
-
-<link rel="stylesheet" href="{% static 'frontend/css/tournaments/stage.css' %}">

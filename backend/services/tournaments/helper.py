@@ -119,15 +119,20 @@ class TournamentHelper():
 	def get_winner(self, tournament_id):
 		tournament = self.tournament_service.get_tournament_by_string(tournament_id)
 		return tournament.winner_id
-		
+	
+	def get_matchups_from_round_obj(self, round_obj, order_by=None):
+		if order_by:
+			return round_obj.round_matchups.all().order_by(order_by)
+		return round_obj.round_matchups.all()
 
 	@transaction.atomic
 	def get_actual_matchups(self, round_obj):
-		matchups = list(round_obj.round_matchups.all())
+		matchups = self.get_matchups_from_round_obj(round_obj, 'matchup_number')
 		if not matchups:
 			round_competitors = list(round_obj.round_competitors.all())
 			random.shuffle(round_competitors)
 			matchups = self.tournament_service.generate_round_matchups(round_obj, round_competitors)
+		return matchups
 
 		#тут нужен код который будет возвращать первый матчап без winner
 		#расчитать матчап winner_id losers_id и поменять им статус в round_competitor на соответствующий

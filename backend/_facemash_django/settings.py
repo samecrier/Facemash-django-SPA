@@ -55,6 +55,7 @@ MIDDLEWARE = [
 	'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'middleware.query_count.QueryCountMiddleware',
 ]
 
 ROOT_URLCONF = '_facemash_django.urls'
@@ -143,3 +144,24 @@ AUTH_USER_MODEL = 'profiles.User'
 LOGIN_REDIRECT_URL = '/profile/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
+
+LOGGING = {
+	'version': 1,
+	'disable_existing_loggers': False,
+	'handlers': {
+		'console': {
+			'class': 'logging.StreamHandler',
+		},
+	},
+	'loggers': {
+		'django': {
+			'handlers': ['console'],
+			'level': 'INFO',
+		},
+		'middleware.query_count': {
+			'handlers': ['console'],
+			'level': 'INFO',
+			'propagate': False,
+		},
+	},
+}

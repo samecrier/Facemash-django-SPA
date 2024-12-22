@@ -75,6 +75,9 @@ class LocalTournamentService(TournamentService):
 			self.change_round_competitor_status(competitor, 'in schedule')
 		matchup_obj.competitors_in_matchup.set(matchup_competitors)
 	
+	def get_round_matchups(self, round_obj):
+		return round_obj.round_matchup.all()
+	
 	def generate_round_matchups(self, round_obj, round_competitors):
 		competitors_in_matchup = round_obj.competitors_in_matchup
 		matchup_number = 0
@@ -84,6 +87,7 @@ class LocalTournamentService(TournamentService):
 				matchup = self.create_tournament_matchup(round_obj, matchup_number)
 			matchup.competitors_in_matchup.add(round_competitor)
 			self.change_round_competitor_status(round_competitor, 'in schedule')
+		return self.get_round_matchups(round_obj)
 
 	def get_round_obj_by_tournament_obj(self, tournament_obj, round_number):
 		round_obj = tournament_obj.rounds.filter(round_number=round_number).first()

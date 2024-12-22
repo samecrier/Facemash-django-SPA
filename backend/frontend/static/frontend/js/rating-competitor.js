@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-	const competitorRows = document.querySelectorAll('.competitor-row');
+	const competitorRows = document.querySelectorAll('.competitor-name');
 
 	competitorRows.forEach(row => {
 		row.addEventListener('click', async () => {

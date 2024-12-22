@@ -1,0 +1,136 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+body {
+	font-family: Consolas;
+}
+div.logo {
+	margin-left:50px;
+}
+img.img_logo {
+	width: 45%;
+}
+header.header {
+	margin-top: 10px;
+	display:flex;
+	justify-content: space-between;
+	align-items: center; /* Центрирует по вертикали */
+}
+
+nav.navbar ul{
+	display: flex;
+	justify-content: space-between;
+	list-style: none; /* Убирает маркеры списка */
+}
+
+nav.navbar li{
+	margin-right: 25px;
+}
+
+nav.navbar a{
+	font-size: 25pt;
+	color: black;
+	text-decoration: none; /* Подчеркивание */
+}
+
+nav.navbar a.active{
+	font-size: 25pt;
+	color: black;
+	text-decoration: underline; /* Подчеркивание */
+	text-decoration-color: #8800ff; /* Цвет подчеркивания */
+	text-decoration-thickness: 5px; /* Толщина подчеркивания */
+	text-underline-offset: 10px; /* Отступ подчеркивания от текста */
+}
+
+.slider-images {
+	width: 380px;           /* Ширина квадратного канваса */
+	height: 480px;          /* Высота квадратного канваса */
+	background-color: white; /* Белый фон канваса */
+	border: 6px solid black; /* Чёрная рамка */
+	display: flex;          /* Включаем Flexbox */
+	align-items: center;    /* Центрирование по вертикали */
+	justify-content: center; /* Центрирование по горизонтали */
+	box-sizing: border-box;
+	overflow: hidden;
+}
+.slider-images img {
+	width: auto;               /* Ширина автоматически подстраивается */
+	height: 100%;              /* Заполнение по высоте */
+	object-fit: contain;       /* Сохраняем пропорции с белыми полосами по ширине */
+	object-position: center;   /* Центрируем изображение */
+	display: block;            /* Убеждаемся, что изображение ведёт себя как блочный элемент */
+}
+
+/* Стили переключателей */
+.slider-controls {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+
+.slider-controls input {
+	display: none;
+}
+
+.slider-controls label {
+	width: 15px;
+	height: 15px;
+	background-color: black;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.slider-controls input:checked + label {
+	background-color: #8800ff;
+	box-shadow: 0 0 5px #8800ff;
+}
+
+.top-rating h1 {
+	margin: 0;
+	line-height: 1;
+}
+
+.top-rating table {
+	margin-top: 23px;
+	border-collapse: collapse; /* Убирает промежутки между ячейками */
+	width: 100%; /* Таблица занимает всю ширину */
+}
+
+.top-rating td, th {
+	padding: 5px; /* Добавляет немного отступов */
+	text-align: left; /* Выравнивает текст по левому краю */
+	white-space: nowrap; /* Запрет на перенос текста */
+	max-width: 500px; /* Ограничение ширины ячейки */
+}
+
+.button {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.button button {
+	width: 80%;
+	background: #8800ff; /* Градиент от светло-голубого к темно-голубому */
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: Consolas;
+	cursor: pointer;
+	text-align: center;
+	margin: 0 auto; /* Обеспечивает горизонтальное центрирование блока */
+	display: block; /* Делает кнопку блочным элементом */
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.button button:hover{
+	color: #8800ff;
+	background-color: black;
+}

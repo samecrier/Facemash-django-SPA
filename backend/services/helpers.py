@@ -4,6 +4,7 @@ from services.ratings.service import LocalRatingService
 from services.profiles.service import LocalProfileService
 from services.matchups.service import LocalMatchupService
 from django.utils.safestring import mark_safe
+from collections import defaultdict
 import json
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -33,3 +34,18 @@ class Helper():
 			"images": images, "initial_image":initial_image, 
 			"other_images":other_images, "image_count":image_count
 		}
+	
+	@staticmethod
+	def convert_to_dict(obj):
+		if isinstance(obj, defaultdict):
+			# Преобразуем defaultdict в обычный словарь
+			return {key: Helper.convert_to_dict(value) for key, value in obj.items()}
+		elif isinstance(obj, dict):
+			# Рекурсивно обрабатываем словари
+			return {key: Helper.convert_to_dict(value) for key, value in obj.items()}
+		elif isinstance(obj, list):
+			# Рекурсивно обрабатываем списки
+			return [Helper.convert_to_dict(item) for item in obj]
+		else:
+			# Возвращаем неизмененные объекты
+			return obj

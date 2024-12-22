@@ -92,8 +92,6 @@ class TournamentHandler():
 		matchup_handler.process_matchup()
 
 		tournament_base = matchup_obj.tournament_round_id.tournament_base_id
-		print('МАТЧАП ДЕЛЬТА')
-		print(matchup_handler.delta)
 		for round_competitor in matchup_obj.competitors_in_matchup.all():
 			competitor = round_competitor.tournament_competitor_id.competitor_id
 			tournament_competitor = round_competitor.tournament_competitor_id

@@ -4,8 +4,13 @@
 	margin-left: 100px;
 }
 
+.tournament-competitors-info {
+	display: flex;
+	justify-content: center;
+}
+
 .table-info { 
-	width: 430px;
+	width: 100%;
 }
 
 .table-info table {
@@ -15,13 +20,25 @@
 }
 
 .table-info td, th {
-	padding: 5px; /* Добавляет немного отступов */
-	text-align: left; /* Выравнивает текст по левому краю */
+	padding-top: 5px; /* Добавляет немного отступов */
+	padding-bottom: 5px;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center; /* Выравнивает текст по левому краю */
 	white-space: nowrap; /* Запрет на перенос текста */
 	max-width: 500px; /* Ограничение ширины ячейки */
 }
+
 td.competitor-name {
 	text-decoration: underline;
+	text-align: left;
+	cursor: pointer; /* Указывает, что элемент кликабельный */
+	transition: background-color 0.3s ease;
+
+}
+
+td.competitor-city {
+	text-align: left;
 }
 
 div.pagination {
@@ -34,7 +51,39 @@ div.pagination a {
 }
 
 span.current { 
-	color: #000cff;
+	color: #8800ff;
+}
+
+.a-button {
+	margin-top: 10px;
+	display: flex; /* Используем Flexbox для центровки */
+	justify-content: center; /* Центрирование по горизонтали */
+	align-items: center; /* Центрирование по вертикали */
+	width: 300px;
+	height: 50px;
+	margin: 20px auto;
+	border-radius: 10px;
+	background-color:#8800ff;
+	text-align: center;
+	font-size: 20pt;
+	font-weight: bold;
+}
+
+.a-button a, a:visited{
+	text-decoration: none;
+	color: white;
+}
+
+.a-button:hover{
+	background-color: black;
+}
+
+.a-button:hover a{
+	color: #8800ff;
+}
+
+.link-to-competitor a {
+	color: black;
 }
 
 #profile-detail {
@@ -42,12 +91,6 @@ span.current {
 	margin-left: 100px;
 	display: flex;
 }
-
-.competitor-row {
-	cursor: pointer; /* Указывает, что элемент кликабельный */
-	transition: background-color 0.3s ease;
-}
-
 
 .slider {
 	width: 100%;
@@ -82,8 +125,8 @@ span.current {
 }
 
 .slider-controls input:checked + label {
-	background-color: #000cff;
-	box-shadow: 0 0 5px #000cff;
+	background-color: #8800ff;
+	box-shadow: 0 0 5px #8800ff;
 }
 
 .slider {
@@ -113,40 +156,4 @@ span.current {
 	word-wrap: break-word;
 	word-break: break-word;
 	white-space: normal;
-}
-
-.a-button {
-	margin-top: 10px;
-	display: flex; /* Используем Flexbox для центровки */
-	justify-content: center; /* Центрирование по горизонтали */
-	align-items: center; /* Центрирование по вертикали */
-	width: 300px;
-	height: 50px;
-	margin: 20px auto;
-	border-radius: 10px;
-	background-color:#000cff;
-	text-align: center;
-	font-size: 20pt;
-	font-weight: bold;
-}
-
-.a-button a, a:visited{
-	text-decoration: none;
-	color: white;
-}
-
-.a-button:hover{
-	background-color: black;
-}
-
-.a-button:hover a{
-	color: #000cff;
-}
-
-.rounds-info {
-	margin-top: 10px;
-}
-
-.rounds-info a {
-	color: black;
 }
