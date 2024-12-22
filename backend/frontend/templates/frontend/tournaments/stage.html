@@ -10,6 +10,6 @@
 
 {% block content%}
 <div class="wrapper-tournament-stage">
-	<a href="{% url 'tournament-matchup' actual_round.tournament_base_id.id actual_round.round_number 0%}">Перейти к последнему матчапу раунда {{ actual_round.round_number }}</a>
+	<a href="{% url 'tournament-matchup-actual' actual_round.tournament_base_id.id actual_round.round_number%}">Перейти к последнему матчапу раунда {{ actual_round.round_number }}</a>
 </div>
 {% endblock %}

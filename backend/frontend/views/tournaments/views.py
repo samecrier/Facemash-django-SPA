@@ -57,8 +57,9 @@ class TournamentView(View):
 	
 	def get(self, request, tournament_id):
 		competitors = self.helper_service.get_competitors_info(tournament_id)
-		actual_round = self.helper_service.get_actual_round_obj_by_tournament(tournament_id)
-		print(actual_round)
+		actual_round = self.helper_service.get_actual_round_obj_by_tournament_string(tournament_id)
+		if not actual_round:
+			return redirect('tournament-winner', tournament_id)
 		paginator = Paginator(competitors, 20)
 		page_number = request.GET.get('page', 1)
 		page_obj = paginator.get_page(page_number)
@@ -84,9 +85,14 @@ class MatchupTournamentView(View):
 	helper_service = TournamentHelper()
 	data_service = MatchupGetData()
 	handler=TournamentHandler()
-	def get(self, request, tournament_id, round_number, matchup_number=0):
-		if matchup_number == 0:
+	def get(self, request, tournament_id, round_number, matchup_number=None):
+		if not matchup_number:
 			competitors_in_matchup, matchup_obj = self.helper_service.get_actual_matchup(tournament_id, round_number)
+			if not matchup_obj:
+				next_round_number = self.helper_service.turn_next_round(tournament_id, round_number)
+				if not next_round_number:
+					return redirect('tournament-winner', tournament_id)
+				return redirect('tournament-stage', tournament_id, next_round_number)
 			data = self.data_service.data_matchup(**competitors_in_matchup)
 			return render(request, 'frontend/tournaments/tournament_matchup.html',
 				{
@@ -94,7 +100,7 @@ class MatchupTournamentView(View):
 					'matchup': matchup_obj,
 				})
 		
-	def post(self, request, tournament_id, round_number, matchup_number=0):
+	def post(self, request, tournament_id, round_number, matchup_number=None):
 		matchup_id = request.POST.get("matchup_id")
 		winner_id = request.POST.get("winner_id")
 		loser_ids = request.POST.get("loser_ids")
@@ -105,4 +111,10 @@ class MatchupTournamentView(View):
 		return redirect('tournament-matchup-actual', tournament_id=tournament_id, round_number=round_number)
 
 class WinnerTournamentView(View):
-	pass
+	helper_service = TournamentHelper()
+	
+	def get(self, request, tournament_id):
+		winner = self.helper_service.get_winner(tournament_id)
+		return render(request, 'frontend/tournaments/winner.html',
+				{'winner': winner}
+			)

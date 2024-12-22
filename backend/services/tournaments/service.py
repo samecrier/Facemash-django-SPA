@@ -48,10 +48,10 @@ class LocalTournamentService(TournamentService):
 		)
 		return tournament_competitor
 
-	def create_round_competitor(self, tournament_competitor_id, tournament_round_id):
+	def create_round_competitor(self, tournament_round_id, tournament_competitor_id):
 		round_competitor = RoundCompetitor.objects.create(
-			tournament_competitor_id=tournament_competitor_id,
 			tournament_round_id=tournament_round_id,
+			tournament_competitor_id=tournament_competitor_id,
 		)
 		return round_competitor
 	
@@ -82,7 +82,12 @@ class LocalTournamentService(TournamentService):
 			matchup.competitors_in_matchup.add(round_competitor)
 			self.change_round_competitor_status(round_competitor, 'in schedule')
 
-	def get_round_obj(self, tournament_obj, round_number):
+	def get_round_obj_by_tournament_obj(self, tournament_obj, round_number):
+		round_obj = tournament_obj.rounds.filter(round_number=round_number).first()
+		return round_obj
+	
+	def get_round_obj_by_tournament_string(self, tournament_id, round_number):
+		tournament_obj = self.get_tournament_by_string(tournament_id)
 		round_obj = tournament_obj.rounds.filter(round_number=round_number).first()
 		return round_obj
 
@@ -96,6 +101,18 @@ class LocalTournamentService(TournamentService):
 	def get_matchup_obj_by_id(self, matchup_id):
 		matchup_obj = self.get_matchup_by_string(matchup_id)
 		return matchup_obj
+	
+	def update_status_round(self, round_obj, status):
+		round_obj.status = status
+		round_obj.save()
+
+	def next_round(self, tournament_obj, round_number):
+		next_rounds = tournament_obj.rounds.filter(round_number__gt=round_number).order_by('round_number')
+		if not next_rounds:
+			return None
+		else:
+			return next_rounds[0]
+
 
 class APITournamentService(TournamentService):
 	

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static%}
+{% block css %}
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/winner.css' %}">
+{% endblock %}
+{% block title%}
+Турниры
+{% endblock %}
+
+
+{% block content%}
+<div class="wrapper-tournament-winner">
+Выиграла {{winner}}
+</div>
+{% endblock %}
