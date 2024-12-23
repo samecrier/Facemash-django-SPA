@@ -1,19 +1,30 @@
 .wrapper-tournament-main {
 	margin-top: 50px;
 	margin-left: 100px;
+	display: flex;
 }
-.tournaments-list {
+
+.tournament-progress {
 	display: flex;
 	flex-direction: column;
 }
 
-.tournament {
-	margin-top: 5px;
-	margin-bottom: 5px;
+.tournament-completed {
+	display: flex;
+	flex-direction: column;
+	margin-left: 50px;
 }
+
+
+.header-tournament {
+	margin-bottom: 23px;
+}
+.to-button {
+	margin-bottom: 23px;
+	margin-left: 50px;
+}
+
 .a-button {
-	margin-top: 10px;
-	margin-bottom: 10px;
 	display: flex; /* Используем Flexbox для центровки */
 	justify-content: center; /* Центрирование по горизонтали */
 	align-items: center; /* Центрирование по вертикали */
@@ -24,21 +35,27 @@
 	text-align: center;
 	font-size: 20pt;
 	font-weight: bold;
+
 }
 
-.a-button a, a:visited{
+div.a-button a, a:visited{
 	text-decoration: none;
 	color: white;
 }
 
-.a-button:hover{
+div.a-button:hover{
 	background-color: black;
 }
 
-.a-button:hover a{
+div.a-button:hover a{
 	color: #8800ff;
 }
 
 .tournaments-list a {
+	color: black;
+}
+
+
+.tournament-completed a, a:visited{
 	color: black;
 }

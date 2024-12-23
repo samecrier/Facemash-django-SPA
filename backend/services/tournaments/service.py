@@ -1,6 +1,9 @@
 from django.db import transaction
+from django.db.models.functions import Coalesce
+from django.db.models import Value
 from abc import ABC, abstractmethod
 from apps.tournaments.models import TournamentBase, TournamentCompetitor, TournamentRound, RoundCompetitor, TournamentMatchup, TournamentSystem, TournamentRatingSystem, TemplateTournament, TemplateRound
+
 
 class TournamentService(ABC):
 
@@ -25,7 +28,6 @@ class LocalTournamentService(TournamentService):
 			return TournamentBase.objects.all().order_by(order_by)
 		return TournamentBase.objects.all()
 		
-	
 	def create_tournament_base(self, profile_id, competitors_number, rounds_number):
 		tournament_base = TournamentBase.objects.create(
 			profile_id=profile_id,
@@ -134,6 +136,8 @@ class LocalTournamentService(TournamentService):
 		tournament_base_obj.winner_id = winner_obj.competitor_id
 		tournament_base_obj.save()
 
+	def sort_competitors_with_null(self, obj):
+		return obj.competitors.all().order_by(Coalesce('final_position', Value(0)))
 
 class APITournamentService(TournamentService):
 	

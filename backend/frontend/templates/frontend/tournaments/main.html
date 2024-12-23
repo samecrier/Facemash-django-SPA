@@ -11,15 +11,33 @@
 
 {% block content%}
 <div class="wrapper-tournament-main">
+	
 	<div class="tournaments-list">
-	{% for tournament in tournaments %}
-		<div class="tournament">
-			<a href="{% url 'tournament-info' tournament.id%}">Турнир id#{{ tournament.id }}</a> {{tournament.status}}
+		<div class="header-tournament">
+			<h1>Активные турниры</h1>
 		</div>
-	{% endfor %}
+		<div class="tournament-progress">
+		{% for tournament, value in data.in_progress_tournaments.items %}
+			<p><a href="{% url 'tournament-stage' value.tournament_id value.actual_round %}">Турнир id#{{ value.tournament_id }}</a> {{value.status}}</p>
+		{% endfor %}
+		</div>
 	</div>
-	<div class="a-button">
-	<a href="{% url 'tournament-create'%}">Создать турнир</a>
+
+
+	<div class="tournament-completed">
+		<div class="header-tournament">
+			<h1>Завершенные турниры</h1>
+		</div>
+		{% for tournament, value in data.completed_tournaments.items %}
+			<p><a href="{% url 'tournament-info' value.tournament_id %}">Турнир id#{{ value.tournament_id }}</a> Победила: <a href="{% url 'competitor' value.winner_id.id %}">{{value.winner_id.name}}</a></p>
+		{% endfor %}
 	</div>
+
+	<div class="to-button">
+		<div class="a-button">
+			<a href="{% url 'tournament-create'%}">Создать турнир</a>
+		</div>
+	</div>
+
 </div>
 {% endblock %}

@@ -12,10 +12,10 @@
 <main>
 	<div class="wrapper">
 		<div class="tournament-matchup-info">
-			{% if matchup.winner_id%}
+			{% if matchup.winner_id and not tournament.winner_id %}
 			<div class="actual-matchup-button">
 				<div class="a-button">
-					<a href="{% url 'tournament-matchup-actual' tournament_id round_number %}">Перейти к актуальному матчапу {{ actual_round.round_number }}</a>
+					<a href="{% url 'tournament-matchup-actual' tournament.id round_number %}">Перейти к актуальному матчапу {{ actual_round.round_number }}</a>
 				</div>
 			</div>
 			{% endif %}
@@ -23,7 +23,7 @@
 				<h1>Раунд номер {{round_number }} // {{matchup.matchup_number}} матчап из {{matchups_count}} </h1>
 			</div>
 			<div class="tournament-stage-button">
-				<a href="{% url 'tournament-stage' tournament_id round_number %}">Подробнее о раунде</a>
+				<a href="{% url 'tournament-stage' tournament.id round_number %}">Подробнее о раунде</a>
 			</div>
 		</div>
 		<div class="competitors-block">

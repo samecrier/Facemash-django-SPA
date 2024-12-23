@@ -28,13 +28,14 @@
 	white-space: nowrap; /* Запрет на перенос текста */
 	max-width: 500px; /* Ограничение ширины ячейки */
 }
-
+th.th-name {
+	text-align: left;
+}
 td.competitor-name {
 	text-decoration: underline;
 	text-align: left;
 	cursor: pointer; /* Указывает, что элемент кликабельный */
 	transition: background-color 0.3s ease;
-
 }
 
 td.competitor-city {
@@ -84,12 +85,12 @@ span.current {
 
 .link-to-competitor a {
 	color: black;
+	white-space: nowrap;
 }
 
 #profile-detail {
-	width: 60%;
-	margin-left: 100px;
 	display: flex;
+	margin-left: 100px;
 }
 
 .slider {
@@ -134,7 +135,6 @@ span.current {
 }
 
 .profile-info {
-	width: 40%;
 	margin-left: 50px;
 	margin-top: 50px;
 }
@@ -156,4 +156,23 @@ span.current {
 	word-wrap: break-word;
 	word-break: break-word;
 	white-space: normal;
+}
+
+.round-stage-info {
+	margin-left: 50px;
+	white-space: nowrap; /* Запрет на перенос текста */
+}
+
+.round-stage-info a {
+	color: black;
+}
+
+.round-stage-info a:visited {
+	color: black;
+}
+
+.round-section {
+	margin-top: 23px;
+	padding-top: 5px; /* Добавляет немного отступов */
+	padding-bottom: 5px;
 }

@@ -56,6 +56,7 @@ class TournamentGetData():
 
 		tournament_base_obj = round_obj.tournament_base_id
 		data['tournament_info']['tournament_id'] = tournament_base_obj.id
+		data['tournament_info']['winner_id'] = tournament_base_obj.winner_id
 		
 		for i, matchup in enumerate(matchups_obj.order_by('matchup_number')):
 			if matchup_obj:

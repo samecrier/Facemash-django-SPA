@@ -141,7 +141,7 @@ class TournamentRound(models.Model):
 		related_name='rounds',
 		db_column='tournament_base_id'
 	)
-	rating_system = models.CharField(max_length=255, default='elo_32')
+	rating_system = models.CharField(max_length=255, default='elo_64')
 	round_number = models.PositiveIntegerField(default=1)
 	competitors_in_matchup = models.PositiveIntegerField()
 	status = models.CharField(

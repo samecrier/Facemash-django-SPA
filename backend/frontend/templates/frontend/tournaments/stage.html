@@ -12,7 +12,9 @@ Stage page
 {% block content %}
 <div class="wrapper-tournament-stage">
 	<div class="stage-sidebar">
+		
 		<div class="table-info">
+		<h1>Раунд номер {{data.round_info.round_number}}</h1>
 			<table>
 				<tbody>
 					{% for matchup, matchup_data in data.matchups.items %}
@@ -28,11 +30,19 @@ Stage page
 				</tbody>
 			</table>
 		</div>
+		
 		<div class="click-button">
 			<div class="a-button">
+			{% if not data.tournament_info.winner_id %}
 				<a href="{% url 'tournament-matchup-actual' data.tournament_info.tournament_id data.round_info.round_number %}">Перейти к матчапу {{ actual_round.round_number }}</a>
+			{% else %}
+				<a href="{% url 'tournament-info' data.tournament_info.tournament_id%}">В меню турнира</a>
+			{% endif %}
 			</div>
-		</div> 
+		</div>
+		
+
+	
 	</div>
 	<div id="profile-detail">
 		<div id="profile-photos"></div>

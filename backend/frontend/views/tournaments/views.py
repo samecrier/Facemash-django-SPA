@@ -17,9 +17,10 @@ class HomeTournamentView(View):
 	helper_service = TournamentHelper()
 	
 	def get(self, request):
-		tournaments = self.helper_service.get_tournaments_base()
+		data = self.helper_service.get_tournaments_base()
 		return render(request, 'frontend/tournaments/main.html',
-			{'tournaments': tournaments})
+			{'data': data}
+		)
 
 
 class CreateTournamentView(View):
@@ -52,9 +53,9 @@ class TournamentView(View):
 	
 	def get(self, request, tournament_id):
 		competitors = self.helper_service.get_competitors_info(tournament_id)
-		actual_round = self.helper_service.get_actual_round_obj_by_tournament_string(tournament_id)
-		if not actual_round:
-			return redirect('tournament-winner', tournament_id)
+		actual_rounds_status = self.helper_service.actual_rounds_status(tournament_id)
+		tournament_obj = self.helper_service.get_tournament_obj(tournament_id)
+		actual_round = self.helper_service.get_actual_round_obj_by_tournament(tournament_id)
 		paginator = Paginator(competitors, 20)
 		page_number = request.GET.get('page', 1)
 		page_obj = paginator.get_page(page_number)
@@ -63,7 +64,9 @@ class TournamentView(View):
 			'page_obj': page_obj,
 			'paginator': paginator,
 			'start_position': start_position,
+			'tournament_obj': tournament_obj,
 			'actual_round': actual_round,
+			'actual_rounds_status': actual_rounds_status
 		})
 
 class StageTournamentView(View):
@@ -84,6 +87,7 @@ class StageTournamentView(View):
 		if not matchups:
 			raise Http404("Раунд еще не инициализирован")
 		
+
 		data = self.data_service.get_data_stage(request, matchups)
 		return render(request, 'frontend/tournaments/stage.html',
 			{
@@ -99,6 +103,10 @@ class MatchupTournamentView(View):
 
 	def get(self, request, tournament_id, round_number, matchup_number=None):
 		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
+		tournament = {
+			'id': tournament_obj.id,
+			'winner_id': tournament_obj.winner_id,
+		}
 		if not tournament_obj:
 			raise Http404("Такого турнира не существует")
 		
@@ -128,7 +136,7 @@ class MatchupTournamentView(View):
 				'matchups_count': matchups_count,
 				'data': data,
 				'matchup': matchup_obj,
-				'tournament_id': tournament_id,
+				'tournament': tournament,
 				'round_number': round_number
 			})
 	

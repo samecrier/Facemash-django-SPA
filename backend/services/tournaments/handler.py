@@ -72,7 +72,8 @@ class TournamentHandler():
 	@transaction.atomic
 	def process_tournament_matchup(self, request, matchup_id, winner_id, loser_ids):
 		rating_systems = {
-			'elo_32': EloRatingSystem32()
+			'elo_32': EloRatingSystem32(),
+			'elo_64': EloRatingSystem64()
 		}
 		matchup_obj = self.tournament_service.get_matchup_obj_by_id(matchup_id)
 		if matchup_obj.winner_id:

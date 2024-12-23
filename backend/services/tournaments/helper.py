@@ -35,12 +35,33 @@ class TournamentHelper():
 	
 	def get_tournaments_base(self):
 		tournaments = self.tournament_service.get_tournaments(order_by='created_at')
-		return tournaments
+		data = {
+			'completed_tournaments': dict(),
+			'in_progress_tournaments': dict(),
+		}
+		for i, tournament in enumerate(tournaments):
+			if tournament.status == 'completed':
+				data['completed_tournaments'][i] = {}
+				data['completed_tournaments'][i]['tournament_id'] = tournament.id
+				data['completed_tournaments'][i]['status'] = 'completed'
+				data['completed_tournaments'][i]['winner_id'] = tournament.winner_id
+				data['completed_tournaments'][i]['actual_round'] = None
+			else:
+				data['in_progress_tournaments'][i] = {}
+				data['in_progress_tournaments'][i]['tournament_id'] = tournament.id  # Турниры в процессе
+				data['in_progress_tournaments'][i]['status'] = tournament.status
+				actual_round = self.get_actual_round_obj_by_tournament(tournament)
+				data['in_progress_tournaments'][i]['winner_id'] = None
+				data['in_progress_tournaments'][i]['actual_round'] = actual_round.round_number
+		return data
+	
+	def get_tournament_obj(self, tournament_id):
+		return self.tournament_service.get_tournament_obj(tournament_id)
 	
 	def get_competitors_info(self, tournament_id):
 		tournament = self.tournament_service.get_tournament_obj(tournament_id)
-		tournament_competitors = tournament.competitors.all()
-		competitors = [obj.competitor_id for obj in tournament_competitors]
+		tournament_competitors = self.tournament_service.sort_competitors_with_null(tournament)
+		competitors = [(obj.competitor_id, obj.final_position) for obj in tournament_competitors]
 		return competitors
 
 	def get_rounds(self, tournament_obj):
@@ -48,10 +69,26 @@ class TournamentHelper():
 		return rounds_obj
 	
 	def get_rounds_status(self, tournament_obj):
+		if isinstance(tournament_obj, (int, str)):
+			tournament_obj = self.tournament_service.get_tournament_obj(tournament_obj)
 		rounds = self.get_rounds(tournament_obj)
-		rounds_status = {round.round_number: round.status
+		rounds_status = {round: round.status
 			for round in sorted(rounds, key=lambda r: r.round_number)}
 		return rounds_status
+	
+	def actual_rounds_status(self, tournament_id):
+		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
+		rounds_status = self.get_rounds_status(tournament_obj)
+		previous_status = None
+		actual_rounds_status = {}
+		for round_obj in rounds_status:
+			if round_obj.status != 'not started' or previous_status == 'completed':
+				actual_rounds_status[round_obj] = round_obj.status
+				previous_status = actual_rounds_status[round_obj]
+			else:
+				break
+		return actual_rounds_status
+
 	
 	def get_certain_round_obj(self, tournament_id, round_number):
 		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
@@ -73,18 +110,16 @@ class TournamentHelper():
 		round_obj = self.tournament_service.get_matchup_obj_by_round(round_obj, matchup_number)
 		return round_obj
 	
-	def get_actual_round_obj_by_tournament_string(self, tournament_id):
-		tournament_obj = self.tournament_service.get_tournament_by_string(tournament_id)
+	def get_actual_round_obj_by_tournament(self, tournament_id):
+		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
 		rounds_status = self.get_rounds_status(tournament_obj)
 		if list(rounds_status.values())[-1] == 'completed':
 			# raise ValueError("Взят завершенный турнир")
 			return None 
 		for round in rounds_status:
-			if rounds_status[round] == 'not started':
-				return self.get_certain_round_obj(tournament_id, round)
-			elif rounds_status[round] == 'in progress':
-				return self.get_certain_round_obj(tournament_id, round)
-		
+			if rounds_status[round] in ('not started', 'in progress'):
+				return round
+
 	def data_type_matchup(self, matchup_obj):
 		data = {}
 		for i, round_competitor in enumerate(matchup_obj.competitors_in_matchup.all()):
@@ -98,15 +133,17 @@ class TournamentHelper():
 		self.tournament_service.update_tournament_status(tournament_base_obj, update_winner)
 
 	def turn_next_round(self, tournament_id, round_number):
+		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
+		if tournament_obj.winner_id:
+			return None
 		round_obj = self.tournament_service.get_round_obj_by_tournament_string(tournament_id, round_number)
 		self.tournament_service.update_status_round(round_obj, 'completed')
-		tournament_base_obj = round_obj.tournament_base_id
-		next_round_obj = self.tournament_service.next_round(tournament_base_obj, round_number)
+		next_round_obj = self.tournament_service.next_round(tournament_obj, round_number)
 		if not next_round_obj:
-			self.end_tournament(tournament_base_obj)
+			self.end_tournament(tournament_obj)
 			return None
 		else:
-			next_round_competitors = tournament_base_obj.competitors.filter(status='active').order_by('?')
+			next_round_competitors = tournament_obj.competitors.filter(status='active').order_by('?')
 			for next_round_competitor in next_round_competitors:
 				self.tournament_service.create_round_competitor(next_round_obj, next_round_competitor)
 			return next_round_obj.round_number
@@ -147,7 +184,12 @@ class TournamentHelper():
 			return True
 		else:
 			return False
-
+		
+	def get_actual_rounds(self, tournament_id):
+		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
+		actual_rounds = tournament_obj.rounds.exclude(status='not started')
+		return actual_rounds
+	
 	@transaction.atomic
 	def get_stage_matchups(self, round_obj):
 		matchups = self.get_matchups_from_round_obj(round_obj, 'matchup_number')
