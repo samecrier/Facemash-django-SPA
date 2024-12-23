@@ -12,11 +12,11 @@ class TournamentService(ABC):
 class LocalTournamentService(TournamentService):
 	
 	def get_tournament_by_string(self, tournament_id):
-		return TournamentBase.objects.get(id=tournament_id)
+		return TournamentBase.objects.filter(id=tournament_id).first()
 	
 	def get_tournament_obj(self, tournament_id):
 		if isinstance(tournament_id, TournamentBase):
-			return TournamentBase.objects.get(id=tournament_id.id)
+			return TournamentBase.objects.filter(id=tournament_id.id).first()
 		if isinstance(tournament_id, (str, int)):
 			return self.get_tournament_by_string(tournament_id)
 	
@@ -76,7 +76,7 @@ class LocalTournamentService(TournamentService):
 		matchup_obj.competitors_in_matchup.set(matchup_competitors)
 	
 	def get_round_matchups(self, round_obj):
-		return round_obj.round_matchup.all()
+		return round_obj.round_matchups.all()
 	
 	def generate_round_matchups(self, round_obj, round_competitors):
 		competitors_in_matchup = round_obj.competitors_in_matchup
@@ -103,7 +103,7 @@ class LocalTournamentService(TournamentService):
 		return matchup_obj
 
 	def get_matchup_by_string(self, matchup_id):
-		return TournamentMatchup.objects.get(id=matchup_id)
+		return TournamentMatchup.objects.filter(id=matchup_id).first()
 	
 	def get_matchup_obj_by_id(self, matchup_id):
 		matchup_obj = self.get_matchup_by_string(matchup_id)

@@ -7,6 +7,19 @@
 .stage-sidebar {
 	max-width: 50%;
 }
+a.matchup-link {
+	color: black;
+	text-decoration: none;
+}
+
+a.matchup-link:visited{
+	color: black;
+}
+
+a.matchup-link:hover{
+	color: #8800ff;
+}
+
 
 .table-info table {
 	margin-top: 23px;
@@ -21,27 +34,24 @@
 	padding-right: 20px;
 	text-align: center; /* Выравнивает текст по левому краю */
 	white-space: nowrap; /* Запрет на перенос текста */
+	text-decoration: none;
 }
 
 
 td.matchup-winner {
-	color: green;
-}
-td.matchup-loser {
-	color: red;
+	color: #8800ff;
+	font-weight: bold;
 }
 
-.competitor-name {
+td.competitor-name {
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+td.competitor-name:hover {
 	cursor: pointer;
 	transition: background-color 0.3s ease;
 	text-decoration: underline;
-}
-td.competitor-name a {
-	color: black;
-}
-
-td.competitor-name a:visited {
-	color: black;
 }
 
 .click-button {

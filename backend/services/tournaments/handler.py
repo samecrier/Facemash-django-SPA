@@ -75,7 +75,8 @@ class TournamentHandler():
 			'elo_32': EloRatingSystem32()
 		}
 		matchup_obj = self.tournament_service.get_matchup_obj_by_id(matchup_id)
-		
+		if matchup_obj.winner_id:
+			raise AttributeError("ПОБЕДИТЕЛЬ УЖЕ ЕСТЬ")
 		winner_id = int(winner_id)
 		loser_ids = [int(loser_id) for loser_id in loser_ids]
 		delta_data = {loser_id:0 for loser_id in loser_ids}
@@ -92,6 +93,9 @@ class TournamentHandler():
 		matchup_handler.process_matchup()
 
 		tournament_base = matchup_obj.tournament_round_id.tournament_base_id
+		if tournament_base.status == 'not started':
+			tournament_base.status = 'in progress'
+			tournament_base.save()
 		for round_competitor in matchup_obj.competitors_in_matchup.all():
 			competitor = round_competitor.tournament_competitor_id.competitor_id
 			tournament_competitor = round_competitor.tournament_competitor_id

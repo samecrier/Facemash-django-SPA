@@ -164,8 +164,8 @@ class RoundCompetitor(models.Model):
 		('not played', 'not played')
 	]
 	RESULT_CHOICES = [
-		(0, 'Lose'),        # Проиграл
-		(1, 'Win'),         # Выиграл
+		(0, 'Lose'),
+		(1, 'Win')
 	]
 	
 	tournament_competitor_id = models.ForeignKey(

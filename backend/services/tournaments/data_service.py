@@ -57,14 +57,15 @@ class TournamentGetData():
 		tournament_base_obj = round_obj.tournament_base_id
 		data['tournament_info']['tournament_id'] = tournament_base_obj.id
 		
-		for i, matchup in enumerate(matchups_obj):
-			data['matchup_info']['matchup_number'] = matchup_obj.matchup_number
-			data['matchup_info']['matchup_winner'] = matchup_obj.winner_id.tournament_competitor_id.competitor_id.id
-			if matchup.winner_id:
-				data['matchups'][matchup.matchup_number]['status'] = 'сыгран'
-			else:
-				data['matchups'][matchup.matchup_number]['status'] = 'в ожидании'
-			
+		for i, matchup in enumerate(matchups_obj.order_by('matchup_number')):
+			if matchup_obj:
+				data['matchup_info']['matchup_number'] = matchup_obj.matchup_number
+				if matchup.winner_id:
+					data['matchup_info']['matchup_winner'] = matchup_obj.winner_id.tournament_competitor_id.competitor_id.id
+					data['matchups'][matchup.matchup_number]['status'] = 'сыгран'
+				else:
+					data['matchups'][matchup.matchup_number]['status'] = 'в ожидании'
+				
 			for i, competitor in enumerate(matchup.competitors_in_matchup.all()):
 				round_competitor_obj = competitor
 				

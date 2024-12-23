@@ -30,7 +30,7 @@ class MatchupHandler():
 		"""
 		Процесс расчета рейтингов и создания Matchup
 		"""
-
+		
 		winner_obj = self.competitor_service.get_competitor_object(self.winner_id)
 		if self.request.user.is_authenticated:
 			profile_id = self.request.user

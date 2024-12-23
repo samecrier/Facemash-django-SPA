@@ -12,11 +12,27 @@
 <main>
 	<div class="wrapper">
 		<div class="tournament-matchup-info">
-		<h1>{{matchup.matchup_number}} матчап</h1>
+			{% if matchup.winner_id%}
+			<div class="actual-matchup-button">
+				<div class="a-button">
+					<a href="{% url 'tournament-matchup-actual' tournament_id round_number %}">Перейти к актуальному матчапу {{ actual_round.round_number }}</a>
+				</div>
+			</div>
+			{% endif %}
+			<div class="heading-matchup">
+				<h1>Раунд номер {{round_number }} // {{matchup.matchup_number}} матчап из {{matchups_count}} </h1>
+			</div>
+			<div class="tournament-stage-button">
+				<a href="{% url 'tournament-stage' tournament_id round_number %}">Подробнее о раунде</a>
+			</div>
 		</div>
 		<div class="competitors-block">
 		{% for competitor_key, competitor_data in data.items %}
-			<div class="{% if forloop.first %}competitor-1{% endif %} competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
+			{% if matchup.winner_id.tournament_competitor_id.competitor_id.id == competitor_data.competitor.id%}
+			<div class="competitor winner{% if forloop.first %} competitor-1{% endif %}" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
+			{% else %}
+			<div class="competitor{% if forloop.first %} competitor-1{% endif %}" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
+			{% endif %}
 				<div class="slider">
 					<div class="slider-controls">
 					</div>
@@ -38,7 +54,8 @@
 					<p>{{ competitor_data.competitor.name}}{% if competitor_data.competitor.age %}, {{ competitor_data.competitor.age }}{% endif %}</p>
 					<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
 				</div>
-				<div class="button">
+				
+				<div class="button" {% if matchup.winner_id %} style="display:none;"{% endif %}>
 					<form method="post">
 					{% csrf_token %}
 						<input type="hidden" name="matchup_id" value="{{ matchup.id }}">
@@ -48,6 +65,11 @@
 						<button type="submit" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
 					</form>
 				</div>
+				{% if matchup.winner_id.tournament_competitor_id.competitor_id.id == competitor_data.competitor.id%}
+				<div class="matchup-winner">
+					<p>Победитель</p>
+				</div>
+				{% endif %}
 			</div>
 		{% endfor %}
 		</div>

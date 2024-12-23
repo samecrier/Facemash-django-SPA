@@ -106,7 +106,7 @@ class MatchupGetData():
 					first_position=len(raw_data)))
 
 		competitor_final_data = {f"competitor-{key}": value for key, value in sorted(final_data.items())}
-
+		print(competitor_final_data)
 		return competitor_final_data
 	
 class MatchupGetDataJS():

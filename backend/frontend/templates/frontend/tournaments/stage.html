@@ -17,7 +17,7 @@ Stage page
 				<tbody>
 					{% for matchup, matchup_data in data.matchups.items %}
 					<tr class="competitor-row">
-						<td>Матчап {{ matchup }} {{matchup_data.status}}</td>
+						<td><a class="matchup-link" href="{% url 'tournament-matchup' data.tournament_info.tournament_id data.round_info.round_number matchup %}">Матчап {{ matchup }} {{matchup_data.status}}</a></td>
 						{% for competitor_number, competitor_data in matchup_data.competitors.items %}
 							<td {% if competitor_data.round_competitor_result %}class="competitor-name matchup-winner"{% elif competitor_data.round_competitor_result == 0 %} class="competitor-name matchup-loser"{% else %}class="competitor-name"{% endif %} data-competitor-id="{{ competitor_data.competitor_id }}">
 								{{ competitor_data.name }}

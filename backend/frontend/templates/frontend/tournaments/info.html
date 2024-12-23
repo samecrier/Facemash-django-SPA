@@ -68,7 +68,7 @@ Tournament Info Page
 			{% endif %}
 			</div>
 			<div class="a-button">
-				<a href='{% url 'tournament-stage' actual_round.tournament_base_id.id actual_round.round_number%}'>Перейти к турниру</a>
+				<a href='{% url 'tournament-matchup-actual' actual_round.tournament_base_id.id actual_round.round_number%}'>Перейти к матчапам</a>
 			</div>
 		</div>
 		<div id="profile-detail">

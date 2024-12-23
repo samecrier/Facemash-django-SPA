@@ -11,7 +11,7 @@
 	<div class="wrapper">
 		<div class="competitors-block">
 		{% for competitor_key, competitor_data in data.items %}
-			<div class="{% if forloop.first %}competitor-1{% endif %} competitor" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
+			<div class="competitor{% if forloop.first %} competitor-1{% endif %}" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
 				<div class="slider">
 					<div class="slider-controls">
 					</div>

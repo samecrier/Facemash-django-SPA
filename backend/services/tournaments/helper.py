@@ -55,8 +55,19 @@ class TournamentHelper():
 	
 	def get_certain_round_obj(self, tournament_id, round_number):
 		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
+		if not tournament_obj:
+			report_message = 'Такого турнира не существует'
+			return report_message
 		round_obj = self.tournament_service.get_round_obj_by_tournament_obj(tournament_obj, round_number)
+		if not round_obj:
+			report_message = 'Такого раунда не существует'
+			return report_message
 		return round_obj
+	
+	def get_count_matchup_in_round(self, tournament_id, round_number):
+		round_obj = self.tournament_service.get_round_obj_by_tournament_string(tournament_id, round_number)
+		matchups_in_round = len(round_obj.round_matchups.all())
+		return matchups_in_round
 
 	def get_certain_matchup_obj(self, round_obj, matchup_number):
 		round_obj = self.tournament_service.get_matchup_obj_by_round(round_obj, matchup_number)
@@ -99,22 +110,6 @@ class TournamentHelper():
 			for next_round_competitor in next_round_competitors:
 				self.tournament_service.create_round_competitor(next_round_obj, next_round_competitor)
 			return next_round_obj.round_number
-
-
-	def get_actual_matchup(self, tournament_id, round_number, matchup_number=None):
-		if not matchup_number:
-			round_obj = self.get_certain_round_obj(tournament_id, round_number)
-			actual_matchups_in_round = round_obj.round_matchups.filter(winner_id__isnull=True).order_by('matchup_number')
-			if actual_matchups_in_round:
-				for matchup in actual_matchups_in_round:
-					if not matchup.winner_id:
-						matchup_number = matchup.matchup_number
-						break
-			else:
-				return (None, None)
-			matchup_obj = self.get_certain_matchup_obj(round_obj, matchup_number)
-			data_matchup = self.data_type_matchup(matchup_obj)
-			return (data_matchup, matchup_obj)
 	
 	def get_winner(self, tournament_id):
 		tournament = self.tournament_service.get_tournament_by_string(tournament_id)
@@ -124,12 +119,42 @@ class TournamentHelper():
 		if order_by:
 			return round_obj.round_matchups.all().order_by(order_by)
 		return round_obj.round_matchups.all()
+	
+	def get_actual_matchup(self, round_obj, matchup_number=None):
+		if not matchup_number:
+			actual_matchups_in_round = round_obj.round_matchups.filter(winner_id__isnull=True).order_by('matchup_number')
+			if actual_matchups_in_round:
+				for matchup in actual_matchups_in_round:
+					if not matchup.winner_id:
+						matchup_number = matchup.matchup_number
+						break
+			else:
+				return (None, None)
+		matchup_obj = self.get_certain_matchup_obj(round_obj, matchup_number)
+		if not matchup_obj:
+			return (None, None)
+		data_matchup = self.data_type_matchup(matchup_obj)
+		return (data_matchup, matchup_obj)
+	
+	def check_actuality_round_obj(self, tournament_obj, round_obj):
+		previous_round_number = (round_obj.round_number - 1)
+		if previous_round_number == 0:
+			return True
+		check_previous_round = self.tournament_service.get_round_obj_by_tournament_obj(tournament_obj, previous_round_number)
+		if not check_previous_round:
+			raise AttributeError("А как у тебя проскачил сюда раунд, которого не существует?")
+		if check_previous_round.status == 'completed':
+			return True
+		else:
+			return False
 
 	@transaction.atomic
-	def get_actual_matchups(self, round_obj):
+	def get_stage_matchups(self, round_obj):
 		matchups = self.get_matchups_from_round_obj(round_obj, 'matchup_number')
 		if not matchups:
 			round_competitors = list(round_obj.round_competitors.all())
+			if not round_competitors:
+				return None
 			random.shuffle(round_competitors)
 			matchups = self.tournament_service.generate_round_matchups(round_obj, round_competitors)
 		return matchups

@@ -14,7 +14,7 @@
 	<div class="tournaments-list">
 	{% for tournament in tournaments %}
 		<div class="tournament">
-			<a href="{% url 'tournament-info' tournament.id%}">Турнир id#{{ tournament.id }}</a>
+			<a href="{% url 'tournament-info' tournament.id%}">Турнир id#{{ tournament.id }}</a> {{tournament.status}}
 		</div>
 	{% endfor %}
 	</div>
