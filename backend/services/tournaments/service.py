@@ -136,7 +136,9 @@ class LocalTournamentService(TournamentService):
 		tournament_base_obj.winner_id = winner_obj.competitor_id
 		tournament_base_obj.save()
 
-	def sort_competitors_with_null(self, obj):
+	def sort_competitors_with_null(self, obj, number=None):
+		if number:
+			return obj.competitors.all().order_by(Coalesce('final_position', Value(0)))[:number]
 		return obj.competitors.all().order_by(Coalesce('final_position', Value(0)))
 
 class APITournamentService(TournamentService):

@@ -32,7 +32,6 @@ def calculate_participants(request):
 		try:
 			# Парсим данные из запроса
 			data = json.loads(request.body)
-			print(data)
 			num_rounds = int(data.get('num_rounds', 0))
 			num_per_matchup = int(data.get('num_per_matchup', 0))
 			available_users = int(data.get('available_users', 0))

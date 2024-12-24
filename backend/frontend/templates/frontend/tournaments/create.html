@@ -16,11 +16,11 @@
 			<h1>Страница создания турнира</h1>
 			{% csrf_token %}
 
-			{% if location_form.errors %}
+			{% if tournament_form.errors %}
 				<div class="errorlist">
 					<strong>Ошибки:</strong>
 					<ul>
-						{% for field, errors in location_form.errors.items %}
+						{% for field, errors in tournament_form.errors.items %}
 							{% for error in errors %}
 								<li>{{ error }}</li>  <!-- Выводим только текст ошибки -->
 							{% endfor %}
@@ -32,7 +32,7 @@
 			<label class="selection-label">Выберите элементы</label>
 			
 			<div class="checkbox-container">
-				{% for checkbox in location_form.cities %}
+				{% for checkbox in tournament_form.cities %}
 					<div class="checkbox-item">
 						{{ checkbox }}
 					</div>
@@ -46,11 +46,11 @@
 			<h1>Параметры</h1>
 			<p id="user-count-display">Выбрано пользователей: 0</p>
 			<br>
-			<label for="id_num_participants">{{ location_form.num_participants.label }} {{ location_form.num_participants }}</p>
+			<label for="id_num_participants" >{{ tournament_form.num_participants.label }} {{ tournament_form.num_participants}}</p>
 			<br>
-			<label for="id_num_rounds">{{ location_form.num_rounds.label }}</label> {{ location_form.num_rounds }}</p>
+			<label for="id_num_rounds">{{ tournament_form.num_rounds.label }}</label> {{ tournament_form.num_rounds }}</p>
 			<br>
-			<label for="id_num_per_matchup">{{ location_form.num_per_matchup.label }}</label> {{ location_form.num_per_matchup }}</p>
+			<label for="id_num_per_matchup">{{ tournament_form.num_per_matchup.label }}</label> {{ tournament_form.num_per_matchup }}</p>
 			<br>
 		</div>
 	</div>

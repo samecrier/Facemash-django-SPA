@@ -3,14 +3,70 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/base_tournament.css' %}">
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/winner.css' %}">
+<link rel="stylesheet" href="{% static 'frontend/css/competitor.css' %}">
 {% endblock %}
 {% block title%}
 Турниры
 {% endblock %}
 
-
 {% block content%}
-<div class="wrapper-tournament-winner">
-Выиграла {{winner}}
-</div>
+<main>
+	<div class="wrapper">
+		<div class="tournament-winner-section">
+			<div class="winner-heading">
+				<h1>Выиграла турнир {{data.name}}!!!</h1>
+			</div>
+			<div class="click-button">
+				<div class="a-button">
+				<a href="{% url 'tournament-info' tournament_id %}">В меню турнира</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="slider">
+			<div class="slider-controls">
+			</div>
+			<div class="slider-images">
+					<img id="current-image" src="/" alt="Image">
+			</div>
+		</div>
+		<div class="profile-info">
+			<table>
+				<tbody>
+					<tr>
+						<td class="key">id</td>
+						<td class="value">{{ data.id }}</td>
+					</tr>
+					{% if data.age%}
+					<tr>
+						<td class="key">Age</td>
+						<td class="value">{{ data.age }}</td>
+					</tr>
+					{% endif %}
+					<tr>
+						<td class="key">City</td>
+						<td class="value">{{ data.city }}</td>
+					</tr>
+					<tr>
+						<td class="key">Rating</td>
+						<td class="value">{{ data.rating }}</td>
+					</tr>
+					<tr>
+						<td class="key">Bio</td>
+						<td class="value bio">{{ data.bio }}</td>
+					</tr>
+				</tbody>
+				</table>
+
+	</div>
+</main>
+{% endblock%}
+{% block scripts %}
+<script id="image-data-slider-1" type="application/json">
+	{
+		"images" : {{ data.images }}
+	}
+</script>
+
+<script src="{% static 'frontend/js/profile-slider.js' %}" type="module" defer></script>
 {% endblock %}

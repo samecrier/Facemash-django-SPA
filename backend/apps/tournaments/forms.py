@@ -1,7 +1,7 @@
 from django import forms
-from .models import Location
+from apps.competitors.models import Location
 
-class CitySelectionForm(forms.Form):
+class TournamentSelectionForm(forms.Form):
 	cities = forms.ModelMultipleChoiceField(
 		queryset=Location.objects.all(),
 		widget=forms.CheckboxSelectMultiple,
@@ -16,6 +16,7 @@ class CitySelectionForm(forms.Form):
 	num_participants = forms.CharField(
 		label="Участников",
 		required=True,
+		widget=forms.NumberInput(attrs={"readonly": "readonly"}),
 		error_messages={'required': "Укажите количество участников."}
 	)
 	num_rounds = forms.CharField(

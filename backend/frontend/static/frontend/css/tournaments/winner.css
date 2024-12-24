@@ -1,0 +1,38 @@
+.tournament-winner-section {
+	margin-top: 20px;
+	margin-left: 100px;
+	display: flex;
+	flex-direction: column;
+	
+}
+
+.click-button{
+	margin-top: 20px;
+}
+
+.a-button {
+	margin-top: 10px;
+	display: flex; /* Используем Flexbox для центровки */
+	justify-content: center; /* Центрирование по горизонтали */
+	align-items: center; /* Центрирование по вертикали */
+	width: 300px;
+	height: 50px;
+	border-radius: 10px;
+	background-color:#8800ff;
+	text-align: center;
+	font-size: 20pt;
+	font-weight: bold;
+}
+
+.a-button a, a:visited{
+	text-decoration: none;
+	color: white;
+}
+
+.a-button:hover{
+	background-color: black;
+}
+
+.a-button:hover a{
+	color: #8800ff;
+}

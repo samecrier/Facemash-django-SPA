@@ -58,9 +58,9 @@ class TournamentHelper():
 	def get_tournament_obj(self, tournament_id):
 		return self.tournament_service.get_tournament_obj(tournament_id)
 	
-	def get_competitors_info(self, tournament_id):
+	def get_competitors_info(self, tournament_id, number=None):
 		tournament = self.tournament_service.get_tournament_obj(tournament_id)
-		tournament_competitors = self.tournament_service.sort_competitors_with_null(tournament)
+		tournament_competitors = self.tournament_service.sort_competitors_with_null(tournament, number)
 		competitors = [(obj.competitor_id, obj.final_position) for obj in tournament_competitors]
 		return competitors
 
@@ -148,8 +148,8 @@ class TournamentHelper():
 				self.tournament_service.create_round_competitor(next_round_obj, next_round_competitor)
 			return next_round_obj.round_number
 	
-	def get_winner(self, tournament_id):
-		tournament = self.tournament_service.get_tournament_by_string(tournament_id)
+	def get_winner_competitor_obj(self, tournament_obj):
+		tournament = self.tournament_service.get_tournament_obj(tournament_obj)
 		return tournament.winner_id
 	
 	def get_matchups_from_round_obj(self, round_obj, order_by=None):
@@ -190,6 +190,16 @@ class TournamentHelper():
 		actual_rounds = tournament_obj.rounds.exclude(status='not started')
 		return actual_rounds
 	
+	def check_correct_tournament_information(self, participants, rounds, in_matchup):
+		participants = int(participants)
+		rounds = int(rounds)
+		in_matchup = int(in_matchup)
+
+		if rounds ** in_matchup == participants:
+			return True
+		else:
+			return False
+
 	@transaction.atomic
 	def get_stage_matchups(self, round_obj):
 		matchups = self.get_matchups_from_round_obj(round_obj, 'matchup_number')

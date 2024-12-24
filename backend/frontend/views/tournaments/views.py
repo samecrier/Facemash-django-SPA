@@ -3,16 +3,18 @@ from django.db import transaction
 from django.urls import reverse
 from django.views import View
 from django.shortcuts import render, redirect
-from apps.competitors.forms import CitySelectionForm
+from apps.tournaments.forms import TournamentSelectionForm
 from services.competitors.service import LocalCompetitorService
+from services.competitors.data_service import CompetitorGetData
 from services.tournaments.service import LocalTournamentService
 from services.matchups.data_service import MatchupGetData
 from services.tournaments.data_service import TournamentGetData
 from services.tournaments.helper import TournamentHelper
 from services.tournaments.handler import TournamentHandler
 from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class HomeTournamentView(View):
+class HomeTournamentView(LoginRequiredMixin, View):
 	
 	helper_service = TournamentHelper()
 	
@@ -23,32 +25,35 @@ class HomeTournamentView(View):
 		)
 
 
-class CreateTournamentView(View):
-	
+class CreateTournamentView(LoginRequiredMixin, View):
+	helper_service = TournamentHelper()
 	competitor_service = LocalCompetitorService()
 	handler_service = TournamentHandler()
 	data_service = TournamentGetData()
 	
 	def get(self, request):
-		location_form = CitySelectionForm()
-		return render(request, 'frontend/tournaments/create.html', {'location_form': location_form})
+		tournament_form = TournamentSelectionForm()
+		return render(request, 'frontend/tournaments/create.html', {'tournament_form': tournament_form})
 	
 	def post(self, request):
-		location_form = CitySelectionForm(request.POST)  # Заполняем форму данными POST
-		if location_form.is_valid():  # Проверяем валидацию
+		tournament_form = TournamentSelectionForm(request.POST)  # Заполняем форму данными POST
+		if tournament_form.is_valid():  # Проверяем валидацию
 			# Получаем выбранные города
-			cities = location_form.cleaned_data['cities']
-			participants = location_form.cleaned_data['num_participants']
-			rounds = location_form.cleaned_data['num_rounds']
-			in_matchup = location_form.cleaned_data['num_per_matchup']
+			cities = tournament_form.cleaned_data['cities']
+			participants = tournament_form.cleaned_data['num_participants']
+			rounds = tournament_form.cleaned_data['num_rounds']
+			in_matchup = tournament_form.cleaned_data['num_per_matchup']
+			result = self.helper_service.check_correct_tournament_information(participants, rounds, in_matchup)
+			if not result:
+				raise Http404('Неправильные данные для турнира')
 			tournament_id, round_number = self.handler_service.process_tournament(request, cities, participants, rounds, in_matchup)
 			return redirect('tournament-stage', tournament_id, round_number) # Редирект при успешной обработке
 		else:
 			# Возвращаем форму с ошибками
-			return render(request, 'frontend/tournaments/create.html', {'location_form': location_form})
+			return render(request, 'frontend/tournaments/create.html', {'tournament_form': tournament_form})
 
 
-class TournamentView(View):
+class TournamentView(LoginRequiredMixin, View):
 	helper_service = TournamentHelper()
 	
 	def get(self, request, tournament_id):
@@ -68,8 +73,9 @@ class TournamentView(View):
 			'actual_round': actual_round,
 			'actual_rounds_status': actual_rounds_status
 		})
+	
 
-class StageTournamentView(View):
+class StageTournamentView(LoginRequiredMixin, View):
 	helper_service = TournamentHelper()
 	data_service = TournamentGetData()
 	tournament_service = LocalTournamentService()
@@ -95,7 +101,7 @@ class StageTournamentView(View):
 			})
 
 
-class MatchupTournamentView(View):
+class MatchupTournamentView(LoginRequiredMixin, View):
 	helper_service = TournamentHelper()
 	data_service = MatchupGetData()
 	handler=TournamentHandler()
@@ -150,11 +156,23 @@ class MatchupTournamentView(View):
 		self.handler.process_tournament_matchup(request, matchup_id, winner_id, loser_ids)
 		return redirect('tournament-matchup-actual', tournament_id=tournament_id, round_number=round_number)
 
-class WinnerTournamentView(View):
+class WinnerTournamentView(LoginRequiredMixin, View):
 	helper_service = TournamentHelper()
-	
+	data_service = CompetitorGetData()
+
 	def get(self, request, tournament_id):
-		winner = self.helper_service.get_winner(tournament_id)
+		tournament_obj = self.helper_service.get_tournament_obj(tournament_id)
+		if not tournament_obj:
+			raise Http404("Такого турнира у нас нет...")
+		competitor_obj = self.helper_service.get_winner_competitor_obj(tournament_obj)
+		if not competitor_obj:
+			raise Http404("У этого турнира еще нет победителя")
+		competitors = self.helper_service.get_competitors_info(tournament_id, number=10)
+		data = self.data_service.get_competitor_profile(competitor_obj)
 		return render(request, 'frontend/tournaments/winner.html',
-				{'winner': winner}
+				{
+					'data': data,
+					'competitors': competitors,
+					'tournament_id': tournament_id
+				}
 			)

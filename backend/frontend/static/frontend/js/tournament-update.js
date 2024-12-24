@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok) {
                 const data = await response.json();
                 errorDisplay.textContent = ''; // Убираем сообщение об ошибке
-                numParticipantsInput.placeholder = data.calculated_participants; // Устанавливаем значение
+                numParticipantsInput.value = data.calculated_participants; // Устанавливаем значение
             } else {
                 const errorData = await response.json();
                 errorDisplay.textContent = errorData.error || 'Ошибка сервера.';
