@@ -2,8 +2,12 @@
 {% load static %}
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/base_tournament.css' %}">
-<link rel="stylesheet" href="{% static 'frontend/css/matchup.css' %}">
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/tournament_matchup.css' %}">
+{% if competitors_number < 5 %}
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/size_matchups/2-4.css' %}">
+{% elif competitors_number < 9 %}
+<link rel="stylesheet" href="{% static 'frontend/css/tournaments/size_matchups/5-8.css' %}">
+{% endif %}
 {% endblock %}
 {% block title%}Facemash{% endblock %}
 
@@ -42,6 +46,16 @@
 								<a href="{% url 'competitor' competitor_data.competitor.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
 							{% endif %}
 						{% endfor%}
+						<div class="button" {% if matchup.winner_id %} style="display:none;"{% endif %}>
+							<form method="post">
+							{% csrf_token %}
+								<input type="hidden" name="matchup_id" value="{{ matchup.id }}">
+								<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
+								<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
+								<input type="hidden" name="loser_ids" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }},{% endif %}{% endfor %}">
+								<button type="submit" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
+							</form>
+						</div>
 					</div>
 					<script id="image-data-slider-{{forloop.counter}}" type="application/json">
 						{
@@ -50,21 +64,8 @@
 						}
 					</script>
 				</div>
-				<div class="bio">
-					<p>{{ competitor_data.competitor.name}}{% if competitor_data.competitor.age %}, {{ competitor_data.competitor.age }}{% endif %}</p>
-					<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
-				</div>
 				
-				<div class="button" {% if matchup.winner_id %} style="display:none;"{% endif %}>
-					<form method="post">
-					{% csrf_token %}
-						<input type="hidden" name="matchup_id" value="{{ matchup.id }}">
-						<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
-						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
-						<input type="hidden" name="loser_ids" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }},{% endif %}{% endfor %}">
-						<button type="submit" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
-					</form>
-				</div>
+
 				{% if matchup.winner_id.tournament_competitor_id.competitor_id.id == competitor_data.competitor.id%}
 				<div class="matchup-winner">
 					<p>Победитель</p>

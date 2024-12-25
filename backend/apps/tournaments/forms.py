@@ -16,7 +16,10 @@ class TournamentSelectionForm(forms.Form):
 	num_participants = forms.CharField(
 		label="Участников",
 		required=True,
-		widget=forms.NumberInput(attrs={"readonly": "readonly"}),
+		widget=forms.NumberInput(attrs={
+			"readonly": "readonly",
+			'placeholder': 'Не редактируется'
+			}),
 		error_messages={'required': "Укажите количество участников."}
 	)
 	num_rounds = forms.CharField(

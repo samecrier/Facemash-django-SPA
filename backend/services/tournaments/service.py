@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.db.models.functions import Coalesce
 from django.db.models import Value
+from django.shortcuts import get_object_or_404
 from abc import ABC, abstractmethod
 from apps.tournaments.models import TournamentBase, TournamentCompetitor, TournamentRound, RoundCompetitor, TournamentMatchup, TournamentSystem, TournamentRatingSystem, TemplateTournament, TemplateRound
 
@@ -19,7 +20,8 @@ class LocalTournamentService(TournamentService):
 	
 	def get_tournament_obj(self, tournament_id):
 		if isinstance(tournament_id, TournamentBase):
-			return TournamentBase.objects.filter(id=tournament_id.id).first()
+			return tournament_id #возможны баги, когда не обновляется при создании объекта параметры, тогда использовать TournamentBase.objects.filter(id=tournament_id.id).first()
+
 		if isinstance(tournament_id, (str, int)):
 			return self.get_tournament_by_string(tournament_id)
 	
@@ -27,8 +29,18 @@ class LocalTournamentService(TournamentService):
 		if order_by:
 			return TournamentBase.objects.all().order_by(order_by)
 		return TournamentBase.objects.all()
+	
+	def get_tournaments_profile(self, profile_id, order_by=None):
+		if order_by:
+			return TournamentBase.objects.filter(profile_id=profile_id).order_by(order_by)
+		return TournamentBase.objects.filter(profile_id=profile_id)
 		
+	
+	def get_tournament_or_404(self, tournament_id):
+		return get_object_or_404(TournamentBase, id=tournament_id)
+	
 	def create_tournament_base(self, profile_id, competitors_number, rounds_number):
+		competitors_number, rounds_number = int(competitors_number), int(rounds_number)
 		tournament_base = TournamentBase.objects.create(
 			profile_id=profile_id,
 			competitors_number=competitors_number,
@@ -39,6 +51,7 @@ class LocalTournamentService(TournamentService):
 		return tournament_obj
 
 	def create_tournament_round(self, tournament_base_id, competitors_in_matchup, round_number):
+		competitors_in_matchup, round_number = int(competitors_in_matchup), int(round_number)
 		tournament_round = TournamentRound.objects.create(
 			tournament_base_id=tournament_base_id,
 			competitors_in_matchup=competitors_in_matchup,
