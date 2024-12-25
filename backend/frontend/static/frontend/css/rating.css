@@ -60,24 +60,23 @@ span.current {
 	transition: background-color 0.3s ease;
 }
 
-
 .slider {
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
+	width: 100%;
+	max-width: 600px;
+	text-align: center;
 }
 
 .slider img {
 	height: 600px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-bottom: 10px;
 }
 
 .slider-controls {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
+	display: flex;
+	justify-content: center;
+	gap: 5px;
 }
 
 .slider-controls input {
