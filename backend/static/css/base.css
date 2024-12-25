@@ -3,15 +3,19 @@
 	padding: 0;
 	box-sizing: border-box;
 }
+
 body {
 	font-family: Consolas;
 }
+
 div.logo {
 	margin-left:50px;
 }
+
 img.img_logo {
 	width: 45%;
 }
+
 header.header {
 	margin-top: 10px;
 	display:flex;
@@ -64,7 +68,6 @@ nav.navbar a.active{
 	display: block;            /* Убеждаемся, что изображение ведёт себя как блочный элемент */
 }
 
-/* Стили переключателей */
 .slider-controls {
 	display: flex;
 	justify-content: center;
@@ -98,13 +101,13 @@ nav.navbar a.active{
 
 .top-rating table {
 	margin-top: 23px;
-	border-collapse: collapse; /* Убирает промежутки между ячейками */
-	width: 100%; /* Таблица занимает всю ширину */
+	border-collapse: collapse;
+	width: 100%;
 }
 
 .top-rating td, th {
-	padding: 5px; /* Добавляет немного отступов */
-	text-align: left; /* Выравнивает текст по левому краю */
-	white-space: nowrap; /* Запрет на перенос текста */
-	max-width: 500px; /* Ограничение ширины ячейки */
+	padding: 5px;
+	text-align: left;
+	white-space: nowrap;
+	max-width: 500px;
 }
