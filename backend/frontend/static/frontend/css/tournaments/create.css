@@ -25,6 +25,22 @@
 
 .button button {
 	width: 250px;
+	background: #8800ff; /* Градиент от светло-голубого к темно-голубому */
+	border-radius: 10px;
+	border: none;
+	color: white;
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: Consolas;
+	cursor: pointer;
 	text-align: center;
-	margin: 0 0;
+	margin: 25px 0;
+	display: block; /* Делает кнопку блочным элементом */
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.button button:hover{
+	color: #8800ff;
+	background-color: black;
 }

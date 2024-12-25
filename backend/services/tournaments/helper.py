@@ -33,8 +33,8 @@ class TournamentHelper():
 		participants_list = random.sample(competitors_list, participants)
 		return participants_list
 	
-	def get_tournaments_base(self):
-		tournaments = self.tournament_service.get_tournaments(order_by='created_at')
+	def get_tournaments_base(self, profile_obj):
+		tournaments = self.tournament_service.get_tournaments_profile(profile_id=profile_obj, order_by='updated_at')
 		data = {
 			'completed_tournaments': dict(),
 			'in_progress_tournaments': dict(),
@@ -65,6 +65,7 @@ class TournamentHelper():
 		return competitors
 
 	def get_rounds(self, tournament_obj):
+		print(tournament_obj)
 		rounds_obj = tournament_obj.rounds.all()
 		return rounds_obj
 	
@@ -136,7 +137,7 @@ class TournamentHelper():
 		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
 		if tournament_obj.winner_id:
 			return None
-		round_obj = self.tournament_service.get_round_obj_by_tournament_string(tournament_id, round_number)
+		round_obj = self.tournament_service.get_round_obj_by_tournament_obj(tournament_obj, round_number)
 		self.tournament_service.update_status_round(round_obj, 'completed')
 		next_round_obj = self.tournament_service.next_round(tournament_obj, round_number)
 		if not next_round_obj:
@@ -194,8 +195,8 @@ class TournamentHelper():
 		participants = int(participants)
 		rounds = int(rounds)
 		in_matchup = int(in_matchup)
-
-		if rounds ** in_matchup == participants:
+		equation = (in_matchup ** rounds == participants)
+		if equation:
 			return True
 		else:
 			return False

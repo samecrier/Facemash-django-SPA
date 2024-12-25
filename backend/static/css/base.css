@@ -55,9 +55,10 @@ nav.navbar a.active{
 	box-sizing: border-box;
 	overflow: hidden;
 }
+
 .slider-images img {
 	width: auto;               /* Ширина автоматически подстраивается */
-	height: 100%;              /* Заполнение по высоте */
+	height: 100.1%;              /* Заполнение по высоте */
 	object-fit: contain;       /* Сохраняем пропорции с белыми полосами по ширине */
 	object-position: center;   /* Центрируем изображение */
 	display: block;            /* Убеждаемся, что изображение ведёт себя как блочный элемент */
@@ -106,31 +107,4 @@ nav.navbar a.active{
 	text-align: left; /* Выравнивает текст по левому краю */
 	white-space: nowrap; /* Запрет на перенос текста */
 	max-width: 500px; /* Ограничение ширины ячейки */
-}
-
-.button {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-.button button {
-	width: 80%;
-	background: #000cff; /* Градиент от светло-голубого к темно-голубому */
-	border-radius: 10px;
-	border: none;
-	color: white;
-	font-size: 20pt;
-	font-weight: bold;
-	font-family: Consolas;
-	cursor: pointer;
-	text-align: center;
-	margin: 0 auto; /* Обеспечивает горизонтальное центрирование блока */
-	display: block; /* Делает кнопку блочным элементом */
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
-.button button:hover{
-	color: #000cff;
-	background-color: black;
 }
