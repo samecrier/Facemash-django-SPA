@@ -1,21 +1,26 @@
 from django.db import transaction
 from django.db.models.functions import Coalesce
 from django.db.models import Value
-from django.shortcuts import get_object_or_404
-from services.service_helper import StringHelper
 from abc import ABC, abstractmethod
 from apps.tournaments.models import *
 
-class TournamentManager:
-	pass
 
-class TournamentBaseService:
+class BaseService:
+	
+	def get_obj_by_string(self, model, identifier):
+		return model.objects.filter(id=identifier).first()
+	
+	def get_object(self, model, identifier):
+		if isinstance(identifier, model):
+			return model.objects.filter(id=identifier.id).first() #это используется, чтобы возвращать конкретно запись из базы с обновленными типами (str->int и.т.д)
+		elif isinstance(identifier, (str, int)):
+			return self.get_obj_by_string(model, identifier)
+
+
+class TournamentBaseService(BaseService):
 
 	def get_tournament_obj(self, tournament):
-		if isinstance(tournament, TournamentBase):
-			return TournamentBase.objects.filter(id=tournament.id).first() #это используется, чтобы возвращать конкретно запись из базы с обновленными типами (str->int и.т.д)
-		elif isinstance(tournament, (str, int)):
-			return StringHelper.get_obj_by_string(TournamentBase, tournament)
+		return self.get_object(TournamentBase, tournament)
 	
 	def get_tournaments(self, order_by=None): #Не используется
 		"""Возвращает все турниры без привязки к профайлу"""
@@ -62,20 +67,14 @@ class TournamentBaseService:
 			return tournament_obj.competitors.all().order_by(Coalesce('final_position', Value(0)))[:number]
 		return tournament_obj.competitors.all().order_by(Coalesce('final_position', Value(0)))
 
-class TournamentRoundService:
+class TournamentRoundService(BaseService):
 	
 	def get_round_obj(self, round):
-		if isinstance(round, TournamentRound):
-			return TournamentRound.objects.filter(id=round.id)
-		elif isinstance(round, (str, int)):
-			return StringHelper.get_obj_by_string(TournamentRound, round)
+		return self.get_object(TournamentRound, round)
 	
 	def get_round_obj_by_tournament(self, tournament, round_number):
 		"""Tournament obj или id(str) возвращает объект раунда"""
-		if isinstance(tournament, TournamentBase):
-			tournament_obj = tournament
-		elif isinstance(tournament, (str, int)):
-			tournament_obj = StringHelper.get_obj_by_string(TournamentBase, tournament)
+		tournament_obj = self.get_object(TournamentBase, tournament)
 		round_obj = tournament_obj.rounds.filter(round_number=round_number).first()
 		return round_obj
 	
@@ -111,16 +110,14 @@ class TournamentRoundService:
 		round_obj.status = status
 		round_obj.save()
 	
-class TournamentMatchupService:
+class TournamentMatchupService(BaseService):
+	
 	def get_matchup_obj_by_round_obj(self, round_obj, matchup_number):
 		matchup_obj = round_obj.round_matchups.filter(matchup_number=matchup_number).first()
 		return matchup_obj
 	
 	def get_matchup_obj(self, matchup):
-		if isinstance(matchup, TournamentMatchup):
-			return TournamentMatchup.objects.filter(id=matchup.id)
-		elif isinstance(matchup, (str, int)):
-			return StringHelper.get_obj_by_string(TournamentMatchup, matchup)
+		return self.get_object(TournamentMatchup, matchup)
 	
 	def get_matchups_by_round_obj(self, round_obj):
 		return round_obj.round_matchups.all()
@@ -147,6 +144,11 @@ class LocalTournamentService:
 		self.base = base
 		self.round = round
 		self.matchup = matchup
+
+
+class TournamentManager:
+	pass
+
 
 class APITournamentService:
 	pass

@@ -8,6 +8,7 @@ from services.tournaments.helper import TournamentHelper
 from services.matchups.handler import MatchupHandler
 from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
 
+
 class TournamentHandler():
 	
 	def __init__(
