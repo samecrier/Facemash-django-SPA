@@ -4,6 +4,7 @@ from services.ratings.service import LocalRatingService
 from services.profiles.service import LocalProfileService
 from services.matchups.service import LocalMatchupService
 from django.utils.safestring import mark_safe
+from django.apps import apps
 from collections import defaultdict
 import json
 from typing import TYPE_CHECKING
@@ -49,3 +50,14 @@ class Helper():
 		else:
 			# Возвращаем неизмененные объекты
 			return obj
+
+
+	@staticmethod
+	def get_model_object(app, model):
+		"""Возвращает объект модели для проверки в ifinstance без импорта
+		User = get_model_object('apps.profiles', 'User')
+		Вместо import User
+		"""
+
+		model = apps.get_model(app, model)
+		return model

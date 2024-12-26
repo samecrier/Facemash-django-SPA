@@ -11,7 +11,7 @@ class BasePermissionMixin:
 	
 	def get_tournament_obj(self, tournament_id, request):
 		"""Получение объекта турнира и проверка прав доступа."""
-		tournament_obj = self.tournament_service.get_tournament_obj(tournament_id)
+		tournament_obj = self.tournament_service.base.get_tournament_obj(tournament_id)
 		if not tournament_obj:
 			raise Http404("Такого турнира не существует")
 		if tournament_obj.profile_id != request.user:
@@ -20,7 +20,7 @@ class BasePermissionMixin:
 
 	def get_round_obj(self, tournament_obj, round_number):
 		"""Получение объекта раунда и проверка актуальности."""
-		round_obj = self.tournament_service.get_round_obj_by_tournament_obj(tournament_obj, round_number)
+		round_obj = self.tournament_service.round.get_round_obj_by_tournament(tournament_obj, round_number)
 		if not round_obj:
 			raise Http404("Такого раунда не существует")
 		
@@ -31,7 +31,6 @@ class BasePermissionMixin:
 
 class TournamentPermissionMixin(BasePermissionMixin):
 	tournament_lookup_field = "tournament_id"
-	tournament_service = LocalTournamentService()
 	
 	def dispatch(self, request, *args, **kwargs):
 		tournament_id = kwargs.get(self.tournament_lookup_field)

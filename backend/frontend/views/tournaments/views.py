@@ -82,7 +82,6 @@ class TournamentView(LoginRequiredMixin, TournamentPermissionMixin, View):
 class StageTournamentView(LoginRequiredMixin, RoundPermissionMixin, View):
 	helper_service = TournamentHelper()
 	data_service = TournamentGetData()
-	tournament_service = LocalTournamentService()
 	
 	def get(self, request, tournament_id, round_number):
 		
@@ -98,7 +97,6 @@ class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):
 	helper_service = TournamentHelper()
 	data_service = MatchupGetData()
 	handler=TournamentHandler()
-	tournament_service = LocalTournamentService()
 
 	def get(self, request, tournament_id, round_number, matchup_number=None):
 		tournament = {

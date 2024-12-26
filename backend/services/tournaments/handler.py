@@ -39,7 +39,7 @@ class TournamentHandler():
 			return (tournament_id, round_number)
 	
 	def initiate_of_tournament(self, profile_id, competitors, participants, rounds, in_matchup):
-		tournament_obj = self.tournament_service.create_tournament_base(
+		tournament_obj = self.tournament_service.base.create_tournament_base(
 			profile_id=profile_id,
 			competitors_number=participants,
 			rounds_number=rounds
@@ -47,23 +47,23 @@ class TournamentHandler():
 
 		for round_number in range(1, tournament_obj.rounds_number+1):
 			if round_number == 1:
-				round_obj = self.tournament_service.create_tournament_round(
+				round_obj = self.tournament_service.round.create_tournament_round(
 					tournament_base_id=tournament_obj,
 					competitors_in_matchup=in_matchup,
 					round_number=round_number
 				)
 			else:
-				self.tournament_service.create_tournament_round(
+				self.tournament_service.round.create_tournament_round(
 					tournament_base_id=tournament_obj,
 					competitors_in_matchup=in_matchup,
 					round_number=round_number
 				)
 		for competitor in competitors:
-			tournament_competitor_obj = self.tournament_service.create_tournament_competitor(
+			tournament_competitor_obj = self.tournament_service.base.create_tournament_competitor(
 				tournament_base_id=tournament_obj,
 				competitor_id=competitor,
 			)
-			self.tournament_service.create_round_competitor(
+			self.tournament_service.round.create_round_competitor(
 				tournament_competitor_id=tournament_competitor_obj,
 				tournament_round_id=round_obj,
 			)
@@ -75,7 +75,7 @@ class TournamentHandler():
 			'elo_32': EloRatingSystem32(),
 			'elo_64': EloRatingSystem64()
 		}
-		matchup_obj = self.tournament_service.get_matchup_obj_by_id(matchup_id)
+		matchup_obj = self.tournament_service.matchup.get_matchup_obj(matchup_id)
 		if matchup_obj.winner_id:
 			raise AttributeError("ПОБЕДИТЕЛЬ УЖЕ ЕСТЬ")
 		winner_id = int(winner_id)
