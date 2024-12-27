@@ -15,6 +15,9 @@ class BaseService:
 			return model.objects.filter(id=identifier.id).first() #это используется, чтобы возвращать конкретно запись из базы с обновленными типами (str->int и.т.д)
 		elif isinstance(identifier, (str, int)):
 			return self.get_obj_by_string(model, identifier)
+	
+	def get_service(self, service_class):
+		return service_class()
 
 
 class TournamentBaseService(BaseService):
@@ -34,13 +37,16 @@ class TournamentBaseService(BaseService):
 			return TournamentBase.objects.filter(profile_id=profile).order_by(order_by)
 		return TournamentBase.objects.filter(profile_id=profile)
 	
-	def create_tournament_base(self, profile_id, competitors_number, rounds_number):
-		competitors_number, rounds_number = int(competitors_number), int(rounds_number)
+	def get_winner_tournament_competitor(self, tournament_obj):
+		return tournament_obj.competitors.filter(status='active').first()
+	
+	def create_tournament_base(self, profile_id, competitors_qty, rounds_qty):
+		competitors_qty, rounds_qty = int(competitors_qty), int(rounds_qty)
 		tournament_base = TournamentBase.objects.create(
 			profile_id=profile_id,
-			competitors_number=competitors_number,
-			competitors_remaining=competitors_number,
-			rounds_number=rounds_number
+			competitors_qty=competitors_qty,
+			competitors_remaining=competitors_qty,
+			rounds_qty=rounds_qty
 		)
 		tournament_obj = self.get_tournament_obj(tournament_base)
 		return tournament_obj
@@ -72,6 +78,10 @@ class TournamentRoundService(BaseService):
 	def get_round_obj(self, round):
 		return self.get_object(TournamentRound, round)
 	
+	def get_rounds_objs(self, tournament_obj):
+		rounds_obj = tournament_obj.rounds.all()
+		return rounds_obj
+	
 	def get_round_obj_by_tournament(self, tournament, round_number):
 		"""Tournament obj или id(str) возвращает объект раунда"""
 		tournament_obj = self.get_object(TournamentBase, tournament)
@@ -84,7 +94,7 @@ class TournamentRoundService(BaseService):
 			return None
 		else:
 			return next_rounds[0]
-	
+
 	def create_tournament_round(self, tournament_base_id, competitors_in_matchup, round_number):
 		competitors_in_matchup, round_number = int(competitors_in_matchup), int(round_number)
 		tournament_round = TournamentRound.objects.create(
@@ -109,6 +119,15 @@ class TournamentRoundService(BaseService):
 	def update_status_round(self, round_obj, status):
 		round_obj.status = status
 		round_obj.save()
+
+	def update_competitors_qty(self, round_obj):
+		round_obj.competitors_qty += 1
+		round_obj.save()
+
+	def update_matchups_qty(self, round_obj):
+		round_obj.matchups_qty += 1
+		round_obj.save()
+	
 	
 class TournamentMatchupService(BaseService):
 	
@@ -128,10 +147,17 @@ class TournamentMatchupService(BaseService):
 			matchup_number=matchup_number
 		)
 		matchup_obj = self.get_matchup_obj(matchup)
+		self.update_round_matchups_qty(matchup_obj)
 		return matchup_obj
 	
 	def update_matchup_competitors(self, matchup_obj, round_competitor):
 		matchup_obj.competitors_in_matchup.add(round_competitor)
+		round_service = self.get_service(TournamentRoundService)
+		round_service.update_competitors_qty(matchup_obj.tournament_round_id)
+
+	def update_round_matchups_qty(self, matchup_obj):
+		round_service = self.get_service(TournamentRoundService)
+		round_service.update_matchups_qty(matchup_obj.tournament_round_id)
 
 
 class LocalTournamentService:

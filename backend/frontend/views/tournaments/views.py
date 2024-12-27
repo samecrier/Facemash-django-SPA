@@ -18,14 +18,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class HomeTournamentView(LoginRequiredMixin, View):
-	
-	helper_service = TournamentHelper()
+	data_service = TournamentGetData()
 	
 	def get(self, request):
-		
 		profile_obj = request.user
-		
-		data = self.helper_service.get_tournaments_base(profile_obj)
+		data = self.data_service.get_tournaments_base(profile_obj)
 		return render(request, 'frontend/tournaments/main.html',
 			{'data': data}
 		)
@@ -33,9 +30,7 @@ class HomeTournamentView(LoginRequiredMixin, View):
 
 class CreateTournamentView(LoginRequiredMixin, View):
 	helper_service = TournamentHelper()
-	competitor_service = LocalCompetitorService()
 	handler_service = TournamentHandler()
-	data_service = TournamentGetData()
 	
 	def get(self, request):
 		tournament_form = TournamentSelectionForm()
@@ -60,16 +55,17 @@ class CreateTournamentView(LoginRequiredMixin, View):
 
 
 class TournamentView(LoginRequiredMixin, TournamentPermissionMixin, View):
-	helper_service = TournamentHelper()
+	data_service = TournamentGetData()
 	
 	def get(self, request, tournament_id):
-		competitors = self.helper_service.get_competitors_info(tournament_id)
-		actual_rounds_status = self.helper_service.actual_rounds_status(tournament_id)
-		actual_round = self.helper_service.get_actual_round_obj_by_tournament(tournament_id)
+		competitors = self.data_service.get_competitors_rank(tournament_id)
+		actual_rounds_status = self.data_service.actual_rounds_status(tournament_id)
+		actual_round = self.data_service.get_actual_round_obj_by_tournament(tournament_id)
 		paginator = Paginator(competitors, 20)
 		page_number = request.GET.get('page', 1)
 		page_obj = paginator.get_page(page_number)
 		start_position = (page_obj.number - 1) * paginator.per_page
+		tournament_info = self.data_service.get_tournament_info(tournament_id)
 		return render(request, 'frontend/tournaments/info.html', {
 			'page_obj': page_obj,
 			'paginator': paginator,
@@ -95,7 +91,8 @@ class StageTournamentView(LoginRequiredMixin, RoundPermissionMixin, View):
 
 class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):
 	helper_service = TournamentHelper()
-	data_service = MatchupGetData()
+	matchup_data_service = MatchupGetData()
+	tournament_data_service = TournamentGetData()
 	handler=TournamentHandler()
 
 	def get(self, request, tournament_id, round_number, matchup_number=None):
@@ -104,13 +101,16 @@ class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):
 			'winner_id': self.tournament_obj.winner_id,
 		}
 
-		competitors_number = len(self.competitors_in_matchup)
-		matchups_count = self.helper_service.get_count_matchup_in_round(tournament_id, round_number)
-		data = self.data_service.data_matchup(**self.competitors_in_matchup)
+		competitors_qty = len(self.competitors_in_matchup)
+		matchups_count = self.tournament_data_service.get_number_matchups_in_round(tournament_id, round_number)
+		data = self.matchup_data_service.data_matchup(**self.competitors_in_matchup)
+		
+		tournament_info = self.tournament_data_service.get_tournament_info_by_obj(self.tournament_obj)
+		round_info = self.tournament_data_service.get_round_info_by_obj(self.round_obj)
 		return render(request, 'frontend/tournaments/tournament_matchup.html',
 			{	
 				'matchups_count': matchups_count,
-				'competitors_number': competitors_number,
+				'competitors_qty': competitors_qty,
 				'data': data,
 				'matchup': self.matchup_obj,
 				'tournament': tournament,
@@ -128,13 +128,13 @@ class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):
 		return redirect('tournament-matchup-actual', tournament_id=tournament_id, round_number=round_number)
 
 class WinnerTournamentView(LoginRequiredMixin, WinnerPermissionMixin, View):
-	helper_service = TournamentHelper()
-	data_service = CompetitorGetData()
+	tournament_data_service = TournamentGetData()
+	competitor_data_service = CompetitorGetData()
 
 	def get(self, request, tournament_id):
 
-		competitors = self.helper_service.get_competitors_info(self.tournament_obj, number=10)
-		data = self.data_service.get_competitor_profile(self.competitor_obj)
+		competitors = self.tournament_data_service.get_competitors_rank(self.tournament_obj, number=10)
+		data = self.competitor_data_service.get_competitor_profile(self.competitor_obj)
 		return render(request, 'frontend/tournaments/winner.html',
 				{
 					'data': data,
@@ -142,3 +142,4 @@ class WinnerTournamentView(LoginRequiredMixin, WinnerPermissionMixin, View):
 					'tournament_id': tournament_id
 				}
 			)
+

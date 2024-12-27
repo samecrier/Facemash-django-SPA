@@ -6,6 +6,7 @@ from services.profiles.service import LocalProfileService
 from services.tournaments.service import LocalTournamentService
 from services.tournaments.helper import TournamentHelper
 from services.matchups.handler import MatchupHandler
+from services.tournaments.handler_helper import HandlerHelper
 from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
 
 
@@ -33,7 +34,7 @@ class TournamentHandler():
 		if request.user.is_authenticated:
 			profile_id = request.user
 			competitors = self.competitor_service.fetch_competitors_by_location(cities)
-			competitor_for_tournament = self.tournament_helper.choose_random_competitors(competitors, participants)
+			competitor_for_tournament = HandlerHelper.choose_random_competitors(competitors, participants)
 			tournament_obj, round_obj = self.initiate_of_tournament(profile_id, competitor_for_tournament, participants, rounds, in_matchup)
 			tournament_id = tournament_obj.id
 			round_number = round_obj.round_number
@@ -42,11 +43,11 @@ class TournamentHandler():
 	def initiate_of_tournament(self, profile_id, competitors, participants, rounds, in_matchup):
 		tournament_obj = self.tournament_service.base.create_tournament_base(
 			profile_id=profile_id,
-			competitors_number=participants,
-			rounds_number=rounds
+			competitors_qty=participants,
+			rounds_qty=rounds
 		)
 
-		for round_number in range(1, tournament_obj.rounds_number+1):
+		for round_number in range(1, tournament_obj.rounds_qty+1):
 			if round_number == 1:
 				round_obj = self.tournament_service.round.create_tournament_round(
 					tournament_base_id=tournament_obj,

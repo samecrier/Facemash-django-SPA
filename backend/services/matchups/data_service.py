@@ -50,16 +50,16 @@ class MatchupGetData():
 
 		return data_competitor
 
-	def get_data_random_competitors(self, competitors_number, first_position=0) -> dict:
+	def get_data_random_competitors(self, competitors_qty, first_position=0) -> dict:
 		"""
 		Возвращает competitor_number dict для матчапа
 
-		:param competitors_number: int - количество участников
+		:param competitors_qty: int - количество участников
 		return dict
 		"""
 		data = defaultdict(dict)
 		start_position = first_position + 1
-		finish_position = start_position + competitors_number
+		finish_position = start_position + competitors_qty
 		competitors = []
 		for i_competitor in range(start_position, finish_position):
 			competitor_number_key = f"competitor-{i_competitor}"
@@ -102,7 +102,7 @@ class MatchupGetData():
 			need_competitors = competitors-len(raw_data)
 			for i in range(need_competitors):
 				final_data.update(self.get_data_random_competitors(
-					competitors_number=need_competitors, 
+					competitors_qty=need_competitors, 
 					first_position=len(raw_data)))
 
 		competitor_final_data = {f"competitor-{key}": value for key, value in sorted(final_data.items())}

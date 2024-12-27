@@ -3,9 +3,9 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/base_tournament.css' %}">
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/tournament_matchup.css' %}">
-{% if competitors_number < 5 %}
+{% if competitors_qty < 5 %}
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/size_matchups/2-4.css' %}">
-{% elif competitors_number < 9 %}
+{% elif competitors_qty < 9 %}
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/size_matchups/5-8.css' %}">
 {% endif %}
 {% endblock %}
