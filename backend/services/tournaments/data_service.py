@@ -144,78 +144,35 @@ class TournamentGetData():
 		competitors = [(obj.competitor_id, obj.final_position) for obj in tournament_competitors]
 		return competitors
 	
-	def get_number_matchups_in_round(self, tournament, round_number):
-		round_obj = self.tournament_service.round.get_round_obj_by_tournament(tournament, round_number)
-		matchups_in_round = round_obj.matchups_qty
-		return matchups_in_round
-	
 	def get_actual_round_obj_by_tournament(self, tournament):
 		return self.data_helper_service.get_actual_round_obj_by_tournament(tournament)
 	
 	def get_tournament_info_by_obj(self, tournament_obj):
 		tournament_data = {
-			'profile_id': None,
-			'competitors_qty': None,
-			'competitors_remaining': None,
-			'rounds_qty': None,
-			'winner_id': None,
-			'created_at': None,
-			'updated_at': None
+			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+			'rounds_info': self.data_helper_service.get_rounds_info_dict(tournament_obj),
+			'tournament_competitors': self.data_helper_service.get_tournament_competitors_dict(tournament_obj),
 		}
-		tournament_data['profile_id'] = tournament_obj.profile_id.id
-		tournament_data['competitors_qty'] = tournament_obj.competitors_qty
-		tournament_data['competitors_remaining'] = tournament_obj.competitors_remaining
-		tournament_data['rounds_qty'] = tournament_obj.rounds_qty
-		if tournament_obj.winner_id:
-			tournament_data['winner_id'] = tournament_obj.winner_id.id
-		tournament_data['created_at'] = tournament_obj.created_at
-		tournament_data['updated_at'] = tournament_obj.updated_at
-
-		tournament_data['tournament_competitors'] = {}
-		for t_competitor in tournament_obj.competitors.all():
-			t_competitor_id = t_competitor.id
-			tournament_data['tournament_competitors'][t_competitor_id] = {}
-			
-			tournament_data['tournament_competitors'][t_competitor_id]['competitor_id'] = t_competitor.competitor_id.id
-			tournament_data['tournament_competitors'][t_competitor_id]['status'] = t_competitor.status
-			tournament_data['tournament_competitors'][t_competitor_id]['final_position'] = t_competitor.final_position
-			tournament_data['tournament_competitors'][t_competitor_id]['delta_tournament'] = t_competitor.delta_tournament
-			tournament_data['tournament_competitors'][t_competitor_id]['delta_tournament_profile'] = t_competitor.delta_tournament_profile
-		
 		return tournament_data
 	
 	def get_round_info_by_obj(self, round_obj):
+		tournament_obj = round_obj.tournament_base_id
 		round_data = {
-			'tournament_id': None,
-			'round_number': None,
-			'competitors_qty': None,
-			'matchups_qty': None,
-			'rating_system': None,
-			'competitors_in_matchup': None,
-			'status': None,
-			'created_at': None,
-			'updated_at': None,
+			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+			'round_info': self.data_helper_service.get_round_info_dict(round_obj),
+			'round_competitors': self.data_helper_service.get_round_competitors_dict(round_obj)
 		}
-		round_data['tournament_id'] = round_obj.tournament_base_id.id
-		round_data['round_number'] = round_obj.round_number
-		round_data['competitors_qty'] = round_obj.competitors_qty
-		round_data['matchups_qty'] = round_obj.matchups_qty
-		round_data['rating_system'] = round_obj.rating_system
-		round_data['competitors_in_matchup'] = round_obj.competitors_in_matchup
-		round_data['status'] = round_obj.status
-		round_data['created_at'] = round_obj.created_at
-		round_data['updated_at'] = round_obj.updated_at
-
-		round_data['round_competitors'] = {}
-		for r_competitor in round_obj.round_competitors.all():
-			r_competitor_id = r_competitor.id
-			round_data['round_competitors'][r_competitor_id] = {}
-
-			round_data['round_competitors'][r_competitor_id]['competitor_id'] = r_competitor.tournament_competitor_id.competitor_id.id
-			round_data['round_competitors'][r_competitor_id]['tournament_competitor_id'] = r_competitor.tournament_competitor_id.id
-			round_data['round_competitors'][r_competitor_id]['result'] = r_competitor.result
-			round_data['round_competitors'][r_competitor_id]['status'] = r_competitor.status
-			round_data['round_competitors'][r_competitor_id]['delta_round'] = r_competitor.delta_round
-			round_data['round_competitors'][r_competitor_id]['delta_round_profile'] = r_competitor.delta_round_profile
-		
 		return round_data
+	
+	def get_matchup_info_by_obj(self, matchup_obj):
+		round_obj = matchup_obj.tournament_round_id
+		tournament_obj = round_obj.tournament_base_id
+
+		matchup_data = {
+			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+			'round_info': self.data_helper_service.get_round_info_dict(round_obj),
+			'matchup_info': self.data_helper_service.get_matchup_info_dict(matchup_obj),
+			'matchup_competitors': self.data_helper_service.get_matchup_competitors_dict(matchup_obj)
+		}
+		
+		return matchup_data

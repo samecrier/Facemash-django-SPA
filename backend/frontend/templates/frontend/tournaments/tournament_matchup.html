@@ -3,9 +3,9 @@
 {% block css %}
 <link rel="stylesheet" href="{% static 'css/base_tournament.css' %}">
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/tournament_matchup.css' %}">
-{% if competitors_qty < 5 %}
+{% if data.round_info.competitors_qty < 5 %}
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/size_matchups/2-4.css' %}">
-{% elif competitors_qty < 9 %}
+{% elif data.round_info.competitors_qty < 9 %}
 <link rel="stylesheet" href="{% static 'frontend/css/tournaments/size_matchups/5-8.css' %}">
 {% endif %}
 {% endblock %}
@@ -16,23 +16,23 @@
 <main>
 	<div class="wrapper">
 		<div class="tournament-matchup-info">
-			{% if matchup.winner_id and not tournament.winner_id %}
+			{% if data.matchup_info.competitor_winner_id and not data.tournament_info.winner_id %}
 			<div class="actual-matchup-button">
 				<div class="a-button">
-					<a href="{% url 'tournament-matchup-actual' tournament.id round_number %}">Перейти к актуальному матчапу {{ actual_round.round_number }}</a>
+					<a href="{% url 'tournament-matchup-actual' data.tournament_info.id data.round_info.round_number %}">Перейти к актуальному матчапу {{ actual_round.round_number }}</a>
 				</div>
 			</div>
 			{% endif %}
 			<div class="heading-matchup">
-				<h1>Раунд номер {{round_number }} // {{matchup.matchup_number}} матчап из {{matchups_count}} </h1>
+				<h1>Раунд номер {{data.round_info.round_number }} // {{data.matchup_info.matchup_number}} матчап из {{data.round_info.matchups_qty}} </h1>
 			</div>
 			<div class="tournament-stage-button">
-				<a href="{% url 'tournament-stage' tournament.id round_number %}">Подробнее о раунде</a>
+				<a href="{% url 'tournament-stage' data.tournament_info.id data.round_info.round_number %}">Подробнее о раунде</a>
 			</div>
 		</div>
 		<div class="competitors-block">
-		{% for competitor_key, competitor_data in data.items %}
-			{% if matchup.winner_id.tournament_competitor_id.competitor_id.id == competitor_data.competitor.id%}
+		{% for competitor_key, competitor_data in competitors.items %}
+			{% if data.matchup_info.competitor_winner_id == competitor_data.competitor.id%}
 			<div class="competitor winner{% if forloop.first %} competitor-1{% endif %}" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
 			{% else %}
 			<div class="competitor{% if forloop.first %} competitor-1{% endif %}" id="{{ competitor_key }}", data-index="{{ forloop.counter }}">
@@ -46,13 +46,13 @@
 								<a href="{% url 'competitor' competitor_data.competitor.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
 							{% endif %}
 						{% endfor%}
-						<div class="button" {% if matchup.winner_id %} style="display:none;"{% endif %}>
+						<div class="button" {% if data.matchup_info.competitor_winner_id %} style="display:none;"{% endif %}>
 							<form method="post">
 							{% csrf_token %}
-								<input type="hidden" name="matchup_id" value="{{ matchup.id }}">
+								<input type="hidden" name="matchup_id" value="{{ data.matchup_info.id }}">
 								<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
 								<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
-								<input type="hidden" name="loser_ids" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }},{% endif %}{% endfor %}">
+								<input type="hidden" name="loser_ids" value="{% for c_key, c_data in competitors.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }},{% endif %}{% endfor %}">
 								<button type="submit" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
 							</form>
 						</div>
@@ -66,7 +66,7 @@
 				</div>
 				
 
-				{% if matchup.winner_id.tournament_competitor_id.competitor_id.id == competitor_data.competitor.id%}
+				{% if data.matchup_info.competitor_winner_id == competitor_data.competitor.id%}
 				<div class="matchup-winner">
 					<p>Победитель</p>
 				</div>

@@ -95,10 +95,15 @@ class TournamentHandler():
 		)
 		matchup_handler.process_matchup()
 
-		tournament_base = matchup_obj.tournament_round_id.tournament_base_id
-		if tournament_base.status == 'not started':
-			tournament_base.status = 'in progress'
-			tournament_base.save()
+		round_obj = matchup_obj.tournament_round_id
+		tournament_obj = round_obj.tournament_base_id
+		if round_obj.status == 'not started':
+			round_obj.status = 'in progress'
+			round_obj.save()
+			if round_obj.round_number == 1:
+				tournament_obj.status = 'in progress'
+				tournament_obj.save()
+		
 		for round_competitor in matchup_obj.competitors_in_matchup.all():
 			competitor = round_competitor.tournament_competitor_id.competitor_id
 			tournament_competitor = round_competitor.tournament_competitor_id
@@ -121,12 +126,10 @@ class TournamentHandler():
 				round_competitor.delta_round_profile = matchup_handler.delta_profile[competitor]
 				tournament_competitor.delta_tournament += matchup_handler.delta[competitor]
 				tournament_competitor.delta_tournament_profile += matchup_handler.delta_profile[competitor]
-				tournament_competitor.final_position = tournament_base.competitors_remaining
-				tournament_base.competitors_remaining = tournament_base.competitors_remaining-1
-				tournament_base.save()
+				tournament_competitor.final_position = tournament_obj.competitors_remaining
+				tournament_obj.competitors_remaining = tournament_obj.competitors_remaining-1
+				tournament_obj.save()
 			
 			tournament_competitor.save()
 			round_competitor.save()
 			matchup_obj.save()
-
-		print(matchup_id, '/', winner_id)

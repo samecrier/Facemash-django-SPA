@@ -15,6 +15,7 @@ from services.tournaments.handler import TournamentHandler
 from apps.tournaments.models import TournamentBase
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from pprint import pprint
 
 
 class HomeTournamentView(LoginRequiredMixin, View):
@@ -65,7 +66,8 @@ class TournamentView(LoginRequiredMixin, TournamentPermissionMixin, View):
 		page_number = request.GET.get('page', 1)
 		page_obj = paginator.get_page(page_number)
 		start_position = (page_obj.number - 1) * paginator.per_page
-		tournament_info = self.data_service.get_tournament_info(tournament_id)
+		tournament_info = self.data_service.get_tournament_info_by_obj(self.tournament_obj)
+		print(tournament_info)
 		return render(request, 'frontend/tournaments/info.html', {
 			'page_obj': page_obj,
 			'paginator': paginator,
@@ -101,20 +103,15 @@ class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):
 			'winner_id': self.tournament_obj.winner_id,
 		}
 
-		competitors_qty = len(self.competitors_in_matchup)
-		matchups_count = self.tournament_data_service.get_number_matchups_in_round(tournament_id, round_number)
-		data = self.matchup_data_service.data_matchup(**self.competitors_in_matchup)
+		competitors = self.matchup_data_service.data_matchup(**self.competitors_in_matchup)
 		
-		tournament_info = self.tournament_data_service.get_tournament_info_by_obj(self.tournament_obj)
-		round_info = self.tournament_data_service.get_round_info_by_obj(self.round_obj)
+		# tournament_info = self.tournament_data_service.get_tournament_info_by_obj(self.tournament_obj)
+		# round_info = self.tournament_data_service.get_round_info_by_obj(self.round_obj)
+		data = self.tournament_data_service.get_matchup_info_by_obj(self.matchup_obj)
 		return render(request, 'frontend/tournaments/tournament_matchup.html',
 			{	
-				'matchups_count': matchups_count,
-				'competitors_qty': competitors_qty,
 				'data': data,
-				'matchup': self.matchup_obj,
-				'tournament': tournament,
-				'round_number': round_number
+				'competitors': competitors,
 			})
 	
 	def post(self, request, tournament_id, round_number, matchup_number=None):
