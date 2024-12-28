@@ -15,7 +15,7 @@ class TournamentDataHelper():
 			for round in sorted(rounds, key=lambda r: r.round_number)}
 		return rounds_status
 	
-	def get_actual_round_obj_by_tournament(self, tournament_id):
+	def get_actual_round_number_by_tournament(self, tournament_id):
 		tournament_obj = self.tournament_service.base.get_tournament_obj(tournament_id)
 		rounds_status = self.get_rounds_status(tournament_obj)
 		if list(rounds_status.values())[-1] == 'completed':
@@ -23,11 +23,12 @@ class TournamentDataHelper():
 			return None 
 		for round in rounds_status:
 			if rounds_status[round] in ('not started', 'in progress'):
-				return round
+				return round.round_number
 	
 	def get_competitor_info_dict(self, competitor_obj):
 		competitor_info = {
-			'competitor_id': competitor_obj.id,
+			'id': competitor_obj.id,
+			'name': competitor_obj.name,
 			'name_id': competitor_obj.name_id,
 			'age': competitor_obj.age,
 			'city': competitor_obj.city.city_eng,
@@ -39,6 +40,7 @@ class TournamentDataHelper():
 		tournament_info = {
 			'id': tournament_obj.id,
 			'profile_id': tournament_obj.profile_id.id,
+			'actual_round_number': self.get_actual_round_number_by_tournament(tournament_obj),
 			'competitors_qty': tournament_obj.competitors_qty,
 			'competitors_remaining': tournament_obj.competitors_remaining,
 			'rounds_qty': tournament_obj.rounds_qty,
@@ -116,6 +118,7 @@ class TournamentDataHelper():
 			'matchup_number': matchup_obj.matchup_number,
 			'round_competitor_winner_id': matchup_obj.winner_id if matchup_obj.winner_id else None,
 			'competitor_winner_id': matchup_obj.winner_id.tournament_competitor_id.competitor_id.id if matchup_obj.winner_id else None,
+			'status': matchup_obj.status
 		}
 		return matchup_info
 	
@@ -130,3 +133,20 @@ class TournamentDataHelper():
 				'round_info': self.get_round_competitor_info_dict(round_competitor_obj)
 			}
 		return matchup_competitors
+	
+	def get_matchups_dict(self, matchups_obj):
+		matchups = {}
+		for matchup_obj in matchups_obj.order_by('matchup_number'):
+			matchup_number = matchup_obj.matchup_number
+			matchups[matchup_number] = {'competitors': {}}
+			for i, competitor in enumerate(matchup_obj.competitors_in_matchup.all()):
+				round_competitor_obj = competitor
+				tournament_competitor_obj = round_competitor_obj.tournament_competitor_id
+				competitor_obj = tournament_competitor_obj.competitor_id
+				matchups[matchup_number]['competitors'][i] = {}
+				matchups[matchup_number]['competitors'][i]['competitor_info'] = self.get_competitor_info_dict(competitor_obj)
+				matchups[matchup_number]['competitors'][i]['round_info'] = self.get_round_competitor_info_dict(round_competitor_obj)
+				matchups[matchup_number]['competitors'][i]['tournament_info'] = self.get_tournament_competitor_info_dict(tournament_competitor_obj)
+				# if request.user.is_authenticated: # эта штука вызывает вопросов и надо реализовывать ее через кэш
+				# 	matchups[matchup_number]['competitors'][i]['rating_profile'] = self.rating_service.get_rating_profile(request.user, competitor_obj)
+		return matchups

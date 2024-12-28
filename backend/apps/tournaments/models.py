@@ -197,7 +197,10 @@ class RoundCompetitor(models.Model):
 
 
 class TournamentMatchup(models.Model):
-	
+	STATUS_CHOICES = [
+		('played', 'played'),
+		('not played', 'not played')
+	]
 	tournament_round_id = models.ForeignKey(
 		'tournaments.TournamentRound',
 		on_delete=models.SET_NULL,
@@ -220,6 +223,11 @@ class TournamentMatchup(models.Model):
 		'tournaments.RoundCompetitor',
 		related_name='matchup_losers'
 	)
+	status = models.CharField(
+		max_length=255,
+		choices=STATUS_CHOICES,
+		default='not played'
+		)
 	matchup_number = models.PositiveIntegerField()
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

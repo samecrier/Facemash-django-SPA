@@ -16,11 +16,7 @@
 					<div class="slider-controls">
 					</div>
 					<div class="slider-images">
-						{% for image in competitor_data.competitor.images.all %}
-							{% if forloop.counter == competitor_data.forloop_index %}
-								<a href="{% url 'competitor' competitor_data.competitor.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
-							{% endif %}
-						{% endfor%}
+						<a href="{% url 'competitor' competitor_data.id %}"><img id="current-image-{{forloop.counter}}" src="/" alt="Image"></a>
 					</div>
 					<script id="image-data-slider-{{forloop.counter}}" type="application/json">
 						{
@@ -30,16 +26,16 @@
 					</script>
 				</div>
 				<div class="bio">
-					<p>{{ competitor_data.competitor.name}}{% if competitor_data.competitor.age %}, {{ competitor_data.competitor.age }}{% endif %}</p>
+					<p>{{ competitor_data.name}}{% if competitor_data.age %}, {{ competitor_data.age }}{% endif %}</p>
 					<p class="competitor-rating">Rating: {{ competitor_data.rating }}</p>
 				</div>
 				<div class="button">
 					<form method="post">
 					{% csrf_token %}
-						<input type="hidden" name="winner_id" value="{{ competitor_data.competitor.id }}">
+						<input type="hidden" name="winner_id" value="{{ competitor_data.id }}">
 						<input type="hidden" name="winner_position" value="{{ forloop.counter }}">
 						<input type="hidden" id="image-index-slider-{{ forloop.counter}}" name="winner_image_index" value="{{competitor_data.initial_index}}">
-						<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.competitor.id != c_data.competitor.id %}{{ c_data.competitor.id }}{% endif %}{% endfor %}">
+						<input type="hidden" name="loser_id" value="{% for c_key, c_data in data.items %}{% if competitor_data.id != c_data.id %}{{ c_data.id }}{% endif %}{% endfor %}">
 						<button type="button" class="winner-btn" data-form-id="{{ competitor_key }}">Выбрать</button>
 					</form>
 				</div>

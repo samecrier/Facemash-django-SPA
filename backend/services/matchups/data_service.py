@@ -42,7 +42,12 @@ class MatchupGetData():
 		data_competitor = {}
 		competitor = self.competitor_service.get_competitor_object(competitor)
 		image_data = Helper.get_image_stats(competitor, initial_index=initial_index)
-		data_competitor["competitor"] = competitor
+		data_competitor["id"] = competitor.id
+		data_competitor["name_id"] = competitor.name_id
+		data_competitor["name"] = competitor.name
+		data_competitor["age"] = competitor.age
+		data_competitor["competitor_images"] = competitor.images.all()
+		data_competitor["city"] = competitor.city.city_eng
 		data_competitor["rating"] = self.matchup_helper_service.get_rating_stat(competitor)
 		data_competitor["images"] = image_data["images"]
 		data_competitor["initial_index"] = initial_index

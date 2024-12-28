@@ -6,6 +6,12 @@
 	
 }
 
+
+.slider-controls input:checked + label {
+	background-color: #8800ff;
+	box-shadow: 0 0 5px #8800ff;
+}
+
 .click-button{
 	margin-top: 20px;
 }

@@ -34,12 +34,7 @@ class TournamentGetData():
 
 	# Сбросить список запросов
 		reset_queries()
-		data = {
-				'matchups': defaultdict(lambda: defaultdict(lambda: defaultdict(dict))),
-				'round_info': defaultdict(dict),
-				'matchup_info': defaultdict(dict),
-				'tournament_info': defaultdict(dict),
-			}
+		
 		matchups_obj = matchups_obj.select_related(
 			'tournament_round_id',
 			'winner_id__tournament_competitor_id__competitor_id'
@@ -51,53 +46,20 @@ class TournamentGetData():
 			'competitors_in_matchup__tournament_competitor_id__competitor_id__profiles_ratings',
 		)
 
+
 		# Запрос к базе данных происходит только здесь
 		matchup_obj = matchups_obj.first()
 		round_obj = matchup_obj.tournament_round_id
-		round_number = round_obj.round_number
-		data['round_info']['round_number'] = round_number
-		
-		matchups_overall = len(matchups_obj)
-		data['matchup_info']['matchups_overall'] = matchups_overall
+		tournament_obj = round_obj.tournament_base_id
 
-		tournament_base_obj = round_obj.tournament_base_id
-		data['tournament_info']['tournament_id'] = tournament_base_obj.id
-		data['tournament_info']['winner_id'] = tournament_base_obj.winner_id
+		data = {
+				'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+				'round_info': self.data_helper_service.get_round_info_dict(round_obj),
+				'matchup_info': self.data_helper_service.get_matchup_info_dict(matchup_obj),
+				'matchups': self.data_helper_service.get_matchups_dict(matchups_obj),
+			}
 		
-		for i, matchup in enumerate(matchups_obj.order_by('matchup_number')):
-			if matchup_obj:
-				data['matchup_info']['matchup_number'] = matchup_obj.matchup_number
-				if matchup.winner_id:
-					data['matchup_info']['matchup_winner'] = matchup_obj.winner_id.tournament_competitor_id.competitor_id.id
-					data['matchups'][matchup.matchup_number]['status'] = 'сыгран'
-				else:
-					data['matchups'][matchup.matchup_number]['status'] = 'в ожидании'
-				
-			for i, competitor in enumerate(matchup.competitors_in_matchup.all()):
-				round_competitor_obj = competitor
-				
-				competitor_obj = competitor.tournament_competitor_id.competitor_id
-				data['matchups'][matchup.matchup_number]['competitors'][i]['round_competitor_id'] = round_competitor_obj.id
-				data['matchups'][matchup.matchup_number]['competitors'][i]['round_competitor_status'] = round_competitor_obj.status
-				data['matchups'][matchup.matchup_number]['competitors'][i]['round_competitor_delta_round'] = round_competitor_obj.delta_round
-				data['matchups'][matchup.matchup_number]['competitors'][i]['round_competitor_delta_round_profile'] = round_competitor_obj.delta_round_profile
-				data['matchups'][matchup.matchup_number]['competitors'][i]['round_competitor_result'] = round_competitor_obj.result
-
-				# data['matchups'][matchup.matchup_number]['competitors'][i]['tournament_competitor_id'] = tournament_competitor_obj.id
-				
-				data['matchups'][matchup.matchup_number]['competitors'][i]['competitor_id'] = competitor_obj.id
-				data['matchups'][matchup.matchup_number]['competitors'][i]['name'] = competitor_obj.name
-				data['matchups'][matchup.matchup_number]['competitors'][i]['age'] = competitor_obj.age
-				data['matchups'][matchup.matchup_number]['competitors'][i]['city'] = competitor_obj.city.city_eng
-				data['matchups'][matchup.matchup_number]['competitors'][i]['rating'] = competitor_obj.rating.rating
-				# if request.user.is_authenticated: # эта штука вызывает вопросов и надо реализовывать ее через кэш
-				# 	data['matchups'][matchup.matchup_number]['competitors'][i]['rating_profile'] = self.rating_service.get_rating_profile(request.user, competitor_obj)
-		
-		data_dict = Helper.convert_to_dict(data)
-		# for query in connection.queries:
-		# 	print(query['sql'])
-		
-		return data_dict
+		return data
 
 	def get_tournaments_base(self, profile_obj):
 		"""По профилю возвращает data с турнирами профиля в tournamentview"""
@@ -117,9 +79,8 @@ class TournamentGetData():
 				data['in_progress_tournaments'][i] = {}
 				data['in_progress_tournaments'][i]['tournament_id'] = tournament.id  # Турниры в процессе
 				data['in_progress_tournaments'][i]['status'] = tournament.status
-				actual_round = self.data_helper_service.get_actual_round_obj_by_tournament(tournament)
 				data['in_progress_tournaments'][i]['winner_id'] = None
-				data['in_progress_tournaments'][i]['actual_round'] = actual_round.round_number
+				data['in_progress_tournaments'][i]['actual_round'] = self.data_helper_service.get_actual_round_number_by_tournament(tournament)
 		return data
 	
 	def actual_rounds_status(self, tournament):
@@ -144,8 +105,8 @@ class TournamentGetData():
 		competitors = [(obj.competitor_id, obj.final_position) for obj in tournament_competitors]
 		return competitors
 	
-	def get_actual_round_obj_by_tournament(self, tournament):
-		return self.data_helper_service.get_actual_round_obj_by_tournament(tournament)
+	def get_actual_round_number_by_tournament(self, tournament):
+		return self.data_helper_service.get_actual_round_number_by_tournament(tournament)
 	
 	def get_tournament_info_by_obj(self, tournament_obj):
 		tournament_data = {
