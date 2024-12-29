@@ -1,4 +1,4 @@
-from django.db.models.signals import pre_delete, m2m_changed
+from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from apps.tournaments.models import TournamentBase, TournamentRound, TournamentMatchup
 

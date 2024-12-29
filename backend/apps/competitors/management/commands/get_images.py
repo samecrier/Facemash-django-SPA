@@ -35,7 +35,6 @@ class Command(BaseCommand):
 							image_full_path=image_full_path, 
 							)
 						if image:
-							print(user, image)
 							added_images.append(image)
 							competitor.images.add(image)
 		with open('data/csv/added_images.csv', 'a', newline='', encoding='utf-8') as f:

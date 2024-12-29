@@ -24,8 +24,8 @@ class TemplateTournament(models.Model):
 	]
 
 	template_name = models.CharField(max_length=255)
-	competitors_number = models.PositiveIntegerField()
-	rounds_number = models.PositiveIntegerField()
+	competitors_qty = models.PositiveIntegerField()
+	rounds_qty = models.PositiveIntegerField()
 	creator_id = models.ForeignKey(
 		'profiles.User',
 		on_delete=models.SET_NULL,
@@ -78,9 +78,9 @@ class TournamentBase(models.Model):
 		db_column='template_tournament_id',
 		null=True, blank=True
 	)
-	competitors_number = models.PositiveIntegerField()
+	competitors_qty = models.PositiveIntegerField()
 	competitors_remaining = models.PositiveIntegerField()
-	rounds_number = models.PositiveIntegerField()
+	rounds_qty = models.PositiveIntegerField()
 	status = models.CharField(
 		max_length=255,
 		choices=STATUS_CHOICES, 
@@ -141,19 +141,22 @@ class TournamentRound(models.Model):
 		related_name='rounds',
 		db_column='tournament_base_id'
 	)
-	rating_system = models.CharField(max_length=255, default='elo_64')
 	round_number = models.PositiveIntegerField(default=1)
+	competitors_qty = models.PositiveIntegerField(default=0)
+	matchups_qty = models.PositiveIntegerField(default=0)
+	rating_system = models.CharField(max_length=255, default='elo_64')
 	competitors_in_matchup = models.PositiveIntegerField()
 	status = models.CharField(
 		max_length=255,
 		choices=STATUS_CHOICES, 
 		default='not started')
+	
 	winners = models.ManyToManyField(
 		'tournaments.TournamentCompetitor',
 		related_name='round_winners'
 	)
 	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
+	updated_at = models.DateTimeField(auto_now=True)\
 
 
 class RoundCompetitor(models.Model):
@@ -181,20 +184,23 @@ class RoundCompetitor(models.Model):
 		db_column='tournament_round_id',
 		null=True
 	)
-	delta_round = models.IntegerField(default=0)
-	delta_round_profile = models.IntegerField(default=0)
 	status = models.CharField(
 		max_length=255,
 		choices=STATUS_CHOICES,
 		default='not played'
 		)
 	result = models.IntegerField(choices=RESULT_CHOICES, null=True, blank=True)
+	delta_round = models.IntegerField(default=0)
+	delta_round_profile = models.IntegerField(default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
 
 class TournamentMatchup(models.Model):
-	
+	STATUS_CHOICES = [
+		('played', 'played'),
+		('not played', 'not played')
+	]
 	tournament_round_id = models.ForeignKey(
 		'tournaments.TournamentRound',
 		on_delete=models.SET_NULL,
@@ -217,6 +223,11 @@ class TournamentMatchup(models.Model):
 		'tournaments.RoundCompetitor',
 		related_name='matchup_losers'
 	)
+	status = models.CharField(
+		max_length=255,
+		choices=STATUS_CHOICES,
+		default='not played'
+		)
 	matchup_number = models.PositiveIntegerField()
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

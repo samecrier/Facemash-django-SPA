@@ -42,7 +42,12 @@ class MatchupGetData():
 		data_competitor = {}
 		competitor = self.competitor_service.get_competitor_object(competitor)
 		image_data = Helper.get_image_stats(competitor, initial_index=initial_index)
-		data_competitor["competitor"] = competitor
+		data_competitor["id"] = competitor.id
+		data_competitor["name_id"] = competitor.name_id
+		data_competitor["name"] = competitor.name
+		data_competitor["age"] = competitor.age
+		data_competitor["competitor_images"] = competitor.images.all()
+		data_competitor["city"] = competitor.city.city_eng
 		data_competitor["rating"] = self.matchup_helper_service.get_rating_stat(competitor)
 		data_competitor["images"] = image_data["images"]
 		data_competitor["initial_index"] = initial_index
@@ -50,16 +55,16 @@ class MatchupGetData():
 
 		return data_competitor
 
-	def get_data_random_competitors(self, competitors_number, first_position=0) -> dict:
+	def get_data_random_competitors(self, competitors_qty, first_position=0) -> dict:
 		"""
 		Возвращает competitor_number dict для матчапа
 
-		:param competitors_number: int - количество участников
+		:param competitors_qty: int - количество участников
 		return dict
 		"""
 		data = defaultdict(dict)
 		start_position = first_position + 1
-		finish_position = start_position + competitors_number
+		finish_position = start_position + competitors_qty
 		competitors = []
 		for i_competitor in range(start_position, finish_position):
 			competitor_number_key = f"competitor-{i_competitor}"
@@ -102,11 +107,10 @@ class MatchupGetData():
 			need_competitors = competitors-len(raw_data)
 			for i in range(need_competitors):
 				final_data.update(self.get_data_random_competitors(
-					competitors_number=need_competitors, 
+					competitors_qty=need_competitors, 
 					first_position=len(raw_data)))
 
 		competitor_final_data = {f"competitor-{key}": value for key, value in sorted(final_data.items())}
-		print(competitor_final_data)
 		return competitor_final_data
 	
 class MatchupGetDataJS():

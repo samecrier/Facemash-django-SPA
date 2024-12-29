@@ -6,7 +6,9 @@ from services.profiles.service import LocalProfileService
 from services.tournaments.service import LocalTournamentService
 from services.tournaments.helper import TournamentHelper
 from services.matchups.handler import MatchupHandler
+from services.tournaments.handler_helper import HandlerHelper
 from services.ratings.rating_systems import EloRatingSystem32, EloRatingSystem64
+
 
 class TournamentHandler():
 	
@@ -32,38 +34,38 @@ class TournamentHandler():
 		if request.user.is_authenticated:
 			profile_id = request.user
 			competitors = self.competitor_service.fetch_competitors_by_location(cities)
-			competitor_for_tournament = self.tournament_helper.choose_random_competitors(competitors, participants)
+			competitor_for_tournament = HandlerHelper.choose_random_competitors(competitors, participants)
 			tournament_obj, round_obj = self.initiate_of_tournament(profile_id, competitor_for_tournament, participants, rounds, in_matchup)
 			tournament_id = tournament_obj.id
 			round_number = round_obj.round_number
 			return (tournament_id, round_number)
 	
 	def initiate_of_tournament(self, profile_id, competitors, participants, rounds, in_matchup):
-		tournament_obj = self.tournament_service.create_tournament_base(
+		tournament_obj = self.tournament_service.base.create_tournament_base(
 			profile_id=profile_id,
-			competitors_number=participants,
-			rounds_number=rounds
+			competitors_qty=participants,
+			rounds_qty=rounds
 		)
 
-		for round_number in range(1, tournament_obj.rounds_number+1):
+		for round_number in range(1, tournament_obj.rounds_qty+1):
 			if round_number == 1:
-				round_obj = self.tournament_service.create_tournament_round(
+				round_obj = self.tournament_service.round.create_tournament_round(
 					tournament_base_id=tournament_obj,
 					competitors_in_matchup=in_matchup,
 					round_number=round_number
 				)
 			else:
-				self.tournament_service.create_tournament_round(
+				self.tournament_service.round.create_tournament_round(
 					tournament_base_id=tournament_obj,
 					competitors_in_matchup=in_matchup,
 					round_number=round_number
 				)
 		for competitor in competitors:
-			tournament_competitor_obj = self.tournament_service.create_tournament_competitor(
+			tournament_competitor_obj = self.tournament_service.base.create_tournament_competitor(
 				tournament_base_id=tournament_obj,
 				competitor_id=competitor,
 			)
-			self.tournament_service.create_round_competitor(
+			self.tournament_service.round.create_round_competitor(
 				tournament_competitor_id=tournament_competitor_obj,
 				tournament_round_id=round_obj,
 			)
@@ -75,7 +77,7 @@ class TournamentHandler():
 			'elo_32': EloRatingSystem32(),
 			'elo_64': EloRatingSystem64()
 		}
-		matchup_obj = self.tournament_service.get_matchup_obj_by_id(matchup_id)
+		matchup_obj = self.tournament_service.matchup.get_matchup_obj(matchup_id)
 		if matchup_obj.winner_id:
 			raise AttributeError("ПОБЕДИТЕЛЬ УЖЕ ЕСТЬ")
 		winner_id = int(winner_id)
@@ -93,10 +95,15 @@ class TournamentHandler():
 		)
 		matchup_handler.process_matchup()
 
-		tournament_base = matchup_obj.tournament_round_id.tournament_base_id
-		if tournament_base.status == 'not started':
-			tournament_base.status = 'in progress'
-			tournament_base.save()
+		round_obj = matchup_obj.tournament_round_id
+		tournament_obj = round_obj.tournament_base_id
+		if round_obj.status == 'not started':
+			round_obj.status = 'in progress'
+			round_obj.save()
+			if round_obj.round_number == 1:
+				tournament_obj.status = 'in progress'
+				tournament_obj.save()
+		
 		for round_competitor in matchup_obj.competitors_in_matchup.all():
 			competitor = round_competitor.tournament_competitor_id.competitor_id
 			tournament_competitor = round_competitor.tournament_competitor_id
@@ -119,12 +126,10 @@ class TournamentHandler():
 				round_competitor.delta_round_profile = matchup_handler.delta_profile[competitor]
 				tournament_competitor.delta_tournament += matchup_handler.delta[competitor]
 				tournament_competitor.delta_tournament_profile += matchup_handler.delta_profile[competitor]
-				tournament_competitor.final_position = tournament_base.competitors_remaining
-				tournament_base.competitors_remaining = tournament_base.competitors_remaining-1
-				tournament_base.save()
+				tournament_competitor.final_position = tournament_obj.competitors_remaining
+				tournament_obj.competitors_remaining = tournament_obj.competitors_remaining-1
+				tournament_obj.save()
 			
 			tournament_competitor.save()
 			round_competitor.save()
 			matchup_obj.save()
-
-		print(matchup_id, '/', winner_id)

@@ -18,7 +18,6 @@ def count_competitors_api(request):
 		try:
 			data = json.loads(request.body)
 			city_ids = data.get('cities', [])
-			print(f"CITY{city_ids}")
 			count = Competitor.objects.filter(city__id__in=city_ids).count()
 			return JsonResponse({'count': count}, status=200)
 		except json.JSONDecodeError:

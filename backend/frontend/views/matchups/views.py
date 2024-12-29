@@ -64,18 +64,15 @@ class MatchupView(View):
 					competitor_1_index=winner_image_index,
 					competitor_1_position=winner_position
 				)
-			# elif winner_id:
-			# 	print('WINNER_ID')
-			# 	data = self.data_service.get_data_enemy(winner_id, winner_position, winner_image_index)
 			else:
 				data = self.data_service.data_matchup(competitors=2)
 				for i, competitor in enumerate(data):
-					request.session[f'enemy_{i+1}'] = data[competitor]['competitor'].id
+					request.session[f'enemy_{i+1}'] = data[competitor]['id']
 			if not enemy_id:
 				for competitor in data:
 					if winner_id:
-						if int(winner_id) != data[competitor]["competitor"].id:
-							request.session['enemy_id'] = data[competitor]['competitor'].id
+						if int(winner_id) != data[competitor]['id']:
+							request.session['enemy_id'] = data[competitor]['id']
 
 		ratings = LocalRatingService.get_top_rating(20)
 		

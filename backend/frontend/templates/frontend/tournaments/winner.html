@@ -14,7 +14,7 @@
 	<div class="wrapper">
 		<div class="tournament-winner-section">
 			<div class="winner-heading">
-				<h1>Выиграла турнир {{data.name}}!!!</h1>
+				<h1>Выиграла турнир {{data_competitor.name}}!!!</h1>
 			</div>
 			<div class="click-button">
 				<div class="a-button">
@@ -35,25 +35,25 @@
 				<tbody>
 					<tr>
 						<td class="key">id</td>
-						<td class="value">{{ data.id }}</td>
+						<td class="value">{{ data_competitor.id }}</td>
 					</tr>
-					{% if data.age%}
+					{% if data_competitor.age%}
 					<tr>
 						<td class="key">Age</td>
-						<td class="value">{{ data.age }}</td>
+						<td class="value">{{ data_competitor.age }}</td>
 					</tr>
 					{% endif %}
 					<tr>
 						<td class="key">City</td>
-						<td class="value">{{ data.city }}</td>
+						<td class="value">{{ data_competitor.city }}</td>
 					</tr>
 					<tr>
 						<td class="key">Rating</td>
-						<td class="value">{{ data.rating }}</td>
+						<td class="value">{{ data_competitor.rating }}</td>
 					</tr>
 					<tr>
 						<td class="key">Bio</td>
-						<td class="value bio">{{ data.bio }}</td>
+						<td class="value bio">{{ data_competitor.bio }}</td>
 					</tr>
 				</tbody>
 				</table>
@@ -64,7 +64,7 @@
 {% block scripts %}
 <script id="image-data-slider-1" type="application/json">
 	{
-		"images" : {{ data.images }}
+		"images" : {{ data_competitor.images }}
 	}
 </script>
 

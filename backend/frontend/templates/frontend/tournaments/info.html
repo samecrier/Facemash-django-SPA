@@ -30,14 +30,14 @@ Tournament Info Page
 					</tr>
 				</thead>
 				<tbody>
-					{% for competitor, final_position in page_obj%}
+					{% for competitor, competitor_data in competitors_page%}
 					<tr class="competitor-row" >
-						<td>{% if final_position %}{{ final_position }}{% endif %}</td>
-						<td class="competitor-name" data-competitor-id="{{ competitor.id }}">{{ competitor.name }}</td>
-						<td>{% if competitor.age %}{{ competitor.age }}{% else %}-{% endif %}</td>
-						<td class="competitor-city">{{ competitor.city.city_eng }}</td>
-						<td>{{ competitor.rating.rating }}</td>
-						<td>{{ competitor.tournaments_participation.first.delta_tournament }}</td>
+						<td>{% if competitor_data.tournament_info.final_position %}{{ competitor_data.tournament_info.final_position }}{% endif %}</td>
+						<td class="competitor-name" data-competitor-id="{{ competitor_data.competitor_info.id }}">{{ competitor_data.competitor_info.name }}</td>
+						<td>{% if competitor_data.competitor_info.age %}{{ competitor_data.competitor_info.age }}{% else %}-{% endif %}</td>
+						<td class="competitor-city">{{ competitor_data.competitor_info.city }}</td>
+						<td>{{ competitor_data.competitor_info.rating }}</td>
+						<td>{{ competitor_data.tournament_info.delta_tournament }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -45,19 +45,19 @@ Tournament Info Page
 			</div>
 				<!-- Пагинация -->
 			<div class="pagination">
-			{% if page_obj.has_previous %}
-				<a href="?type={{ request.GET.type }}&page={{ page_obj.previous_page_number }}"><</a>
+			{% if competitors_page.has_previous %}
+				<a href="?type={{ request.GET.type }}&page={{ competitors_page.previous_page_number }}"><</a>
 			{% endif %}
-				{% if page_obj.number > 3 %}
+				{% if competitors_page.number > 3 %}
 					<a href="?type={{ request.GET.type }}&page=1">1</a>
 					<span>...</span>
-				{% elif page_obj.number > 1 %}
+				{% elif competitors_page.number > 1 %}
 					<a href="?type={{ request.GET.type }}&page=1">1</a>
 				{% endif %}
 				<!-- Динамический диапазон страниц -->
-				{% for num in paginator.page_range %}
-						{% if num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-							{% if num == page_obj.number%}
+				{% for num in competitors_paginator.page_range %}
+						{% if num > competitors_page.number|add:'-3' and num < competitors_page.number|add:'3' %}
+							{% if num == competitors_page.number%}
 								<span class="current"><strong>{{ num }}</strong></span> <!-- Текущая страница -->
 							{% else %}
 								{% if num != 1 %}
@@ -68,20 +68,20 @@ Tournament Info Page
 				{% endfor %}
 
 				<!-- Ссылка на последнюю страницу -->
-				{% if page_obj.number < paginator.num_pages|add:'-2' %}
+				{% if competitors_page.number < competitors_paginator.num_pages|add:'-2' %}
 					<span>...</span>
-					<a href="?type={{ request.GET.type }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
-				{% elif page_obj.number|add:'2' < paginator.num_pages %}
-					<a href="?type={{ request.GET.type }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+					<a href="?type={{ request.GET.type }}&page={{ competitors_paginator.num_pages }}">{{ competitors_paginator.num_pages }}</a>
+				{% elif competitors_page.number|add:'2' < competitors_paginator.num_pages %}
+					<a href="?type={{ request.GET.type }}&page={{ competitors_paginator.num_pages }}">{{ competitors_paginator.num_pages }}</a>
 				{% endif %}
 
-			{% if page_obj.has_next %}
-				<a href="?type={{ request.GET.type }}&page={{ page_obj.next_page_number }}">></a>
+			{% if competitors_page.has_next %}
+				<a href="?type={{ request.GET.type }}&page={{ competitors_page.next_page_number }}">></a>
 			{% endif %}
 			</div>
-			{% if actual_round %}
+			{% if data.tournament_info.actual_round_number %}
 				<div class="a-button">
-					<a href='{% url 'tournament-matchup-actual' tournament_obj.id actual_round.round_number%}'>Перейти к матчапам</a>
+					<a href='{% url 'tournament-matchup-actual' data.tournament_info.id data.tournament_info.actual_round_number%}'>Перейти к матчапам</a>
 				</div>
 			{% endif %}
 		</div>
@@ -90,11 +90,13 @@ Tournament Info Page
 				<h1>История раундов</h1>
 			</div>
 			<div class="round-section">
-			{% for round in actual_rounds_status %}
-				{% if forloop.last and not round.status == 'completed' %}
-					<p><a href="{% url 'tournament-stage' tournament_obj.id round.round_number%}">Раунд {{round.round_number}} - текущий</a></p>
-				{% else %}
-					<p><a href="{% url 'tournament-stage' tournament_obj.id round.round_number%}">Раунд {{round.round_number}} - закончен</a></p>
+			{% for round_number, round_data in data.rounds_info.items %}
+				{% if not round_data.status == 'not started' %}
+					{% if not round_data.status == 'completed' %}
+						<p><a href="{% url 'tournament-stage' data.tournament_info.id round_number%}">Раунд {{round_number}} - текущий</a></p>
+					{% else %}
+						<p><a href="{% url 'tournament-stage' data.tournament_info.id round_number%}">Раунд {{round_number}} - закончен</a></p>
+					{% endif %}
 				{% endif %}
 			{% endfor %}
 			</div>
