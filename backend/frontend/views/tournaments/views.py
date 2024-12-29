@@ -79,11 +79,10 @@ class StageTournamentView(LoginRequiredMixin, RoundPermissionMixin, View):
 		
 		matchups = self.helper_service.get_stage_matchups(self.round_obj)
 		stage_data = self.data_service.get_data_stage(request, matchups)
-		pprint(stage_data)
 		return render(request, 'frontend/tournaments/stage.html',
 			{
 				'stage_data': stage_data
-			})			
+			})
 
 
 class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):

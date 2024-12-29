@@ -1,3 +1,4 @@
+from services.helpers import debug_queries, measure_time
 from services.tournaments.service import LocalTournamentService
 
 class TournamentDataHelper():
@@ -36,6 +37,7 @@ class TournamentDataHelper():
 		}
 		return competitor_info
 
+	@debug_queries
 	def get_tournament_info_dict(self, tournament_obj):
 		tournament_info = {
 			'id': tournament_obj.id,
@@ -74,9 +76,12 @@ class TournamentDataHelper():
 		}
 		return tournament_competitor_info
 	
+	@measure_time
+	@debug_queries
 	def get_tournament_competitors_dict(self, tournament_obj):
 		competitors = {}
 		for t_competitor_obj in self.tournament_service.base.sort_competitors_with_null(tournament_obj):
+		# for t_competitor_obj in tournament_obj.sorted_competitors:
 			competitor_obj = t_competitor_obj.competitor_id
 			competitors[competitor_obj.id] = {
 				'competitor_info': self.get_competitor_info_dict(competitor_obj),
@@ -84,6 +89,7 @@ class TournamentDataHelper():
 			}
 		return competitors
 	
+	@debug_queries
 	def get_rounds_info_dict(self, tournament_obj):
 		rounds_info = {}
 		for round_obj in tournament_obj.rounds.all().order_by('round_number'):

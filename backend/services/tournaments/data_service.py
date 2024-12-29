@@ -5,8 +5,12 @@ from services.profiles.service import LocalProfileService
 from services.tournaments.data_helper import TournamentDataHelper
 from services.tournaments.helper import TournamentHelper
 from services.tournaments.service import LocalTournamentService
-from services.helpers import Helper
+from services.helpers import Helper, debug_queries
 from collections import defaultdict
+
+from apps.tournaments.models import TournamentBase, TournamentCompetitor
+from django.db.models.functions import Coalesce
+from django.db.models import Value, Prefetch
 
 
 class TournamentGetData():
@@ -108,7 +112,14 @@ class TournamentGetData():
 	def get_actual_round_number_by_tournament(self, tournament):
 		return self.data_helper_service.get_actual_round_number_by_tournament(tournament)
 	
+	@debug_queries
 	def get_tournament_info_by_obj(self, tournament_obj):
+		
+		# tournament_test = TournamentBase.objects.prefetch_related(
+		# 	self.tournament_service.base.get_competitors_prefetch(sorted=True)
+		# 	).get(id=tournament_obj.id)
+
+		
 		tournament_data = {
 			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
 			'rounds_info': self.data_helper_service.get_rounds_info_dict(tournament_obj),

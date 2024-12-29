@@ -1,7 +1,8 @@
 from django.db import transaction
 from django.db.models.functions import Coalesce
-from django.db.models import Value
+from django.db.models import Value, Prefetch
 from abc import ABC, abstractmethod
+from services.helpers import debug_queries
 from apps.tournaments.models import *
 
 
@@ -22,6 +23,9 @@ class BaseService:
 
 class TournamentBaseService(BaseService):
 
+	def get_tournament_prefetch(self, tournament_id):
+		return TournamentBase.objects.prefetch_related('competitors__competitor_id').get(id=tournament_id)
+	
 	def get_tournament_obj(self, tournament):
 		return self.get_object(TournamentBase, tournament)
 	
@@ -68,10 +72,43 @@ class TournamentBaseService(BaseService):
 		tournament_base_obj.winner_id = winner_obj.competitor_id
 		tournament_base_obj.save()
 
+	@debug_queries
 	def sort_competitors_with_null(self, tournament_obj, number=None):
 		if number:
-			return tournament_obj.competitors.all().order_by(Coalesce('final_position', Value(0)))[:number]
-		return tournament_obj.competitors.all().order_by(Coalesce('final_position', Value(0)))
+			return tournament_obj.competitors.select_related(
+				'competitor_id__city',
+				'competitor_id__rating'
+			).order_by(
+				Coalesce('final_position', Value(0))
+			)[:number]
+		return tournament_obj.competitors.select_related(
+				'competitor_id__city',
+				'competitor_id__rating'
+			).order_by(Coalesce('final_position', Value(0)), "-competitor_id__rating__rating", "competitor_id")
+
+	def get_sorted_competitors_queryset(self):
+		return TournamentCompetitor.objects.select_related(
+			'competitor_id__city',
+			'competitor_id__rating'
+		).order_by(Coalesce('final_position', Value(0)), "-competitor_id__rating__rating", "competitor_id")
+	
+	def get_competitors_queryset(self):
+		return TournamentCompetitor.objects.select_related(
+			'competitor_id__city',
+			'competitor_id__rating'
+		)
+	
+	def get_competitors_prefetch(self, sorted=False):
+		if sorted:
+			return Prefetch(
+				'competitors',
+				queryset=self.get_sorted_competitors_queryset(),
+				to_attr="sorted_competitors"
+			) 
+		return Prefetch(
+				'competitors',
+				queryset=self.get_competitors_queryset(),
+			) 
 
 class TournamentRoundService(BaseService):
 	
