@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,6 +26,10 @@ SECRET_KEY = 'django-insecure-*bujo@4pq#g9sbhqq5cj@p!!s0e=6316ffiu##f-l-k^7^&g@d
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips]
+
 
 ALLOWED_HOSTS = []
 
@@ -44,7 +49,8 @@ INSTALLED_APPS = [
 	'apps.matchups',
 	'apps.tournaments',
 	'apps.ratings',
-	'apps.api'
+	'apps.api',
+	'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +62,7 @@ MIDDLEWARE = [
 	'django.contrib.messages.middleware.MessageMiddleware',
 	'django.middleware.clickjacking.XFrameOptionsMiddleware',
 	'middleware.query_count.QueryCountMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = '_facemash_django.urls'
@@ -66,6 +73,7 @@ TEMPLATES = [
 		'DIRS': [BASE_DIR / 'templates'],
 		'APP_DIRS': True,
 		'OPTIONS': {
+			'debug' : DEBUG,
 			'context_processors': [
 				'django.template.context_processors.debug',
 				'django.template.context_processors.request',

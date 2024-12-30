@@ -7,12 +7,12 @@ from apps.tournaments.forms import TournamentSelectionForm
 from frontend.mixins import TournamentPermissionMixin, RoundPermissionMixin, MatchupPermissionMixin, WinnerPermissionMixin
 from services.competitors.service import LocalCompetitorService
 from services.competitors.data_service import CompetitorGetData
+from services.helpers import measure_time
 from services.tournaments.service import LocalTournamentService
 from services.matchups.data_service import MatchupGetData
 from services.tournaments.data_service import TournamentGetData
 from services.tournaments.helper import TournamentHelper
 from services.tournaments.handler import TournamentHandler
-from apps.tournaments.models import TournamentBase
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from pprint import pprint
@@ -58,6 +58,7 @@ class CreateTournamentView(LoginRequiredMixin, View):
 class TournamentView(LoginRequiredMixin, TournamentPermissionMixin, View):
 	data_service = TournamentGetData()
 	
+	@measure_time
 	def get(self, request, tournament_id):
 		data = self.data_service.get_tournament_info_by_obj(self.tournament_obj)
 		competitors = [(competitor, data) for competitor, data in data['tournament_competitors'].items()]

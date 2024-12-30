@@ -1,4 +1,3 @@
-from django.http import HttpResponseForbidden
 from django.http import Http404
 from django.shortcuts import redirect
 from services.tournaments.service import LocalTournamentService
@@ -11,11 +10,12 @@ class BasePermissionMixin:
 	
 	def get_tournament_obj(self, tournament_id, request):
 		"""Получение объекта турнира и проверка прав доступа."""
-		tournament_obj = self.tournament_service.base.get_tournament_obj(tournament_id)
+		# tournament_obj = self.tournament_service.base.get_tournament_obj(tournament_id)
+		tournament_obj = self.tournament_service.base.get_tournament_obj_with_profile(tournament_id)
 		if not tournament_obj:
 			raise Http404("Такого турнира не существует")
 		if tournament_obj.profile_id != request.user:
-			raise HttpResponseForbidden("У вас нет доступа к этому турниру.")
+			raise Http404("У вас нет доступа к этому турниру.")
 		return tournament_obj
 
 	def get_round_obj(self, tournament_obj, round_number):

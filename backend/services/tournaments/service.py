@@ -2,7 +2,7 @@ from django.db import transaction
 from django.db.models.functions import Coalesce
 from django.db.models import Value, Prefetch
 from abc import ABC, abstractmethod
-from services.helpers import debug_queries
+from services.helpers import debug_queries, measure_time
 from apps.tournaments.models import *
 
 
@@ -13,7 +13,8 @@ class BaseService:
 	
 	def get_object(self, model, identifier):
 		if isinstance(identifier, model):
-			return model.objects.filter(id=identifier.id).first() #это используется, чтобы возвращать конкретно запись из базы с обновленными типами (str->int и.т.д)
+			return identifier
+			# return model.objects.filter(id=identifier.id).first() #это используется, чтобы возвращать конкретно запись из базы с обновленными типами (str->int и.т.д)
 		elif isinstance(identifier, (str, int)):
 			return self.get_obj_by_string(model, identifier)
 	
@@ -28,6 +29,9 @@ class TournamentBaseService(BaseService):
 	
 	def get_tournament_obj(self, tournament):
 		return self.get_object(TournamentBase, tournament)
+	
+	def get_tournament_obj_with_profile(self, tournament_id):
+		return TournamentBase.objects.select_related('profile_id').get(id=tournament_id)
 	
 	def get_tournaments(self, order_by=None): #Не используется
 		"""Возвращает все турниры без привязки к профайлу"""
@@ -72,6 +76,7 @@ class TournamentBaseService(BaseService):
 		tournament_base_obj.winner_id = winner_obj.competitor_id
 		tournament_base_obj.save()
 
+	@measure_time
 	@debug_queries
 	def sort_competitors_with_null(self, tournament_obj, number=None):
 		if number:

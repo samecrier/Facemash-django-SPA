@@ -26,6 +26,15 @@ class TournamentDataHelper():
 			if rounds_status[round] in ('not started', 'in progress'):
 				return round.round_number
 	
+	def get_actual_round_number(self, round_obj):
+		rounds_status = {round: round.status for round in round_obj}
+		if list(rounds_status.values())[-1] == 'completed':
+			# raise ValueError("Взят завершенный турнир")
+			return None 
+		for round in rounds_status:
+			if rounds_status[round] in ('not started', 'in progress'):
+				return round.round_number
+	
 	def get_competitor_info_dict(self, competitor_obj):
 		competitor_info = {
 			'id': competitor_obj.id,
@@ -38,7 +47,7 @@ class TournamentDataHelper():
 		return competitor_info
 
 	@debug_queries
-	def get_tournament_info_dict(self, tournament_obj):
+	def get_tournament_info_dict_by_tournament(self, tournament_obj):
 		tournament_info = {
 			'id': tournament_obj.id,
 			'profile_id': tournament_obj.profile_id.id,
@@ -49,7 +58,21 @@ class TournamentDataHelper():
 			'winner_id': tournament_obj.winner_id.id if tournament_obj.winner_id else None,
 			'created_at': tournament_obj.created_at,
 			'updated_at': tournament_obj.updated_at
-
+		}
+		return tournament_info
+	
+	@debug_queries
+	def get_tournament_info_dict(self, tournament_obj, rounds_obj):
+		tournament_info = {
+			'id': tournament_obj.id,
+			'profile_id': tournament_obj.profile_id.id,
+			'actual_round_number': self.get_actual_round_number(rounds_obj),
+			'competitors_qty': tournament_obj.competitors_qty,
+			'competitors_remaining': tournament_obj.competitors_remaining,
+			'rounds_qty': tournament_obj.rounds_qty,
+			'winner_id': tournament_obj.winner_id.id if tournament_obj.winner_id else None,
+			'created_at': tournament_obj.created_at,
+			'updated_at': tournament_obj.updated_at
 		}
 		return tournament_info
 	
@@ -90,9 +113,16 @@ class TournamentDataHelper():
 		return competitors
 	
 	@debug_queries
-	def get_rounds_info_dict(self, tournament_obj):
+	def get_rounds_info_dict_by_tournament_obj(self, tournament_obj):
 		rounds_info = {}
 		for round_obj in tournament_obj.rounds.all().order_by('round_number'):
+			rounds_info[round_obj.round_number] = self.get_round_info_dict(round_obj)
+		return rounds_info
+	
+	@debug_queries
+	def get_rounds_info_dict(self, rounds_obj):
+		rounds_info = {}
+		for round_obj in rounds_obj:
 			rounds_info[round_obj.round_number] = self.get_round_info_dict(round_obj)
 		return rounds_info
 

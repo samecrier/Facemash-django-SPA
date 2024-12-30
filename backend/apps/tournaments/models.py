@@ -156,7 +156,7 @@ class TournamentRound(models.Model):
 		related_name='round_winners'
 	)
 	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)\
+	updated_at = models.DateTimeField(auto_now=True)
 
 
 class RoundCompetitor(models.Model):

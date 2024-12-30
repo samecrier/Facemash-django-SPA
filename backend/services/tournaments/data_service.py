@@ -5,10 +5,10 @@ from services.profiles.service import LocalProfileService
 from services.tournaments.data_helper import TournamentDataHelper
 from services.tournaments.helper import TournamentHelper
 from services.tournaments.service import LocalTournamentService
-from services.helpers import Helper, debug_queries
+from services.helpers import Helper, debug_queries, measure_time
 from collections import defaultdict
 
-from apps.tournaments.models import TournamentBase, TournamentCompetitor
+from apps.tournaments.models import TournamentBase, TournamentCompetitor, TournamentRound
 from django.db.models.functions import Coalesce
 from django.db.models import Value, Prefetch
 
@@ -57,7 +57,7 @@ class TournamentGetData():
 		tournament_obj = round_obj.tournament_base_id
 
 		data = {
-				'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+				'tournament_info': self.data_helper_service.get_tournament_info_dict_by_tournament(tournament_obj),
 				'round_info': self.data_helper_service.get_round_info_dict(round_obj),
 				'matchup_info': self.data_helper_service.get_matchup_info_dict(matchup_obj),
 				'matchups': self.data_helper_service.get_matchups_dict(matchups_obj),
@@ -112,17 +112,17 @@ class TournamentGetData():
 	def get_actual_round_number_by_tournament(self, tournament):
 		return self.data_helper_service.get_actual_round_number_by_tournament(tournament)
 	
-	@debug_queries
+	@measure_time
 	def get_tournament_info_by_obj(self, tournament_obj):
 		
 		# tournament_test = TournamentBase.objects.prefetch_related(
 		# 	self.tournament_service.base.get_competitors_prefetch(sorted=True)
 		# 	).get(id=tournament_obj.id)
-
 		
+		rounds_obj = TournamentRound.objects.select_related('tournament_base_id').filter(tournament_base_id=tournament_obj).order_by('round_number')
 		tournament_data = {
-			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
-			'rounds_info': self.data_helper_service.get_rounds_info_dict(tournament_obj),
+			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj, rounds_obj),
+			'rounds_info': self.data_helper_service.get_rounds_info_dict(rounds_obj),
 			'tournament_competitors': self.data_helper_service.get_tournament_competitors_dict(tournament_obj),
 		}
 		return tournament_data
@@ -130,7 +130,7 @@ class TournamentGetData():
 	def get_round_info_by_obj(self, round_obj):
 		tournament_obj = round_obj.tournament_base_id
 		round_data = {
-			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+			'tournament_info': self.data_helper_service.get_tournament_info_dict_by_tournament(tournament_obj),
 			'round_info': self.data_helper_service.get_round_info_dict(round_obj),
 			'round_competitors': self.data_helper_service.get_round_competitors_dict(round_obj)
 		}
@@ -141,7 +141,7 @@ class TournamentGetData():
 		tournament_obj = round_obj.tournament_base_id
 
 		matchup_data = {
-			'tournament_info': self.data_helper_service.get_tournament_info_dict(tournament_obj),
+			'tournament_info': self.data_helper_service.get_tournament_info_dict_by_tournament(tournament_obj),
 			'round_info': self.data_helper_service.get_round_info_dict(round_obj),
 			'matchup_info': self.data_helper_service.get_matchup_info_dict(matchup_obj),
 			'matchup_competitors': self.data_helper_service.get_matchup_competitors_dict(matchup_obj)
