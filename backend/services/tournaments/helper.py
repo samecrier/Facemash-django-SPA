@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.shortcuts import redirect
 from services.competitors.service import LocalCompetitorService
+from services.helpers import measure_time
 from services.matchups.service import LocalMatchupService
 from services.ratings.service import LocalRatingService
 from services.profiles.service import LocalProfileService
@@ -122,6 +123,7 @@ class TournamentHelper:
 			self.tournament_service.round.update_round_competitor_status(round_competitor, 'in schedule')
 		return self.tournament_service.matchup.get_matchups_by_round_obj(round_obj)
 
+	@measure_time
 	@transaction.atomic
 	def get_stage_matchups(self, round_obj):
 		matchups = self.get_matchups_from_round_obj(round_obj, 'matchup_number')

@@ -86,9 +86,11 @@ Tournament Info Page
 			{% endif %}
 		</div>
 		<div class="round-stage-info">
+			
 			<div class="round-stage-head">
 				<h1>История раундов</h1>
 			</div>
+			
 			<div class="round-section">
 			{% for round_number, round_data in data.rounds_info.items %}
 				{% if not round_data.status == 'not started' %}

@@ -16,6 +16,7 @@ from services.tournaments.handler import TournamentHandler
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from pprint import pprint
+from datetime import datetime
 
 
 class HomeTournamentView(LoginRequiredMixin, View):
@@ -76,14 +77,12 @@ class StageTournamentView(LoginRequiredMixin, RoundPermissionMixin, View):
 	helper_service = TournamentHelper()
 	data_service = TournamentGetData()
 	
+	@measure_time
 	def get(self, request, tournament_id, round_number):
-		
 		matchups = self.helper_service.get_stage_matchups(self.round_obj)
-		stage_data = self.data_service.get_data_stage(request, matchups)
-		return render(request, 'frontend/tournaments/stage.html',
-			{
-				'stage_data': stage_data
-			})
+		stage_data = self.data_service.get_data_stage(request, self.tournament_obj, self.round_obj, matchups)
+		response = render(request, 'frontend/tournaments/stage.html', {'matchups': matchups, 'stage_data': stage_data})
+		return response
 
 
 class MatchupTournamentView(LoginRequiredMixin, MatchupPermissionMixin, View):

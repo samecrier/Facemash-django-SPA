@@ -7,7 +7,8 @@ class Rating(models.Model):
 		'competitors.Competitor',
 		on_delete=models.CASCADE,
 		related_name='rating',
-		db_column='competitor_id')
+		db_column='competitor_id',
+		db_index=True)
 	rating = models.PositiveIntegerField(default=1200)
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)

@@ -15,13 +15,11 @@ class QueryCountMiddleware:
 
 		# Начало замера времени
 		start_time = time.perf_counter()
-
 		# Количество запросов до выполнения
 		num_queries_before = len(connection.queries)
-
 		# Обработка запроса
 		response = self.get_response(request)
-
+		response_time = time.perf_counter() - start_time
 		# Количество запросов после выполнения
 		num_queries_after = len(connection.queries)
 		total_queries = num_queries_after - num_queries_before

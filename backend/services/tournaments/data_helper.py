@@ -1,3 +1,4 @@
+from django.db import connection
 from services.helpers import debug_queries, measure_time
 from services.tournaments.service import LocalTournamentService
 
@@ -43,6 +44,17 @@ class TournamentDataHelper():
 			'age': competitor_obj.age,
 			'city': competitor_obj.city.city_eng,
 			'rating': competitor_obj.rating.rating,
+		}
+		return competitor_info
+	
+	def get_competitor_info_dict_prefetch(self, competitor_obj):
+		competitor_info = {
+			'id': competitor_obj.id,
+			'name': competitor_obj.name,
+			'name_id': competitor_obj.name_id,
+			'age': competitor_obj.age,
+			'city': competitor_obj.prefetch_city,
+			'rating': competitor_obj.prefetch_rating,
 		}
 		return competitor_info
 
@@ -170,19 +182,26 @@ class TournamentDataHelper():
 			}
 		return matchup_competitors
 	
+	@measure_time
 	def get_matchups_dict(self, matchups_obj):
+		'''Возвращает два словаря для matchups_info и matchups'''
+		
+		matchups_info = {}
 		matchups = {}
-		for matchup_obj in matchups_obj.order_by('matchup_number'):
+	
+		for i, matchup_obj in enumerate(matchups_obj):
+			if i == 0 :
+				matchups_info = self.get_matchup_info_dict(matchup_obj)
 			matchup_number = matchup_obj.matchup_number
 			matchups[matchup_number] = {'competitors': {}}
+			
 			for i, competitor in enumerate(matchup_obj.competitors_in_matchup.all()):
 				round_competitor_obj = competitor
 				tournament_competitor_obj = round_competitor_obj.tournament_competitor_id
 				competitor_obj = tournament_competitor_obj.competitor_id
 				matchups[matchup_number]['competitors'][i] = {}
-				matchups[matchup_number]['competitors'][i]['competitor_info'] = self.get_competitor_info_dict(competitor_obj)
+				matchups[matchup_number]['competitors'][i]['competitor_info'] = self.get_competitor_info_dict_prefetch(competitor_obj)
 				matchups[matchup_number]['competitors'][i]['round_info'] = self.get_round_competitor_info_dict(round_competitor_obj)
 				matchups[matchup_number]['competitors'][i]['tournament_info'] = self.get_tournament_competitor_info_dict(tournament_competitor_obj)
-				# if request.user.is_authenticated: # эта штука вызывает вопросов и надо реализовывать ее через кэш
-				# 	matchups[matchup_number]['competitors'][i]['rating_profile'] = self.rating_service.get_rating_profile(request.user, competitor_obj)
-		return matchups
+		
+		return (matchups_info, matchups)

@@ -17,7 +17,7 @@ class Competitor(models.Model):
 	name_id = models.CharField(max_length=100)
 	age = models.PositiveIntegerField(blank=True, null=True)
 	city = models.ForeignKey(Location, related_name='competitor',
-		on_delete=models.PROTECT)
+		on_delete=models.PROTECT, db_index=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	added_at = models.DateTimeField(auto_now_add=True)
 

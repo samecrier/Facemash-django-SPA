@@ -1,3 +1,6 @@
+from django.db import connection
+from apps.competitors.models import Competitor
+from apps.ratings.models import Rating
 from services.competitors.service import LocalCompetitorService
 from services.matchups.service import LocalMatchupService
 from services.ratings.service import LocalRatingService
@@ -7,6 +10,8 @@ from services.tournaments.helper import TournamentHelper
 from services.tournaments.service import LocalTournamentService
 from services.helpers import Helper, debug_queries, measure_time
 from collections import defaultdict
+from django.db.models import F
+
 
 from apps.tournaments.models import TournamentBase, TournamentCompetitor, TournamentRound
 from django.db.models.functions import Coalesce
@@ -33,34 +38,30 @@ class TournamentGetData():
 		self.helper_service = helper_service
 		self.data_helper_service = data_helper_service
 
-	def get_data_stage(self, request, matchups_obj):
-		from django.db import reset_queries  # Для сброса предыдущих запросов
+	@measure_time
+	@debug_queries
+	def get_data_stage(self, request, tournament_obj, round_obj, matchups_obj):
 
-	# Сбросить список запросов
-		reset_queries()
-		
 		matchups_obj = matchups_obj.select_related(
 			'tournament_round_id',
 			'winner_id__tournament_competitor_id__competitor_id'
 		)
 		
-		matchups_obj = matchups_obj.prefetch_related(
-			'competitors_in_matchup__tournament_competitor_id__competitor_id__city',
-			'competitors_in_matchup__tournament_competitor_id__competitor_id__rating',
-			'competitors_in_matchup__tournament_competitor_id__competitor_id__profiles_ratings',
-		)
+		competitors_prefetch = Prefetch(
+			'competitors_in_matchup__tournament_competitor_id__competitor_id',
+				queryset=Competitor.objects.annotate(
+					prefetch_city=F('city__city_eng'),
+					prefetch_rating=F('rating__rating')
+					))
+		matchups_obj = matchups_obj.prefetch_related(competitors_prefetch)
 
-
-		# Запрос к базе данных происходит только здесь
-		matchup_obj = matchups_obj.first()
-		round_obj = matchup_obj.tournament_round_id
-		tournament_obj = round_obj.tournament_base_id
+		matchups_info, matchups = self.data_helper_service.get_matchups_dict(matchups_obj)
 
 		data = {
 				'tournament_info': self.data_helper_service.get_tournament_info_dict_by_tournament(tournament_obj),
 				'round_info': self.data_helper_service.get_round_info_dict(round_obj),
-				'matchup_info': self.data_helper_service.get_matchup_info_dict(matchup_obj),
-				'matchups': self.data_helper_service.get_matchups_dict(matchups_obj),
+				'matchup_info': matchups_info,
+				'matchups': matchups,
 			}
 		
 		return data
