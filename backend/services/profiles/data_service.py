@@ -22,6 +22,8 @@ class ProfileGetData():
 		matchups = LocalMatchupService.get_profile_matchups(profile_id).order_by('-created_at')
 		if number:
 			matchups = matchups[:number]
+
+		matchups = matchups.select_related('winner_id', 'loser_id')
 	
 		competitor_ids = self.competitor_service.get_competitors_from_matchups(matchups)
 		ratings = LocalRatingService.get_rating_profiles(profile_id, competitor_ids)

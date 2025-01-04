@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
-from services.ratings.service import LocalRatingService, APIRatingService
+from services.ratings.data_service import RatingData
 from services.matchups.helper import MatchupHelper, SavedMatchupHelper
 from services.matchups.data_service import MatchupGetData, MatchupGetDataJS
 from services.matchups.handler import MatchupHandler
@@ -13,6 +13,7 @@ class MatchupView(View):
 	saved_matchup_helper_service = SavedMatchupHelper()
 	data_service = MatchupGetData()
 	data_service_js = MatchupGetDataJS()
+	rating_data_service = RatingData()
 
 	def get(self, request):
 		
@@ -74,7 +75,7 @@ class MatchupView(View):
 						if int(winner_id) != data[competitor]['id']:
 							request.session['enemy_id'] = data[competitor]['id']
 
-		ratings = LocalRatingService.get_top_rating(20)
+		ratings = self.rating_data_service.get_data_top_rating(20)
 		
 		return render(
 			request, 

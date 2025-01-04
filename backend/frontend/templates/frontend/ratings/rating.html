@@ -20,13 +20,13 @@
 				</div>
 			<table>
 				<tbody>
-					{% for competitor, rating in page_obj%}
+					{% for id, data in competitors_page_obj%}
 					<tr class="competitor-row">
 						<td>{{ start_position|add:forloop.counter }}</td>
-						<td class="competitor-name" data-competitor-id="{{ competitor.id }}">{{ competitor.name }}</td>
-						<td>{% if competitor.age %}{{ competitor.age }}{% else %}-{% endif %}</td>
-						<td>{{ competitor.city.city_eng }}</td>
-						<td>{{ rating }}</td>
+						<td class="competitor-name" data-competitor-id="{{ data.id }}">{{ data.name }}</td>
+						<td>{% if data.age %}{{ data.age }}{% else %}-{% endif %}</td>
+						<td>{{ data.city }}</td>
+						<td>{{ data.rating }}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -34,19 +34,19 @@
 			</div>
 				<!-- Пагинация -->
 			<div class="pagination">
-			{% if page_obj.has_previous %}
-				<a href="?type={{ request.GET.type }}&page={{ page_obj.previous_page_number }}"><</a>
+			{% if competitors_page_obj.has_previous %}
+				<a href="?type={{ request.GET.type }}&page={{ competitors_page_obj.previous_page_number }}"><</a>
 			{% endif %}
-				{% if page_obj.number > 3 %}
+				{% if competitors_page_obj.number > 3 %}
 					<a href="?type={{ request.GET.type }}&page=1">1</a>
 					<span>...</span>
-				{% elif page_obj.number > 1 %}
+				{% elif competitors_page_obj.number > 1 %}
 					<a href="?type={{ request.GET.type }}&page=1">1</a>
 				{% endif %}
 				<!-- Динамический диапазон страниц -->
-				{% for num in paginator.page_range %}
-						{% if num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-							{% if num == page_obj.number%}
+				{% for num in competitors_paginator.page_range %}
+						{% if num > competitors_page_obj.number|add:'-3' and num < competitors_page_obj.number|add:'3' %}
+							{% if num == competitors_page_obj.number%}
 								<span class="current"><strong>{{ num }}</strong></span> <!-- Текущая страница -->
 							{% else %}
 								{% if num != 1 %}
@@ -57,15 +57,15 @@
 				{% endfor %}
 
 				<!-- Ссылка на последнюю страницу -->
-				{% if page_obj.number < paginator.num_pages|add:'-2' %}
+				{% if competitors_page_obj.number < competitors_paginator.num_pages|add:'-2' %}
 					<span>...</span>
-					<a href="?type={{ request.GET.type }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
-				{% elif page_obj.number|add:'2' < paginator.num_pages %}
-					<a href="?type={{ request.GET.type }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+					<a href="?type={{ request.GET.type }}&page={{ competitors_paginator.num_pages }}">{{ competitors_paginator.num_pages }}</a>
+				{% elif competitors_page_obj.number|add:'2' < competitors_paginator.num_pages %}
+					<a href="?type={{ request.GET.type }}&page={{ competitors_paginator.num_pages }}">{{ competitors_paginator.num_pages }}</a>
 				{% endif %}
 
-			{% if page_obj.has_next %}
-				<a href="?type={{ request.GET.type }}&page={{ page_obj.next_page_number }}">></a>
+			{% if competitors_page_obj.has_next %}
+				<a href="?type={{ request.GET.type }}&page={{ competitors_page_obj.next_page_number }}">></a>
 			{% endif %}
 			</div>
 

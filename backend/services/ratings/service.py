@@ -30,13 +30,13 @@ class LocalRatingService(RatingService):
 	@staticmethod
 	def get_rating_profiles(profile_id, competitor_ids) -> int:
 		'''По id Competitor возвращаю его рейтинг'''
+		ratings_objs = RatingProfile.objects.filter(
+			profile_id=profile_id,
+			competitor_id__in=competitor_ids
+		).select_related('competitor_id')
 		ratings = {}
-		for competitor_id in competitor_ids:
-			competitor_rating_profile, created = RatingProfile.objects.get_or_create(
-				profile_id=profile_id,
-				competitor_id=competitor_id
-			)
-			ratings[competitor_id] = competitor_rating_profile.rating
+		for rating_obj in ratings_objs:
+			ratings[rating_obj.competitor_id] = rating_obj.rating
 		return ratings
 	
 	@staticmethod
@@ -65,6 +65,7 @@ class LocalRatingService(RatingService):
 	@staticmethod
 	def get_top_rating(numbers):
 		top_ratings = Rating.objects.order_by('-rating')[:numbers]
+		top_ratings = top_ratings.select_related('competitor_id__city')
 		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratings]
 		sorted_competitors = sorted(competitors, key=lambda x: (-x[1], x[0].name))
 		return sorted_competitors
@@ -72,6 +73,7 @@ class LocalRatingService(RatingService):
 	@staticmethod
 	def get_top_ratingprofile(profile_id, numbers):
 		top_ratingsprofile = RatingProfile.objects.filter(profile_id=profile_id).order_by('-rating')[:numbers]
+		top_ratingsprofile = top_ratingsprofile.select_related('competitor_id__city')
 		competitors = [(rating.competitor_id, rating.rating) for rating in top_ratingsprofile]
 		sorted_competitors = sorted(competitors, key=lambda x: (-x[1], x[0].name))
 		return sorted_competitors

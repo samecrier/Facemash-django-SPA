@@ -9,7 +9,7 @@ class Rating(models.Model):
 		related_name='rating',
 		db_column='competitor_id',
 		db_index=True)
-	rating = models.PositiveIntegerField(default=1200)
+	rating = models.PositiveIntegerField(default=1200, db_index=True)
 	wins = models.IntegerField(default=0)
 	losses = models.IntegerField(default=0)
 	matchups = models.IntegerField(default=0)
