@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
 from services.ratings.data_service import RatingData
+from services.ratings.service import APIRatingService
 from services.matchups.helper import MatchupHelper, SavedMatchupHelper
 from services.matchups.data_service import MatchupGetData, MatchupGetDataJS
 from services.matchups.handler import MatchupHandler
