@@ -13,19 +13,23 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import socket
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*bujo@4pq#g9sbhqq5cj@p!!s0e=6316ffiu##f-l-k^7^&g@d'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False")
+DJANGO_SETTINGS_MODULE = os.getenv("DJANGO_SETTINGS_MODULE", "_facemash_django.settings.base")
+
 
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips]
@@ -93,11 +97,11 @@ WSGI_APPLICATION = '_facemash_django.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql',
-		'NAME': 'facemash_database',
-		'USER': 'saycry',
-		'PASSWORD': '12345678',
+		'NAME': os.getenv('DB_NAME', 'facemash_database'),
+		'USER': os.getenv('DB_USER', 'saycry'),
+		'PASSWORD': os.getenv('DB_PASSWORD', ''),
 		'HOST': os.getenv('DB_HOST', 'localhost'),  # Имя сервиса Docker
-		'PORT': '5432',
+		'PORT': os.getenv('DB_PORT', '5432'),
 	}
 }
 

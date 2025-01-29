@@ -8,10 +8,8 @@ services:
     volumes:
       - ../backend:/app/backend
       - /mnt/g/facemash/images:/app/media
-    environment:
-      - DEBUG=True
-      - DJANGO_SETTINGS_MODULE=_facemash_django.settings
-      - DB_HOST=db  # Для контейнера с базой данных
+    env_file:
+      - ../.env  # Добавляем загрузку .env для Django
     depends_on:
       - db
     command: ["python", "backend/manage.py", "runserver", "0.0.0.0:8000"]
@@ -24,10 +22,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    environment:
-      POSTGRES_DB: facemash_database
-      POSTGRES_USER: saycry
-      POSTGRES_PASSWORD: 12345678
+    env_file:
+      - ../.env  # Загружаем переменные для PostgreSQL
     networks:
       - backend
 

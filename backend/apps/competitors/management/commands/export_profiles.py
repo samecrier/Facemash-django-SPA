@@ -72,7 +72,7 @@ class Command(BaseCommand):
 		output_dir = os.path.join("data")
 		os.makedirs(output_dir, exist_ok=True)
 
-		file_path = os.path.join(output_dir, "exported_profiles.json")
+		file_path = os.path.join(output_dir, "/mnt/g/facemash/new_base/exported_profiles.json")
 		with open(file_path, "w", encoding="utf-8") as f:
 			json.dump(data, f, indent=4, ensure_ascii=False)
 
